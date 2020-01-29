@@ -19,8 +19,8 @@ This Compose file contains the following environment variables:
 
 ## Access to PgAdmin: 
 - **URL:** `http://localhost:5050`
-- **Username:** pgadmin&#64;pgadmin&#46;org (as a default)
-- **Password:** pgadmin (as a default)
+- **Username:** `pgadmin@pgadmin.org` (as a default)
+- **Password:** `pgadmin` (as a default)
 
 ## Add a new server in PgAdmin:
 - **Host name/address** `postgres`
