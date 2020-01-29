@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:${PGADMIN_VERSION:-latest}
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-pgadmin}
+      #PGADMIN_ENABLE_TLS: True
+      #PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: True
+      #PGADMIN_CONFIG_LOGIN_BANNER: "Authorised users only!"
+      #PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: 10
+    volumes:
+       - pgadmin:/var/lib/pgadmin
+       #- pgadmin:/root/.pgadmin
+       #- /private/var/lib/pgadmin:/var/lib/pgadmin
+       #- /path/to/certificate.cert:/certs/server.cert
+       #- /path/to/certificate.key:/certs/server.key
+       #- /tmp/servers.json:/pgadmin4/servers.json
+    ports:
+      - ${PGADMIN_PORT:-5050}:80
+    networks:
+      - backend
+    restart: unless-stopped
+    #restart: always
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+    pgadmin:
