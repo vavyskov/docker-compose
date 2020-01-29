@@ -14,12 +14,12 @@ This Compose file contains the following environment variables:
 
 - `PGADMIN_VERSION` the default value is **latest**
 - `PGADMIN_PORT` the default value is **5050**
-- `PGADMIN_DEFAULT_EMAIL` the default value is **pgadmin\@pgadmin.org**
+- `PGADMIN_DEFAULT_EMAIL` the default value is **pgadmin&#64;pgadmin&#46;org**
 - `PGADMIN_DEFAULT_PASSWORD` the default value is **pgadmin**
 
 ## Access to PgAdmin: 
 - **URL:** `http://localhost:5050`
-- **Username:** pgadmin\@pgadmin.org (as a default)
+- **Username:** pgadmin&#64;pgadmin&#46;org (as a default)
 - **Password:** pgadmin (as a default)
 
 ## Add a new server in PgAdmin:
