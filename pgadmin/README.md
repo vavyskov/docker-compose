@@ -17,6 +17,8 @@ This Compose file contains the following environment variables:
 - `PGADMIN_DEFAULT_EMAIL` the default value is **pgadmin<span>@</span>pgadmin<span>.</span>org**
 - `PGADMIN_DEFAULT_PASSWORD` the default value is **pgadmin**
 
+You can set environment variables in `.env` file.
+
 ## Access to PgAdmin: 
 - **URL:** `http://localhost:5050`
 - **Username:** `pgadmin@pgadmin.org` (as a default)

@@ -15,7 +15,8 @@ This Compose file contains the following environment variables:
 - `POSTGRES_VERSION` the default value is **latest**
 - `POSTGRES_USER` the default value is **postgres**
 - `POSTGRES_PASSWORD` the default value is **postgres**
-- `POSTGRES_DATABASE` the default value is **project**
+
+You can set environment variables in `.env` file.
 
 ## Access to postgres
 - `localhost:5432`

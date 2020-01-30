@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DATABASE:-project}
+      #POSTGRES_DB: ${POSTGRES_DATABASE:-project}
       #PGDATA: /data/postgres
     volumes:
       - postgres:/var/lib/postgresql/data
