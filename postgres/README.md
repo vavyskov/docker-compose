@@ -34,3 +34,16 @@ You can set environment variables in `.env` file.
 - Start this service: `docker-compose start`
 - Delete this service: `docker-compose down`
 - Delete docker volume: `docker volume prune`
+
+## Terminal
+    docker volume create --name postgres; \
+    docker network create --driver bridge backend; \
+    docker run -itd \
+        --name postgres \
+        --env POSTGRES_USER=postgres \
+        --env POSTGRES_PASSWORD=postgres \
+        --volume postgres:/var/lib/postgresql/data \
+        --publish 5432:5432 \
+        --network backend \
+        --restart unless-stopped \
+        postgres:latest

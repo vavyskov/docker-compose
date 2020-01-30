@@ -42,3 +42,16 @@ You can set environment variables in `.env` file.
 - Start this service: `docker-compose start`
 - Delete this service: `docker-compose down`
 - Delete docker volume: `docker volume prune`
+
+## Terminal
+    docker volume create --name pgadmin; \
+    docker network create --driver bridge backend; \
+    docker run -itd \
+        --name pgadmin \
+        --env PGADMIN_DEFAULT_EMAIL=pgadmin@pgadmin.org \
+        --env PGADMIN_DEFAULT_PASSWORD=pgadmin \
+        --volume pgadmin:/var/lib/pgadmin \
+        --publish 5050:80 \
+        --network backend \
+        --restart unless-stopped \
+        dpage/pgadmin4:latest
