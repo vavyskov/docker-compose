@@ -1,8 +1,11 @@
-# PostgreSQL
+# Postgres
 
 ## Requirements:
-- docker
-- docker-compose
+1. [Docker CE](https://download.docker.com?target=_blank) or [Docker Toolbox](https://github.com/docker/toolbox/releases/?target=_blank) (Virtualbox)
+    - `docker`
+    - `docker-compose`
+1. [Git](https://git-scm.com/?target=_blank) (optional)
+    - `git`
 
 ## Quick Start
 - Clone or download this repository
@@ -18,16 +21,16 @@ This Compose file contains the following environment variables:
 
 You can set environment variables in `.env` file.
 
-## Access to postgres
-- `localhost:5432`
-- **Username:** postgres (as a default)
-- **Password:** postgres (as a default)
+## Access to Postgres
+- **URL:** `localhost:5432` (Docker Tools: `192.168.99.100:5432`)
+- **Username:** `postgres`
+- **Password:** `postgres`
 
-## Connect to postgres
-- host is to enter by `docker network inspect pgv_default` to check `postgres_container Ipv4`
+## Network
+- Show IP address: `docker network inspect postgres_backend | grep IPv`
 
 ## Note
-- stop this service: `docker-compose stop`
-- start this service: `docker-compose start`
-- delete this service: `docker-compose down`
-- delete docker volume: `docker volume prune`
+- Stop this service: `docker-compose stop`
+- Start this service: `docker-compose start`
+- Delete this service: `docker-compose down`
+- Delete docker volume: `docker volume prune`

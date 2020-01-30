@@ -1,8 +1,11 @@
 # pgAdmin
 
 ## Requirements:
-- docker
-- docker-compose
+1. [Docker CE](https://download.docker.com?target=_blank) or [Docker Toolbox](https://github.com/docker/toolbox/releases/?target=_blank) (Virtualbox)
+    - `docker`
+    - `docker-compose`
+1. [Git](https://git-scm.com/?target=_blank) (optional)
+    - `git`
 
 ## Quick Start
 - Clone or download this repository
@@ -20,18 +23,22 @@ This Compose file contains the following environment variables:
 You can set environment variables in `.env` file.
 
 ## Access to PgAdmin: 
-- **URL:** `http://localhost:5050`
-- **Username:** `pgadmin@pgadmin.org` (as a default)
-- **Password:** `pgadmin` (as a default)
+- **URL:** `http://localhost:5050` (Docker Tools: `192.168.99.100:5050`)
+- **Username:** `pgadmin@pgadmin.org`
+- **Password:** `pgadmin`
 
 ## Add a new server in PgAdmin:
-- **Host name/address** `postgres`
-- **Port** `5432`
-- **Username** as `POSTGRES_USER`, by default: `postgres`
-- **Password** as `POSTGRES_PASSWORD`, by default `postgres`
+**Menu:** Object -> Create -> Server
+- **General** tab:
+  - **Name:** MyCustomServerName
+- **Connection** tab:
+  - **Host name/address:** `postgres` (Docker Tools: `192.168.99.100`)
+  - **Port:** `5432`
+  - **Username:** `postgres`
+  - **Password:** `postgres`
 
 ## Note
-- stop this service: `docker-compose stop`
-- start this service: `docker-compose start`
-- delete this service: `docker-compose down`
-- delete docker volume: `docker volume prune`
+- Stop this service: `docker-compose stop`
+- Start this service: `docker-compose start`
+- Delete this service: `docker-compose down`
+- Delete docker volume: `docker volume prune`
