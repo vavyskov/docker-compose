@@ -45,7 +45,7 @@ You can set environment variables in `.env` file.
 
 ## Terminal
     docker volume create --name pgadmin; \
-    docker network create --driver bridge backend; \
+    docker network create backend; \
     docker run -itd \
         --name pgadmin \
         --env PGADMIN_DEFAULT_EMAIL=pgadmin@pgadmin.org \

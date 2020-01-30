@@ -37,7 +37,7 @@ You can set environment variables in `.env` file.
 
 ## Terminal
     docker volume create --name postgres; \
-    docker network create --driver bridge backend; \
+    docker network create backend; \
     docker run -itd \
         --name postgres \
         --env POSTGRES_USER=postgres \
