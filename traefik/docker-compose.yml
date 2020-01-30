@@ -17,3 +17,5 @@ services:
     deploy:
         placement:
             constraints: [node.role == manager]
+    labels:
+        - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
