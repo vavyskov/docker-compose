@@ -24,6 +24,8 @@ services:
       - backend
     restart: unless-stopped
     #restart: always
+    labels:
+      - traefik.fronted.rule=PathPrefix:/pgadmin
 
 networks:
   backend:
