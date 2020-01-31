@@ -40,7 +40,7 @@ services:
       placement:
           constraints: [node.role == manager]
     labels:
-        - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+        - traefik.http.routers.traefik.rule=Host(`traefik.localhost`)
     networks:
       - backend
   
