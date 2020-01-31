@@ -1,5 +1,17 @@
 version: "3"
 
+#secrets:
+#  ## secret name also used to name the file exposed within the container
+#  ovh_endpoint:
+#    ## path on the host
+#    file: ./secrets/ovh_endpoint.secret
+#  ovh_application_key:
+#    file: ./secrets/ovh_application_key.secret
+#  ovh_application_secret:
+#    file: ./secrets/ovh_application_secret.secret
+#  ovh_consumer_key:
+#    file: ./secrets/ovh_consumer_key.secret
+
 services:
 
   traefik:
@@ -18,10 +30,25 @@ services:
       ## Traefik will listen to incoming request on the port 443 (HTTPS - custom name)
       - --entrypoints.https.address=:443
       ## Enable a tls challenge named "mytlschallenge"
-      - --certificatesResolvers.mytlschallenge.acme.tlschallenge=true
-      - --certificatesResolvers.mytlschallenge.acme.email=postmaster@mydomain.com
+#      - --certificatesResolvers.mytlschallenge.acme.tlschallenge=true
+
+      ## Enable a dns challenge named "mydnschallenge"
+#      - --certificatesresolvers.mydnschallenge.acme.dnschallenge=true
+      ## Tell which provider to use
+#      - --certificatesresolvers.mydnschallenge.acme.dnschallenge.provider=ovh
+
+      ## The email to provide to let's encrypt
+#      - --certificatesResolvers.mytlschallenge.acme.email=postmaster@mydomain.com
       ## Tell to store the certificate on a path under our volume
-      - --certificatesResolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
+#      - --certificatesResolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
+
+      ## Tell it to use our predefined entrypoint named "http"
+#      - --certificatesresolvers.myhttpchallenge.acme.httpchallenge.entrypoint=http
+      #- --certificatesresolvers.myhttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+#      - --certificatesresolvers.myhttpchallenge.acme.email=postmaster@mydomain.com
+#      - --certificatesresolvers.myhttpchallenge.acme.storage=/letsencrypt/acme.json
+
+      - --providers.docker.network=backend
 
       ## Test/Debug
       #- --log.level=DEBUG
@@ -31,6 +58,21 @@ services:
       - 80:80
       - 443:443
       - 8080:8080
+    ## expose the predefined secret to the container by name
+#    secrets:
+#      - ovh_endpoint
+#      - ovh_application_key
+#      - ovh_application_secret
+#      - ovh_consumer_key
+#    environment:
+      #- OVH_ENDPOINT=xxx
+      #- OVH_APPLICATION_KEY=xxx
+      #- OVH_APPLICATION_SECRET=xxx
+      #- OVH_CONSUMER_KEY=xxx
+#      - OVH_ENDPOINT_FILE=/run/secrets/ovh_endpoint
+#      - OVH_APPLICATION_KEY_FILE=/run/secrets/ovh_application_key
+#      - OVH_APPLICATION_SECRET_FILE=/run/secrets/ovh_application_secret
+#      - OVH_CONSUMER_KEY_FILE=/run/secrets/ovh_consumer_key
     volumes:
       ## Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -43,7 +85,7 @@ services:
         - traefik.http.routers.traefik.rule=Host(`traefik.localhost`)
     networks:
       - backend
-  
+
 networks:
   backend:
     external:

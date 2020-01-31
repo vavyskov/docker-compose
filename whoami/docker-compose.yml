@@ -17,12 +17,12 @@ services:
       ## The domain the service will respond to
       - traefik.http.routers.whoami.rule=Host(`whoami.localhost`)
       ## Allow request only from the predefined entry point named "http"
-      - traefik.http.routers.whoami.entrypoints=http
+#      - traefik.http.routers.whoami.entrypoints=http
 
       ## Allow request only from the predefined entry point named "https"
-      #- traefik.http.routers.whoami.entrypoints=https
+#      - traefik.http.routers.whoami.entrypoints=https
       ## Uses the Host rule to define which certificate to issue
-      #- traefik.http.routers.whoami.tls.certresolver=mytlschallenge
+#      - traefik.http.routers.whoami.tls.certresolver=mytlschallenge
 
 
 
@@ -33,6 +33,12 @@ services:
 
       #- traefik.http.routers.whoami.service=whoami ## !!!
       #- traefik.http.services.whoami.loadbalancer.server.port=80
+
+      #- --providers.docker.network=backend
+
+      ## Test/Debug
+      #- --log.level=DEBUG
+      #- --certificatesresolvers.myhttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
     networks:
       - backend
 
