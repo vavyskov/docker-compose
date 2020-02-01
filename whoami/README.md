@@ -1,4 +1,4 @@
-# docker-compose/whoami
+# Whoami
 
 ## Docker
 `docker network create network_backend`
