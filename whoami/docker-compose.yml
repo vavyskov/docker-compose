@@ -34,15 +34,15 @@ services:
       #- traefik.http.routers.whoami.service=whoami ## !!!
       #- traefik.http.services.whoami.loadbalancer.server.port=80
 
-      #- --providers.docker.network=backend
+      #- --providers.docker.network=network_backend
 
       ## Test/Debug
       #- --log.level=DEBUG
       #- --certificatesresolvers.myhttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
     networks:
-      - backend
+      - network_backend
 
 networks:
-  backend:
+  network_backend:
     external:
-      name: backend
+      name: network_backend

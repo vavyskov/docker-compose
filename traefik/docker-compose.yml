@@ -48,7 +48,7 @@ services:
 #      - --certificatesresolvers.myhttpchallenge.acme.email=postmaster@mydomain.com
 #      - --certificatesresolvers.myhttpchallenge.acme.storage=/letsencrypt/acme.json
 
-      - --providers.docker.network=backend
+      - --providers.docker.network=network_backend
 
       ## Test/Debug
       #- --log.level=DEBUG
@@ -84,9 +84,9 @@ services:
     labels:
         - traefik.http.routers.traefik.rule=Host(`traefik.localhost`)
     networks:
-      - backend
+      - network_backend
 
 networks:
-  backend:
+  network_backend:
     external:
-      name: backend
+      name: network_backend
