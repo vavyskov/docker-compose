@@ -9,13 +9,21 @@ services:
     ports:
       - 5555:80
     deploy:
+      replicas: 1
       placement:
-          constraints: [node.role == manager]
+          constraints:
+            - node.role == manager
     labels:
       ## Explicitly tell Traefik to expose this container
       - traefik.enable=true
+
       ## The domain the service will respond to
       - traefik.http.routers.whoami.rule=Host(`whoami.localhost`)
+#      - traefik.http.routers.whoami.rule=Host(`whoami.localhost`) && Path(`/whoami`)
+      
+      ## Load balancer
+      - traefik.http.services.whoami.loadbalancer.server.port=80
+
       ## Allow request only from the predefined entry point named "http"
 #      - traefik.http.routers.whoami.entrypoints=http
 
@@ -32,17 +40,16 @@ services:
 
 
       #- traefik.http.routers.whoami.service=whoami ## !!!
-      #- traefik.http.services.whoami.loadbalancer.server.port=80
 
-      #- --providers.docker.network=network_backend
+      #- --providers.docker.network=network_gateway
 
       ## Test/Debug
       #- --log.level=DEBUG
       #- --certificatesresolvers.myhttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
     networks:
-      - network_backend
+      - network_gateway
 
 networks:
-  network_backend:
-    external:
-      name: network_backend
+  network_gateway:
+    external: true
+      #name: network_backend
