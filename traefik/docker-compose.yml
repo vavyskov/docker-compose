@@ -82,11 +82,11 @@ services:
       placement:
           constraints: [node.role == manager]
     labels:
-        - traefik.http.routers.traefik.rule=Host(`traefik.localhost`)
+        - traefik.http.routers.traefik.rule=Host(`traefik.example.com`)
     networks:
       - network_gateway
 
 networks:
   network_gateway:
     external: true
-      #name: network_backend
+      #name: network_gateway

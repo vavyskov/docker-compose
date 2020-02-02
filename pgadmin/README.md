@@ -44,14 +44,20 @@ You can set environment variables in `.env` file.
 - Delete docker volume: `docker volume prune`
 
 ## Terminal
+
+### Docker
     docker volume create --name pgadmin; \
-    docker network create backend; \
+    docker network create network_gateway; \
     docker run -itd \
         --name pgadmin \
         --env PGADMIN_DEFAULT_EMAIL=pgadmin@pgadmin.org \
         --env PGADMIN_DEFAULT_PASSWORD=pgadmin \
         --volume pgadmin:/var/lib/pgadmin \
         --publish 5050:80 \
-        --network backend \
+        --network network_gateway \
         --restart unless-stopped \
         dpage/pgadmin4:latest
+        
+### Docker Swarm
+    docker network create --driver=overlay network_gateway; \
+    docker stack deploy -c docker-compose.yml pgadmin

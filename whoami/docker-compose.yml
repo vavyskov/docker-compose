@@ -8,6 +8,8 @@ services:
     container_name: whoami
     ports:
       - 5555:80
+    networks:
+      - network_gateway
     deploy:
       replicas: 1
       placement:
@@ -18,9 +20,10 @@ services:
       - traefik.enable=true
 
       ## The domain the service will respond to
-      - traefik.http.routers.whoami.rule=Host(`whoami.localhost`)
-#      - traefik.http.routers.whoami.rule=Host(`whoami.localhost`) && Path(`/whoami`)
-      
+      - traefik.http.routers.whoami.rule=Host(`whoami.example.com`)
+      #- traefik.fronted.rule=PathPrefix:/whoami
+      #- traefik.http.routers.whoami.rule=Host(`whoami.example.com`) && Path(`/whoami`)
+
       ## Load balancer
       - traefik.http.services.whoami.loadbalancer.server.port=80
 
@@ -46,10 +49,8 @@ services:
       ## Test/Debug
       #- --log.level=DEBUG
       #- --certificatesresolvers.myhttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
-    networks:
-      - network_gateway
 
 networks:
   network_gateway:
     external: true
-      #name: network_backend
+      #name: network_gateway

@@ -1,9 +1,10 @@
 version: '3'
 
 services:
+
   postgres:
-    container_name: postgres
     image: postgres:${POSTGRES_VERSION:-12}
+    container_name: postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -15,12 +16,19 @@ services:
     ports:
       - 5432:5432
     networks:
-      - backend
+      - network_gateway
     restart: unless-stopped
     #restart: always
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
 
 networks:
-  backend:
+  network_gateway:
+    external: true
+      #name: network_gateway
 
 volumes:
     postgres:
