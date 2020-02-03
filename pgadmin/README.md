@@ -47,17 +47,17 @@ You can set environment variables in `.env` file.
 
 ### Docker
     docker volume create --name pgadmin; \
-    docker network create network_gateway; \
+    docker network create frontend; \
     docker run -itd \
         --name pgadmin \
         --env PGADMIN_DEFAULT_EMAIL=pgadmin@pgadmin.org \
         --env PGADMIN_DEFAULT_PASSWORD=pgadmin \
         --volume pgadmin:/var/lib/pgadmin \
         --publish 5050:80 \
-        --network network_gateway \
+        --network frontend \
         --restart unless-stopped \
         dpage/pgadmin4:latest
         
 ### Docker Swarm
-    docker network create --driver=overlay network_gateway; \
+    docker network create --driver=overlay frontend; \
     docker stack deploy -c docker-compose.yml pgadmin

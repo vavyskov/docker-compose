@@ -27,7 +27,7 @@ You can set environment variables in `.env` file.
 - **Password:** `postgres`
 
 ## Network
-- Show IP address: `docker network inspect network_gateway | grep IPv`
+- Show IP address: `docker network inspect frontend | grep IPv`
 
 ## Note
 - Stop this service: `docker-compose stop`
@@ -39,17 +39,17 @@ You can set environment variables in `.env` file.
 
 ### Docker
     docker volume create --name postgres; \
-    docker network create network_gateway; \
+    docker network create frontend; \
     docker run -itd \
         --name postgres \
         --env POSTGRES_USER=postgres \
         --env POSTGRES_PASSWORD=postgres \
         --volume postgres:/var/lib/postgresql/data \
         --publish 5432:5432 \
-        --network network_gateway \
+        --network frontend \
         --restart unless-stopped \
         postgres:latest
         
 ### Docker Swarm
-    docker network create --driver=overlay network_gateway; \
+    docker network create --driver=overlay frontend; \
     docker stack deploy -c docker-compose.yml postgres

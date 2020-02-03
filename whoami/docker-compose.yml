@@ -9,7 +9,7 @@ services:
     ports:
       - 5555:80
     networks:
-      - network_gateway
+      - frontend
     deploy:
       replicas: 1
       placement:
@@ -44,13 +44,12 @@ services:
 
       #- traefik.http.routers.whoami.service=whoami ## !!!
 
-      #- --providers.docker.network=network_gateway
+      #- --providers.docker.network=frontend
 
       ## Test/Debug
       #- --log.level=DEBUG
       #- --certificatesresolvers.myhttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
 
 networks:
-  network_gateway:
+  frontend:
     external: true
-      #name: network_gateway

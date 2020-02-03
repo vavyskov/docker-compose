@@ -16,7 +16,7 @@ services:
     ports:
       - 5432:5432
     networks:
-      - network_gateway
+      - frontend
     restart: unless-stopped
     #restart: always
     deploy:
@@ -26,9 +26,8 @@ services:
           - node.role == manager
 
 networks:
-  network_gateway:
+  frontend:
     external: true
-      #name: network_gateway
 
 volumes:
     postgres:

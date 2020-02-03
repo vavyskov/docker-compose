@@ -1,9 +1,9 @@
 # Whoami
 
 ## Docker
-    docker network create network_gateway; \
+    docker network create frontend; \
     docker-compose up -d`
 
 ## Docker Swarm
-    docker network create --driver=overlay network_gateway; \
+    docker network create --driver=overlay frontend; \
     docker stack deploy -c docker-compose.yml whoami

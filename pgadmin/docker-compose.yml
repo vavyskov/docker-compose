@@ -23,7 +23,7 @@ services:
     ports:
       - ${PGADMIN_PORT:-5050}:80
     networks:
-      - network_gateway
+      - frontend
     restart: unless-stopped
     #restart: always
     deploy:
@@ -41,9 +41,8 @@ services:
       - traefik.http.services.pgadmin.loadbalancer.server.port=80
 
 networks:
-  network_gateway:
+  frontend:
     external: true
-      #name: network_gateway
 
 volumes:
     pgadmin:
