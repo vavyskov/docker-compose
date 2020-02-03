@@ -17,21 +17,6 @@ This Compose file contains the following environment variables:
 
 You can set environment variables in `.env` file.
 
-## Access to PgAdmin: 
-- **URL:** `http://localhost:5050` (Docker Tools: `192.168.99.100:5050`)
-- **Username:** `pgadmin@pgadmin.org`
-- **Password:** `pgadmin`
-
-## Add a new server in PgAdmin:
-**Menu:** Object -> Create -> Server
-- **General** tab:
-  - **Name:** MyCustomServerName
-- **Connection** tab:
-  - **Host name/address:** `postgres` (Docker Tools: `192.168.99.100`)
-  - **Port:** `5432`
-  - **Username:** `postgres`
-  - **Password:** `postgres`
-
 ## Quick start (docker-compose)
 1. Clone or download this repository
 1. Go inside of directory `cd docker-compose/pgadmin`
@@ -62,6 +47,21 @@ You can set environment variables in `.env` file.
         --network frontend_network \
         --restart unless-stopped \
         dpage/pgadmin4:4
+        
+## Access to PgAdmin: 
+- **URL:** `http://localhost:5050` (Docker Tools: `192.168.99.100:5050`)
+- **Username:** `pgadmin@pgadmin.org`
+- **Password:** `pgadmin`
+
+## Add a new server in PgAdmin:
+**Menu:** Object -> Create -> Server
+- **General** tab:
+  - **Name:** MyCustomServerName
+- **Connection** tab:
+  - **Host name/address:** `postgres` (Docker Tools: `192.168.99.100`)
+  - **Port:** `5432`
+  - **Username:** `postgres`
+  - **Password:** `postgres`
         
 ## Network
 Show IP address:

@@ -17,11 +17,6 @@ This Compose file contains the following environment variables:
 
 You can set environment variables in `.env` file.
 
-## Access to Postgres
-- **URL:** `localhost:5432` (Docker Tools: `192.168.99.100:5432`)
-- **Username:** `postgres`
-- **Password:** `postgres`
-
 ## Quick start (docker-compose)
 1. Clone or download this repository
 1. Go inside of directory `cd docker-compose/postgres`
@@ -49,6 +44,11 @@ You can set environment variables in `.env` file.
         --network frontend_network \
         --restart unless-stopped \
         postgres:12
+
+## Access to Postgres
+- **URL:** `localhost:5432` (Docker Tools: `192.168.99.100:5432`)
+- **Username:** `postgres`
+- **Password:** `postgres`
 
 ## Network
 Show IP address:

@@ -37,6 +37,9 @@ You can set environment variables in `.env` file.
         --network frontend_network \
         containous/whoami:v1.4.0
 
+## Access to Whoami: 
+- **URL:** `http://localhost:8082` (Docker Tools: `192.168.99.100:8082`)
+
 ## Network
 Show IP address:
 

@@ -36,7 +36,7 @@ services:
       - traefik.enable=true
       - traefik.http.services.pgadmin.loadbalancer.server.port=80
       - traefik.http.routers.pgadmin.service=pgadmin
-      - traefik.http.routers.pgadmin.rule=Host(`example.com`) ## && Path(`/pgadmin`) ## viz SCRIPT_NAME environment
+      - traefik.http.routers.pgadmin.rule=Host(`example.com`) # && Path(`/pgadmin`) ## viz SCRIPT_NAME environment
 
 networks:
   backend_network:
