@@ -1,4 +1,4 @@
-# Postgres
+# Adminer
 
 ## Requirements:
 1. [Docker CE](https://download.docker.com?target=_blank) or [Docker Toolbox](https://github.com/docker/toolbox/releases/?target=_blank) (Virtualbox)
@@ -10,47 +10,39 @@
 ## Environments
 This Compose file contains the following environment variables:
 
-- `POSTGRES_VERSION` the default value is **latest**
-- `POSTGRES_PORT` the default value is **5432**
-- `POSTGRES_USER` the default value is **postgres**
-- `POSTGRES_PASSWORD` the default value is **postgres**
+- `ADMINER_VERSION` the default value is **4**
+- `ADMINER_PORT` the default value is **8081**
 
 You can set environment variables in `.env` file.
 
-## Access to Postgres
-- **URL:** `localhost:5432` (Docker Tools: `192.168.99.100:5432`)
-- **Username:** `postgres`
-- **Password:** `postgres`
-
 ## Quick start (docker-compose)
 1. Clone or download this repository
-1. Go inside of directory `cd docker-compose/postgres`
+1. Go inside of directory `cd docker-compose/adminer`
 1. Run command:
     - Docker:
 
           docker network create backend_network; \
+          docker network create frontend_network; \
           docker-compose up -d
 
     - Docker Swarm
 
           docker network create --driver=overlay backend_network; \
-          docker stack deploy --compose-file=docker-compose.yml postgres
+          docker network create --driver=overlay frontend_network; \
+          docker stack deploy --compose-file=docker-compose.yml adminer
 
 ## Quick start (docker)
-
-    docker volume create --name postgres_data; \
+    
     docker network create backend_network; \
+    docker network create frontend_network; \
     docker run -itd \
-        --name postgres \
-        --env POSTGRES_USER=postgres \
-        --env POSTGRES_PASSWORD=postgres \
-        --volume postgres_data:/var/lib/postgresql/data \
-        --publish 5432:5432 \
+        --name adminer \
+        --publish 8081:80 \
         --network frontend_network \
-        --restart unless-stopped \
-        postgres:12
+        adminer:4
 
 ## Network
 Show IP address:
 
     docker network inspect backend_network | grep IPv
+    docker network inspect frontend_network | grep IPv

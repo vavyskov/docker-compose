@@ -11,12 +11,12 @@ services:
       #POSTGRES_DB: ${POSTGRES_DATABASE:-project}
       #PGDATA: /data/postgres
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
        #- postgres:/data/postgres
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT:-5432}:5432
     networks:
-      - frontend
+      - backend_network
     restart: unless-stopped
     #restart: always
     deploy:
@@ -26,8 +26,8 @@ services:
           - node.role == manager
 
 networks:
-  frontend:
+  backend_network:
     external: true
 
 volumes:
-    postgres:
+    postgres_data:

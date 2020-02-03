@@ -48,16 +48,12 @@ services:
 #      - --certificatesresolvers.myhttpchallenge.acme.email=postmaster@mydomain.com
 #      - --certificatesresolvers.myhttpchallenge.acme.storage=/letsencrypt/acme.json
 
-      - --providers.docker.network=frontend
+      - --providers.docker.network=frontend_network
 
       ## Test/Debug
       #- --log.level=DEBUG
       #- --certificatesResolvers.mytlschallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
 
-    ports:
-      - 80:80
-      - 443:443
-      - 8080:8080
     ## expose the predefined secret to the container by name
 #    secrets:
 #      - ovh_endpoint
@@ -78,14 +74,27 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       ## Create a letsencrypt dir within the folder where the docker-compose file is
       #- ./letsencrypt:/letsencrypt
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+      - 9000:9000
+    networks:
+      - frontend_network
     deploy:
+      replicas: 1
       placement:
           constraints: [node.role == manager]
-    labels:
-        - traefik.http.routers.traefik.rule=Host(`traefik.example.com`)
-    networks:
-      - frontend
+#    labels:
+#        - traefik.enable=true
+
+#        - traefik.http.routers.traefik.rule=Host(`traefik.example.com`)
+        #- traefik.http.routers.traefik.rule=Host(`example.com`)
+        #- traefik.fronted.rule=PathPrefix:/traefik
+        #- traefik.http.routers.traefik.rule=Host(`example.com`) && Path(`/traefik`)
+  
+        #- traefik.http.services.traefik.loadbalancer.server.port=80
 
 networks:
-  frontend:
+  frontend_network:
     external: true

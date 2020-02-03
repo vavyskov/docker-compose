@@ -7,11 +7,6 @@
 1. [Git](https://git-scm.com/?target=_blank) (optional)
     - `git`
 
-## Quick Start
-- Clone or download this repository
-- Go inside of directory, `cd docker-compose/pgadmin`
-- Run command `docker-compose up -d`
-
 ## Environments
 This Compose file contains the following environment variables:
 
@@ -37,27 +32,39 @@ You can set environment variables in `.env` file.
   - **Username:** `postgres`
   - **Password:** `postgres`
 
-## Note
-- Stop this service: `docker-compose stop`
-- Start this service: `docker-compose start`
-- Delete this service: `docker-compose down`
-- Delete docker volume: `docker volume prune`
+## Quick start (docker-compose)
+1. Clone or download this repository
+1. Go inside of directory `cd docker-compose/pgadmin`
+1. Run command:
+    - Docker:
 
-## Terminal
+          docker network create backend_network; \
+          docker network create frontend_network; \
+          docker-compose up -d
 
-### Docker
-    docker volume create --name pgadmin; \
-    docker network create frontend; \
+    - Docker Swarm
+
+          docker network create --driver=overlay backend_network; \
+          docker network create --driver=overlay frontend_network; \
+          docker stack deploy --compose-file=docker-compose.yml pgadmin
+
+## Quick start (docker)
+
+    docker volume create --name pgadmin_data; \
+    docker network create backend_network; \
+    docker network create frontend_network; \
     docker run -itd \
         --name pgadmin \
         --env PGADMIN_DEFAULT_EMAIL=pgadmin@pgadmin.org \
         --env PGADMIN_DEFAULT_PASSWORD=pgadmin \
-        --volume pgadmin:/var/lib/pgadmin \
+        --volume pgadmin_data:/var/lib/pgadmin \
         --publish 5050:80 \
-        --network frontend \
+        --network frontend_network \
         --restart unless-stopped \
-        dpage/pgadmin4:latest
+        dpage/pgadmin4:4
         
-### Docker Swarm
-    docker network create --driver=overlay frontend; \
-    docker stack deploy -c docker-compose.yml pgadmin
+## Network
+Show IP address:
+
+    docker network inspect backend_network | grep IPv
+    docker network inspect frontend_network | grep IPv

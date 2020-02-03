@@ -14,7 +14,7 @@ services:
       #PGADMIN_CONFIG_LOGIN_BANNER: "Authorised users only!"
       #PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: 10
     volumes:
-       - pgadmin:/var/lib/pgadmin
+       - pgadmin_data:/var/lib/pgadmin
        #- pgadmin:/root/.pgadmin
        #- /private/var/lib/pgadmin:/var/lib/pgadmin
        #- /path/to/certificate.cert:/certs/server.cert
@@ -23,7 +23,8 @@ services:
     ports:
       - ${PGADMIN_PORT:-5050}:80
     networks:
-      - frontend
+      - backend_network
+      - frontend_network
     restart: unless-stopped
     #restart: always
     deploy:
@@ -33,16 +34,15 @@ services:
           - node.role == manager
     labels:
       - traefik.enable=true
-
-      #- traefik.http.routers.pgadmin.rule=Host(`pgadmin.example.com`)
-      - traefik.http.routers.pgadmin.rule=Host(`example.com`)
-      #- traefik.http.routers.pgadmin.rule=Host(`example.com`) && Path(`/pgadmin`)
-
       - traefik.http.services.pgadmin.loadbalancer.server.port=80
+      - traefik.http.routers.pgadmin.service=pgadmin
+      - traefik.http.routers.pgadmin.rule=Host(`example.com`) ## && Path(`/pgadmin`) ## viz SCRIPT_NAME environment
 
 networks:
-  frontend:
+  backend_network:
+    external: true
+  frontend_network:
     external: true
 
 volumes:
-    pgadmin:
+    pgadmin_data:
