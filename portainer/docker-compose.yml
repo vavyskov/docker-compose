@@ -19,6 +19,9 @@ services:
   portainer:
     image: portainer/portainer:${PORTAINER_VERSION:-1.23.0}
     container_name: portainer
+#    environment: 
+#      HTTP_PROXY: example.com:8080
+#      HTTPS_PROXY: example.com:8080
     command: -H tcp://tasks.agent:9001 --tlsskipverify
     volumes:
       - portainer_data:/data
@@ -38,9 +41,19 @@ services:
       - traefik.enable=true
       - traefik.http.services.portainer.loadbalancer.server.port=9000
       - traefik.http.routers.portainer.service=portainer
+
       - traefik.http.routers.portainer.rule=Host(`portainer.example.com`)
-      #- traefik.fronted.rule=PathPrefix:/portainer
       #- traefik.http.routers.portainer.rule=Host(`portainer.example.com`) && Path(`/portainer`)
+      #- traefik.http.routers.portainer.rule=Host(`portainer.example.com`) && PathPrefix(`/portainer`)
+
+      ## Middlewares: Strip prefix
+      #- traefik.http.middlewares.portainer-strip-prefix.stripprefix.prefixes=/portainer
+      #- traefik.http.middlewares.portainer-strip-prefix.stripprefix.forceslash=false
+      #- traefik.http.routers.portainer.middlewares=portainer-strip-prefix@docker
+
+      ## Middlewares: Add prefix
+      #- traefik.http.middlewares.portainer-add-prefix.addprefix.prefix=/portainer
+      #- traefik.http.routers.portainer.middlewares=portainer-add-prefix@docker
 
 networks:
   agent_network:

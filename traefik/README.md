@@ -42,6 +42,8 @@ You can set environment variables in `.env` file.
         
 ## Access to Traefik: 
 - **URL:** `http://localhost:8080` (Docker Tools: `192.168.99.100:8080`)
+- **User:** `test`
+- **Password:** `test`
 
 ## Network
 Show IP address:
