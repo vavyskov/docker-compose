@@ -10,7 +10,7 @@
 ## Environments
 This Compose file contains the following environment variables:
 
-- `POSTGRES_VERSION` the default value is **latest**
+- `POSTGRES_VERSION` the default value is **12**
 - `POSTGRES_PORT` the default value is **5432**
 - `POSTGRES_USER` the default value is **postgres**
 - `POSTGRES_PASSWORD` the default value is **postgres**

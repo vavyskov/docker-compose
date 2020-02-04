@@ -10,7 +10,7 @@
 ## Environments
 This Compose file contains the following environment variables:
 
-- `PGADMIN_VERSION` the default value is **latest**
+- `PGADMIN_VERSION` the default value is **4**
 - `PGADMIN_PORT` the default value is **5050**
 - `PGADMIN_DEFAULT_EMAIL` the default value is **pgadmin<span>@</span>pgadmin<span>.</span>org**
 - `PGADMIN_DEFAULT_PASSWORD` the default value is **pgadmin**

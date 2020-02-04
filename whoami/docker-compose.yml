@@ -27,12 +27,14 @@ services:
 
       ## The domain the service will respond to
       - traefik.http.routers.whoami.rule=Host(`whoami.example.com`)
+      ## Path (Exact match)
       #- traefik.http.routers.whoami.rule=Host(`whoami.example.com`) && Path(`/whoami`)
+      ## PathPrefix (Prefix matcher)
       #- traefik.http.routers.whoami.rule=Host(`whoami.example.com`) && PathPrefix(`/whoami`)
 
 
 
-      
+
       ## Middlewares: Add prefix
       #- traefik.http.middlewares.add-foo.addprefix.prefix=/whoami
       #- traefik.http.routers.whoami.middlewares=add-foo@docker

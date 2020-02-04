@@ -34,7 +34,7 @@ You can set environment variables in `.env` file.
 
     docker volume create portainer_data; \
     docker run -d \ 
-        --name porainer \
+        --name portainer \
         --publish 8000:8000 \
         --publish 9000:9000 \
         --restart always \
