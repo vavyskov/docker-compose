@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+
+  visualizer:
+    image: dockersamples/visualizer:${VISUALIZER_VERSION:-latest}
+    container_name: visualizer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - ${VISUALIZER_PORT:-9003}:8080
+    networks:
+      - frontend_network
+    deploy:
+      replicas: 1
+      placement:
+          constraints:
+            - node.role == manager
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.visualizer.loadbalancer.server.port=8080
+      - traefik.http.routers.visualizer.service=visualizer
+      - traefik.http.routers.visualizer.rule=Host(`visualizer.example.com`)
+      #- traefik.http.routers.visualizer.rule=Host(`visualizer.example.com`) && Path(`/visualizer`)
+      #- traefik.http.routers.whoami.rule=Host(`visualizer.example.com`) && PathPrefix(`/visualizer`)
+
+networks:
+  frontend_network:
+    external: true
