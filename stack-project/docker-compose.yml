@@ -29,7 +29,7 @@ services:
       - traefik.http.routers.nginx.rule=Host(`${COMPOSE_PROJECT_NAME:-project}.example.com`)
 
   php-fpm:
-    image: vavyskov/php:${PHP_VERSION:-7.4.fpm-ssh-alpine3.11}
+    image: vavyskov/php:${PHP_VERSION:-7.4-fpm-ssh-alpine3.11}
     container_name: php-fpm
     #container_name: ${COMPOSE_PROJECT_NAME}_php-fpm
     depends_on:
@@ -86,7 +86,7 @@ services:
           - node.role == manager
 
   postgres:
-    image: postgres:${POSTGRES_VERSION:-12}
+    image: postgres:${POSTGRES_VERSION:-12.2-alpine}
     container_name: postgres
     #container_name: ${COMPOSE_PROJECT_NAME}_postgres
     environment:
@@ -110,7 +110,7 @@ services:
           - node.role == manager
 
   mailcatcher:
-    image: vavyskov/mailcatcher
+    image: vavyskov/mailcatcher:${MAILCATCHER_VERSION:-alpine3.11}
     container_name: mailcatcher
     #container_name: ${COMPOSE_PROJECT_NAME}_mailcatcher
     ports:
