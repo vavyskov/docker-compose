@@ -10,7 +10,7 @@ services:
     depends_on:
       - php-fpm
     ports:
-      - ${NGINX_PORT:-8082}:80
+      - ${NGINX_PORT:-8083}:80
       - ${NGINX_PORT_SSL:-444}:443
     networks:
       - backend_network
@@ -122,14 +122,14 @@ services:
       - traefik.enable=true
       - traefik.http.services.mailcatcher.loadbalancer.server.port=80
       - traefik.http.routers.mailcatcher.service=mailcatcher
-      #- traefik.http.routers.mailcatcher.rule=Host(`${MAILCATCHER_URL:-mailcatcher.example.com}`)
-      - traefik.http.routers.mailcatcher.rule=Host(`${MAILCATCHER_URL:-example.com}`) && Path(`${MAILCATCHER_PATH:-/mailcatcher}`)
+      - traefik.http.routers.mailcatcher.rule=Host(`${MAILCATCHER_URL:-mailcatcher.example.com}`)
+      #- traefik.http.routers.mailcatcher.rule=Host(`${MAILCATCHER_URL:-project.example.com}`) && Path(`${MAILCATCHER_PATH:-/mailcatcher}`)
 
   adminer:
     image: adminer:${ADMINER_VERSION:-4.7-standalone}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_adminer
     ports:
-      - ${ADMINER_PORT:-8083}:8080
+      - ${ADMINER_PORT:-8084}:8080
     networks:
       - backend_network
       - frontend_network
@@ -143,7 +143,7 @@ services:
       - traefik.http.services.adminer.loadbalancer.server.port=8080
       - traefik.http.routers.adminer.service=adminer
       #- traefik.http.routers.adminer.rule=Host(`${ADMINER_URL:-adminer.example.com}`)
-      - traefik.http.routers.adminer.rule=Host(`${ADMINER_URL:-example.com}`) && Path(`${ADMINER_PATH:-/adminer}`)
+      - traefik.http.routers.adminer.rule=Host(`${ADMINER_URL:-project.example.com}`) && Path(`${ADMINER_PATH:-/adminer}`)
 
 networks:
   backend_network:

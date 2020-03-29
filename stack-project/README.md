@@ -14,6 +14,9 @@ Content:
 
 
 ## Quick start (docker-compose)
+
+Volitelně Traefik
+
 1. Clone or download this repository
 1. Go inside of directory `cd docker-compose/stack-project`
 1. Run command:
@@ -28,3 +31,14 @@ Content:
           docker network create --driver=overlay backend_network; \
           docker network create --driver=overlay frontend_network; \
           docker stack deploy --compose-file=docker-compose.yml project
+
+## URL
+
+- project.example.com
+- project.example.com/adminer | adminer.example.com
+- mailcatcher.example.com
+
+## ToDo
+
+Mailcatcher:
+- project.example.com/mailcatcher
