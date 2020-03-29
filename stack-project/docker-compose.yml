@@ -3,8 +3,7 @@ version: '3'
 services:
   nginx:
     image: vavyskov/nginx:${NGINX_VERSION:-1.17-alpine3.10}
-    container_name: nginx
-    #container_name: ${COMPOSE_PROJECT_NAME}_nginx
+    container_name: ${COMPOSE_PROJECT_NAME:-project}_nginx
     volumes:
       - html_data:/var/www/html
       #- ./logs:/var/log
@@ -30,8 +29,7 @@ services:
 
   php-fpm:
     image: vavyskov/php:${PHP_VERSION:-7.4-fpm-ssh-alpine3.11}
-    container_name: php-fpm
-    #container_name: ${COMPOSE_PROJECT_NAME}_php-fpm
+    container_name: ${COMPOSE_PROJECT_NAME:-project}_php-fpm
     depends_on:
       - mariadb
       - postgres
@@ -63,8 +61,7 @@ services:
 
   mariadb:
     image: mariadb:${MARIADB_VERSION:-10.4}
-    container_name: mariadb
-    #container_name: ${COMPOSE_PROJECT_NAME}_mariadb
+    container_name: ${COMPOSE_PROJECT_NAME:-project}_mariadb
     environment:
       MYSQL_DATABASE: ${MARIADB_DATABASE:-mariadb}
       MYSQL_USER: ${MARIADB_USER:-mariadb}
@@ -87,8 +84,7 @@ services:
 
   postgres:
     image: postgres:${POSTGRES_VERSION:-12.2-alpine}
-    container_name: postgres
-    #container_name: ${COMPOSE_PROJECT_NAME}_postgres
+    container_name: ${COMPOSE_PROJECT_NAME:-project}_postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -111,8 +107,7 @@ services:
 
   mailcatcher:
     image: vavyskov/mailcatcher:${MAILCATCHER_VERSION:-alpine3.11}
-    container_name: mailcatcher
-    #container_name: ${COMPOSE_PROJECT_NAME}_mailcatcher
+    container_name: ${COMPOSE_PROJECT_NAME:-project}_mailcatcher
     ports:
       - ${MAILCATCHER_PORT:-1081}:80
       - ${MAILCATCHER_SMTP_PORT:-1026}:25
@@ -132,8 +127,7 @@ services:
 
   adminer:
     image: adminer:4.7-standalone
-    container_name: adminer
-    #container_name: ${COMPOSE_PROJECT_NAME}_adminer
+    container_name: ${COMPOSE_PROJECT_NAME:-project}_adminer
     ports:
       - ${ADMINER_PORT:-8083}:8080
     networks:
