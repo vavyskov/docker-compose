@@ -25,7 +25,7 @@ services:
       - traefik.http.services.nginx.loadbalancer.server.port=80
       - traefik.http.routers.nginx.service=nginx
       #- traefik.http.routers.nginx.rule=Host(`project.example.com`)
-      - traefik.http.routers.nginx.rule=Host(`${COMPOSE_PROJECT_NAME:-project}.example.com`)
+      - traefik.http.routers.nginx.rule=Host(`${NGINX_URL:-project.example.com}`)
 
   php-fpm:
     image: vavyskov/php:${PHP_VERSION:-7.4-fpm-ssh-alpine3.11}
@@ -40,7 +40,7 @@ services:
       SSH_PASSWORD: ${SSH_PASSWORD:-ssh}
       GIT_EMAIL: ${GIT_EMAIL:-my@email.com}
       GIT_NAME: ${GIT_NAME:-My Name}
-      SMTP_IP: ${SMTP_IP:-192.168.99.101}
+      SMTP_IP: ${SMTP_IP:-192.168.99.100}
       SMTP_PORT: ${SMTP_PORT:-1026}
     #  APP_ENV: ${APP_ENV}
     #  APP_SECRET: ${APP_SECRET}
@@ -88,7 +88,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      #POSTGRES_DB: ${POSTGRES_DATABASE:-project}
+      POSTGRES_DB: ${POSTGRES_DATABASE:-postgres}
       #PGDATA: /data/postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -122,11 +122,11 @@ services:
       - traefik.enable=true
       - traefik.http.services.mailcatcher.loadbalancer.server.port=80
       - traefik.http.routers.mailcatcher.service=mailcatcher
-      #- traefik.http.routers.mailcatcher.rule=Host(`mailcatcher.example.com`)
-      - traefik.http.routers.mailcatcher.rule=Host(`example.com`) && Path(`/mailcatcher`)
+      #- traefik.http.routers.mailcatcher.rule=Host(`${MAILCATCHER_URL:-mailcatcher.example.com}`)
+      - traefik.http.routers.mailcatcher.rule=Host(`${MAILCATCHER_URL:-example.com}`) && Path(`${MAILCATCHER_PATH:-/mailcatcher}`)
 
   adminer:
-    image: adminer:4.7-standalone
+    image: adminer:${ADMINER_VERSION:-4.7-standalone}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_adminer
     ports:
       - ${ADMINER_PORT:-8083}:8080
@@ -142,7 +142,8 @@ services:
       - traefik.enable=true
       - traefik.http.services.adminer.loadbalancer.server.port=8080
       - traefik.http.routers.adminer.service=adminer
-      - traefik.http.routers.adminer.rule=Host(`example.com`) && Path(`/adminer`)
+      #- traefik.http.routers.adminer.rule=Host(`${ADMINER_URL:-adminer.example.com}`)
+      - traefik.http.routers.adminer.rule=Host(`${ADMINER_URL:-example.com}`) && Path(`${ADMINER_PATH:-/adminer}`)
 
 networks:
   backend_network:
