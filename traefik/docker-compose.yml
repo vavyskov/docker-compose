@@ -26,6 +26,8 @@ services:
       - --providers.docker.exposedbydefault=false
       ## Network
       - --providers.docker.network=frontend_network
+      ## Traefik tries to find a binding on port to select the container
+      - --providers.docker.useBindPortIP=true
       ## Traefik will listen to incoming request on the port 80 (HTTP - custom name)
       - --entrypoints.http.address=:80
       ## Traefik will listen to incoming request on the port 443 (HTTPS - custom name)
