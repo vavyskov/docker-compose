@@ -40,5 +40,5 @@ Volitelně Traefik
 
 ## ToDo
 
-Mailcatcher:
-- project.example.com/mailcatcher
+- Mailcatcher: project.example.com/mailcatcher
+- Swarm Secrets: http://blog.code4hire.com/2018/06/the-rabbit-hole-is-deep-when-trying-to-switch-from-environment-variables-file-to-docker-secrets/
