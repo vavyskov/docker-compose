@@ -50,7 +50,7 @@ services:
       - backend_network
     volumes:
       - html_data:/var/www/html
-      - ~/.ssh:${SSH_HOME:-/var/www}/.shared/.ssh:ro
+      #- ~/.ssh:${SSH_HOME:-/var/www}/.shared/.ssh:ro
       #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
     deploy:
       replicas: 1
