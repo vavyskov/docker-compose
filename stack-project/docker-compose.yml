@@ -24,8 +24,7 @@ services:
       - traefik.enable=true
       - traefik.http.services.nginx.loadbalancer.server.port=80
       - traefik.http.routers.nginx.service=nginx
-      #- traefik.http.routers.nginx.rule=Host(`project.example.com`)
-      - traefik.http.routers.nginx.rule=Host(`${NGINX_URL:-project.example.com}`)
+      - traefik.http.routers.nginx.rule=Host(`${PROJECT_URL:-project.example.com}`)
 
   php-fpm:
     image: vavyskov/php:${PHP_VERSION:-7.4-fpm-ssh-alpine3.11}
@@ -71,7 +70,7 @@ services:
       #- ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
       - mariadb_data:/var/lib/mysql
     ports:
-      - ${MARIADB_PORT:-3307}:3306
+      - ${MARIADB_PORT:-3308}:3306
     networks:
       - backend_network
     restart: unless-stopped
@@ -94,7 +93,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
        #- postgres:/data/postgres
     ports:
-      - ${POSTGRES_PORT:-5432}:5432
+      - ${POSTGRES_PORT:-5434}:5432
     networks:
       - backend_network
     restart: unless-stopped
@@ -123,7 +122,7 @@ services:
       - traefik.http.services.mailcatcher.loadbalancer.server.port=80
       - traefik.http.routers.mailcatcher.service=mailcatcher
       - traefik.http.routers.mailcatcher.rule=Host(`${MAILCATCHER_URL:-mailcatcher.example.com}`)
-      #- traefik.http.routers.mailcatcher.rule=Host(`${MAILCATCHER_URL:-project.example.com}`) && Path(`${MAILCATCHER_PATH:-/mailcatcher}`)
+      #- traefik.http.routers.mailcatcher.rule=Host(`${PROJECT_URL:-project.example.com}`) && Path(`${MAILCATCHER_PATH:-/mailcatcher}`)
 
   adminer:
     image: adminer:${ADMINER_VERSION:-4.7-standalone}
@@ -143,7 +142,7 @@ services:
       - traefik.http.services.adminer.loadbalancer.server.port=8080
       - traefik.http.routers.adminer.service=adminer
       #- traefik.http.routers.adminer.rule=Host(`${ADMINER_URL:-adminer.example.com}`)
-      - traefik.http.routers.adminer.rule=Host(`${ADMINER_URL:-project.example.com}`) && Path(`${ADMINER_PATH:-/adminer}`)
+      - traefik.http.routers.adminer.rule=Host(`${PROJECT_URL:-project.example.com}`) && Path(`${ADMINER_PATH:-/adminer}`)
 
 networks:
   backend_network:
