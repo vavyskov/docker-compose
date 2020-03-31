@@ -24,7 +24,7 @@ services:
       - traefik.enable=true
       - traefik.http.services.nginx.loadbalancer.server.port=80
       - traefik.http.routers.nginx.service=nginx
-      - traefik.http.routers.nginx.rule=Host(`${PROJECT_URL:-project.example.com}`)
+      - traefik.http.routers.nginx.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`)
 
   php-fpm:
     image: vavyskov/php:${PHP_VERSION:-7.4-fpm-ssh-alpine3.11}
@@ -39,11 +39,18 @@ services:
       SSH_PASSWORD: ${SSH_PASSWORD:-ssh}
       GIT_EMAIL: ${GIT_EMAIL:-my@email.com}
       GIT_NAME: ${GIT_NAME:-My Name}
-      SMTP_IP: ${SMTP_IP:-192.168.99.100}
-      SMTP_PORT: ${SMTP_PORT:-1026}
-    #  APP_ENV: ${APP_ENV}
-    #  APP_SECRET: ${APP_SECRET}
-    #  DATABASE_URL: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
+      SMTP_MAILHUB: ${SMTP_MAILHUB:-192.168.99.100}
+      SMTP_MAILHUB_PORT: ${SMTP_MAILHUB_PORT:-1026}
+      SMTP_USER: ${SMTP_USER:-""}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-password}
+      SMTP_METHOD: ${SMTP_METHOD:-LOGIN}
+      SMTP_DOMAIN: ${SMTP_DOMAIN:-vavyskov.cz}
+      SMTP_HOSTNAME_FULL: ${SMTP_HOSTNAME_FULL:-fullhostname.vavyskov.cz}
+      ## Proxy server example: "http://user:password@proxy.example.com:8080"
+      PROXY_SERVER: ${PROXY_SERVER:-""}
+    ##  APP_ENV: ${APP_ENV}
+    ##  APP_SECRET: ${APP_SECRET}
+    ##  DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
     ports:
       - ${SSH_PORT:-2222}:22
     networks:
@@ -121,8 +128,8 @@ services:
       - traefik.enable=true
       - traefik.http.services.mailcatcher.loadbalancer.server.port=80
       - traefik.http.routers.mailcatcher.service=mailcatcher
-      - traefik.http.routers.mailcatcher.rule=Host(`${MAILCATCHER_URL:-mailcatcher.example.com}`)
-      #- traefik.http.routers.mailcatcher.rule=Host(`${PROJECT_URL:-project.example.com}`) && Path(`${MAILCATCHER_PATH:-/mailcatcher}`)
+      - traefik.http.routers.mailcatcher.rule=Host(`${MAILCATCHER_HOSTNAME:-mailcatcher.example.com}`)
+      #- traefik.http.routers.mailcatcher.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`) && Path(`${MAILCATCHER_PATH:-/mailcatcher}`)
 
   adminer:
     image: adminer:${ADMINER_VERSION:-4.7-standalone}
@@ -141,8 +148,8 @@ services:
       - traefik.enable=true
       - traefik.http.services.adminer.loadbalancer.server.port=8080
       - traefik.http.routers.adminer.service=adminer
-      #- traefik.http.routers.adminer.rule=Host(`${ADMINER_URL:-adminer.example.com}`)
-      - traefik.http.routers.adminer.rule=Host(`${PROJECT_URL:-project.example.com}`) && Path(`${ADMINER_PATH:-/adminer}`)
+      #- traefik.http.routers.adminer.rule=Host(`${ADMINER_HOSTNAME:-adminer.example.com}`)
+      - traefik.http.routers.adminer.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`) && Path(`${ADMINER_PATH:-/adminer}`)
 
 networks:
   backend_network:
