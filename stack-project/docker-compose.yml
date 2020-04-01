@@ -41,13 +41,14 @@ services:
       GIT_NAME: ${GIT_NAME:-My Name}
       SMTP_MAILHUB: ${SMTP_MAILHUB:-192.168.99.100}
       SMTP_MAILHUB_PORT: ${SMTP_MAILHUB_PORT:-1026}
-      SMTP_USER: ${SMTP_USER:-${UNSET}}
+      ## SMTP user example: ${SMTP_USER:-user}
+      SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-password}
       SMTP_METHOD: ${SMTP_METHOD:-LOGIN}
       SMTP_DOMAIN: ${SMTP_DOMAIN:-vavyskov.cz}
       SMTP_HOSTNAME_FULL: ${SMTP_HOSTNAME_FULL:-fullhostname.vavyskov.cz}
-      ## Proxy server example: http://user:password@proxy.example.com:8080
-      PROXY_SERVER: ${PROXY_SERVER:-${UNSET}}
+      ## Proxy server example: ${PROXY_SERVER:-http://user:password@proxy.example.com:8080}
+      PROXY_SERVER: ${PROXY_SERVER}
     ##  APP_ENV: ${APP_ENV}
     ##  APP_SECRET: ${APP_SECRET}
     ##  DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
