@@ -32,19 +32,16 @@ services:
       - traefik.http.routers.nginx.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`)
 
   php-fpm:
-    image: vavyskov/php:${PHP_VERSION:-7.4-fpm-ssh-alpine3.11}
+    image: vavyskov/php:${PHP_VERSION:-7.4-fpm-alpine3.11}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_php-fpm
-    #hostname: "web_app_cli"
+    #hostname: "web_app_fpm"
     depends_on:
       - mariadb
       - postgres
     environment:
-      IMAGE_MODE: ${IMAGE_MODE:-dev}
-      SSH_HOME: ${SSH_HOME:-/var/www}
-      SSH_USER: ${SSH_USER:-ssh}
-      SSH_PASSWORD: ${SSH_PASSWORD:-ssh}
-      GIT_EMAIL: ${GIT_EMAIL:-my@email.com}
-      GIT_NAME: ${GIT_NAME:-My Name}
+      PROJECT_MODE: ${PROJECT_MODE:-dev}
+      PHP_HOME: ${PHP_HOME:-/var/www}
+      PHP_USER: ${PHP_USER:-user}
       SMTP_MAILHUB: ${SMTP_MAILHUB:-192.168.99.100}
       SMTP_MAILHUB_PORT: ${SMTP_MAILHUB_PORT:-1026}
       ## SMTP user example: ${SMTP_USER:-user}
@@ -52,6 +49,44 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD:-password}
       SMTP_METHOD: ${SMTP_METHOD:-LOGIN}
       SMTP_DOMAIN: ${SMTP_DOMAIN:-vavyskov.cz}
+      ## Proxy server example: ${PROXY_SERVER:-http://user:password@proxy.example.com:8080}
+#      PROXY_SERVER: ${PROXY_SERVER}
+      #APP_ENV: ${APP_ENV}
+      #APP_SECRET: ${APP_SECRET}
+      #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
+    networks:
+      - backend_network
+    volumes:
+      - html_data:${PROJECT_ROOT:-/var/www/html}
+      #- ~/.ssh:${SSH_HOME:-/var/www}/.shared/.ssh:ro
+      #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
+    #working_dir: /var/www/html
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  ssh:
+    image: vavyskov/ssh:${SSH_VERSION:-php7.4-cli-alpine3.11}
+    container_name: ${COMPOSE_PROJECT_NAME:-project}_ssh
+    #hostname: "web_app_ssh"
+    depends_on:
+      - php-fpm
+    environment:
+      PROJECT_MODE: ${PROJECT_MODE:-dev}
+      SSH_HOME: ${SSH_HOME:-/var/www}
+      SSH_USER: ${SSH_USER:-user}
+      SSH_PASSWORD: ${SSH_PASSWORD:-password}
+      GIT_EMAIL: ${GIT_EMAIL:-my@email.com}
+      GIT_NAME: ${GIT_NAME:-My Name}
+#      SMTP_MAILHUB: ${SMTP_MAILHUB:-192.168.99.100}
+#      SMTP_MAILHUB_PORT: ${SMTP_MAILHUB_PORT:-1026}
+      ## SMTP user example: ${SMTP_USER:-user}
+#      SMTP_USER: ${SMTP_USER}
+#      SMTP_PASSWORD: ${SMTP_PASSWORD:-password}
+#      SMTP_METHOD: ${SMTP_METHOD:-LOGIN}
+#      SMTP_DOMAIN: ${SMTP_DOMAIN:-vavyskov.cz}
       ## Proxy server example: ${PROXY_SERVER:-http://user:password@proxy.example.com:8080}
       PROXY_SERVER: ${PROXY_SERVER}
       #APP_ENV: ${APP_ENV}

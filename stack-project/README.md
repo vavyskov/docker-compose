@@ -38,6 +38,10 @@ Volitelně Traefik
 - project.example.com/adminer | adminer.example.com
 - mailcatcher.example.com
 
+## Aktualizace docker obrazů
+
+- `docker-compose pull`
+
 ## ToDo
 
 - Mailcatcher: project.example.com/mailcatcher
