@@ -35,20 +35,20 @@ services:
     image: vavyskov/php:${PHP_VERSION:-7.4-fpm-alpine3.11}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_php-fpm
     #hostname: "web_app_fpm"
-    depends_on:
-      - mariadb
-      - postgres
+    #depends_on:
+    #  - mariadb
+    #  - postgres
     environment:
       PROJECT_MODE: ${PROJECT_MODE:-dev}
       PHP_HOME: ${PHP_HOME:-/var/www}
       PHP_USER: ${PHP_USER:-user}
-      SMTP_MAILHUB: ${SMTP_MAILHUB:-192.168.99.100}
-      SMTP_MAILHUB_PORT: ${SMTP_MAILHUB_PORT:-1026}
+      SMTP_HOSTNAME: ${SMTP_HOSTNAME:-192.168.99.100}
+      SMTP_PORT: ${SMTP_PORT:-1026}
+      #SMTP_FROM: ${SMTP_FROM}
+      SMTP_FROM: ${SMTP_FROM:-team@example.com}
       ## SMTP user example: ${SMTP_USER:-user}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-password}
-      SMTP_METHOD: ${SMTP_METHOD:-LOGIN}
-      SMTP_DOMAIN: ${SMTP_DOMAIN:-vavyskov.cz}
       ## Proxy server example: ${PROXY_SERVER:-http://user:password@proxy.example.com:8080}
 #      PROXY_SERVER: ${PROXY_SERVER}
       #APP_ENV: ${APP_ENV}
@@ -80,15 +80,15 @@ services:
       SSH_PASSWORD: ${SSH_PASSWORD:-password}
       GIT_EMAIL: ${GIT_EMAIL:-my@email.com}
       GIT_NAME: ${GIT_NAME:-My Name}
-#      SMTP_MAILHUB: ${SMTP_MAILHUB:-192.168.99.100}
-#      SMTP_MAILHUB_PORT: ${SMTP_MAILHUB_PORT:-1026}
+#      SMTP_HOSTNAME: ${SMTP_HOSTNAME:-192.168.99.100}
+#      SMTP_PORT: ${SMTP_PORT:-1026}
+#      SMTP_FROM: team@example.com
       ## SMTP user example: ${SMTP_USER:-user}
 #      SMTP_USER: ${SMTP_USER}
 #      SMTP_PASSWORD: ${SMTP_PASSWORD:-password}
-#      SMTP_METHOD: ${SMTP_METHOD:-LOGIN}
-#      SMTP_DOMAIN: ${SMTP_DOMAIN:-vavyskov.cz}
       ## Proxy server example: ${PROXY_SERVER:-http://user:password@proxy.example.com:8080}
       PROXY_SERVER: ${PROXY_SERVER}
+      XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME:-192.168.99.100}
       #APP_ENV: ${APP_ENV}
       #APP_SECRET: ${APP_SECRET}
       #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
@@ -106,6 +106,13 @@ services:
       placement:
         constraints:
           - node.role == manager
+      #resources:
+        #limits:
+        #  cpus: '0.001'
+        #  memory: 50M
+      #  reservations:
+          #cpus: '0.0001'
+      #    memory: 2G
 
   mariadb:
     image: mariadb:${MARIADB_VERSION:-10.4}
@@ -115,6 +122,7 @@ services:
       MYSQL_USER: ${MARIADB_USER:-mariadb}
       MYSQL_PASSWORD: ${MARIADB_PASSWORD:-mariadb}
       MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-root}
+    command: ["mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_czech_ci"]
     volumes:
       #- ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
       - mariadb_data:/var/lib/mysql
