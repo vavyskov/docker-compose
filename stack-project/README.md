@@ -85,6 +85,10 @@ Statické stránky:
 
 Wordpress ručně:
 - `wget https://cs.wordpress.org/latest-cs_CZ.zip`
+- řazení v databázi vyžaduje ruční konfiguraci
+    - wp-config.php
+        - (`define('DB_CHARSET', 'utf8mb4');` - autodetekce je OK)
+        - `define('DB_COLLATE', 'utf8mb4_czech_ci');` - autodetekce WP verze 5.4 NEFUNGUJE
 - vše OK
 
 Wordpress - cli:
@@ -96,16 +100,21 @@ Drupal - ručně:
 - vše ostatní OK
 
 Drupal - composer (docker-machine minimálně 2G RAM)
-- `cd; drupal site:new` [drupal-composer, html]
+- `cd; drupal site:new` [drupal-composer, html] | `drupal quick:start` [drupal-composer, html, standard] - spouští vlastní server...
     - `cd html; composer install`
-    - instalace OK
-    - ???
-- `drupal quick:start` [drupal-composer, html, standard] - spouští vlastní server...
-    - ???
+    - instalace rozšíření "OK" - současnou chybu verze Drupal 8.5.5 je možné vyřešit viz níže :(
+        - https://www.drupal.org/docs/develop/using-composer/starting-a-site-using-drupal-composer-project-templates#s-workaround
+        - sites/default/settings.php
+            - `$settings['skip_permissions_hardening'] = TRUE;`
+    - vše ostatní OK
 - `cd; composer create-project drupal-composer/drupal-project:8.x-dev html --no-interaction; cd html; composer install`
     - instalace rozšíření "OK" - současnou chybu verze Drupal 8.5.5 je možné vyřešit viz níže :(
         - https://www.drupal.org/docs/develop/using-composer/starting-a-site-using-drupal-composer-project-templates#s-workaround
+        - sites/default/settings.php
+            - `$settings['skip_permissions_hardening'] = TRUE;`
     - vše ostatní OK
+- `cd; drupal quick:start` [drupal-composer, html, standard] - spouští vlastní server...
+    - !!! nefunguje
 
 Docker
 - `docker stats` (Ctrl+C - exit)
@@ -125,6 +134,8 @@ Možnost aktualizace CLI nástrojů z SSH-PHP-CLI?
 Docker Toolbox
 - Memory
     - `VBoxManage showvminfo default | grep Memory` | `docker-machine ssh default free` | `docker-machine inspect`
+        - změna výchozího nastavení
+            - `~/.docker/machine/machines/default/config.json` | `~/.docker/machine/default/config.json`
         - konfigurace stávajícího: 
             - `docker-machine stop default`
               `VBoxManage modifyvm default --memory 4096` (min. 2048)
