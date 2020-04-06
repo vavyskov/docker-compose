@@ -1,4 +1,4 @@
-# Stack Project
+# Stack Project Template
 
 Content:
 - Linux
@@ -11,6 +11,11 @@ Content:
 
 ## Quick start (docker-compose)
 
+1. Upravte `.env` dle potřeb.
+1. Příkazem `docker-compose config` si zobrazte výslednou konfiguraci.
+1. Zobrazený výstup si uložte do nového projektu jako `docker-compose.yml` a upravte dle potřeb. 
+
+## Notes
 Volitelně Traefik
 
 1. Clone or download this repository

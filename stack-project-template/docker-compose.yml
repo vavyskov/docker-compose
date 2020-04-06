@@ -209,5 +209,17 @@ networks:
 
 volumes:
   html_data:
+    #driver_opts:
+    #  type: nfs
+    #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
+    #  device: :${NFS_PATH:-/media/nfs_docker}
   mariadb_data:
+    #driver_opts:
+    #  type: nfs
+    #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
+    #  device: :${NFS_PATH:-/media/nfs_docker}
   postgres_data:
+    #driver_opts:
+    #  type: nfs
+    #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
+    #  device: :${NFS_PATH:-/media/nfs_docker}
