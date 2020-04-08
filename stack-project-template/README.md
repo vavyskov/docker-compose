@@ -63,7 +63,7 @@ Volitelně Traefik
 
 ## Testy
 
-Sendmail:
+Sendmail (webové prostředí + SSH klient):
 - `echo -e "Subject: Testing" | msmtp --debug -t user@domain.com`
 - `echo -e "Subject: Test Mail\r\n\This is a test mail. Did you receive an email?" | msmtp --debug --from from@yourdomain.com -t to@someone.com`
 - `php -r "mail('to@domain.com','Test Mail from PHP', 'This is a test mail from PHP. Did you receive an email?');"`

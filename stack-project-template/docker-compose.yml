@@ -80,12 +80,12 @@ services:
       SSH_PASSWORD: ${SSH_PASSWORD:-password}
       GIT_EMAIL: ${GIT_EMAIL:-my@email.com}
       GIT_NAME: ${GIT_NAME:-My Name}
-#      SMTP_HOSTNAME: ${SMTP_HOSTNAME:-192.168.99.100}
-#      SMTP_PORT: ${SMTP_PORT:-1026}
-#      SMTP_FROM: team@example.com
+      SMTP_HOSTNAME: ${SMTP_HOSTNAME:-192.168.99.100}
+      SMTP_PORT: ${SMTP_PORT:-1026}
+      SMTP_FROM: team@example.com
       ## SMTP user example: ${SMTP_USER:-user}
-#      SMTP_USER: ${SMTP_USER}
-#      SMTP_PASSWORD: ${SMTP_PASSWORD:-password}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-password}
       ## Proxy server example: ${PROXY_SERVER:-http://user:password@proxy.example.com:8080}
       PROXY_SERVER: ${PROXY_SERVER}
       XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME:-192.168.99.100}
@@ -97,7 +97,8 @@ services:
     networks:
       - backend_network
     volumes:
-      - html_data:${PROJECT_ROOT:-/var/www/html}
+      ## nocopy: při prvotním vytvoření "volume" nekopíruje data z kontejneru do úložiště (v našem případě by již úložiště mělo existovat, takže "nocopy" je uvedeno jen pro "jistotu")
+      - html_data:${PROJECT_ROOT:-/var/www/html}:nocopy
       #- ~/.ssh:${SSH_HOME:-/var/www}/.shared/.ssh:ro
       #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
     #working_dir: /var/www/html
@@ -212,14 +213,14 @@ volumes:
     #driver_opts:
     #  type: nfs
     #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-    #  device: :${NFS_PATH:-/media/nfs_docker}
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/html_data}
   mariadb_data:
     #driver_opts:
     #  type: nfs
     #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-    #  device: :${NFS_PATH:-/media/nfs_docker}
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/mariadb_data}
   postgres_data:
     #driver_opts:
     #  type: nfs
     #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-    #  device: :${NFS_PATH:-/media/nfs_docker}
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/postgres_data}
