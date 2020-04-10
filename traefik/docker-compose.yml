@@ -36,6 +36,9 @@ services:
       ## Traefik will listen to incoming request on the port 3306 (MySQL - custom name)
       #- --entrypoints.mysql.address=:3306
 
+      ## Custom certificates
+      - --providers.file.directory=/etc/traefik/dynamic
+
       ## Enable a tls challenge named "mytlschallenge"
 #      - --certificatesresolvers.mytlschallenge.acme.tlschallenge=true
 
@@ -77,6 +80,9 @@ services:
     volumes:
       ## Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      ## Custom certificates (set path also in dynamic/tls.yml)
+#      - /etc/ssl/path:/etc/ssl/path:ro
+#      - ./dynamic/tls.yml:/etc/traefik/dynamic/tls.yml:ro
       ## Create a letsencrypt dir within the folder where the docker-compose file is
       #- ./letsencrypt:/letsencrypt
     ports:
@@ -89,8 +95,18 @@ services:
     deploy:
       replicas: 1
       placement:
-          constraints:
-            - node.role == manager
+        constraints:
+          - node.hostname == serverhostname
+#    deploy:
+#      replicas: 1
+#      placement:
+#        constraints:
+#          - node.role == manager
+#    deploy:
+#      mode: global
+#      placement:
+#          constraints:
+#            - node.platform.os == linux
     labels:
       - traefik.enable=true
       - traefik.http.services.traefik.loadbalancer.server.port=8080
@@ -99,6 +115,9 @@ services:
       - traefik.http.routers.traefik.rule=Host(`traefik.example.com`)
       #- traefik.http.routers.traefik.rule=Host(`traefik.example.com`) && Path(`/traefik`)
       #- traefik.http.routers.traefik.rule=Host(`traefik.example.com`) && PathPrefix(`/traefik`)
+
+      - traefik.http.routers.traefik.tls=true
+      - traefik.http.routers.traefik.entrypoints=https
 
       ## BasicAuth (MD5, SHA1 or BCrypt) - https://www.htaccesstools.com/htpasswd-generator/
       - traefik.http.routers.traefik.middlewares=auth
@@ -114,7 +133,12 @@ services:
       #- "traefik.http.middlewares.auth-users.basicauth.users=test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"
       #- "traefik.http.middlewares.https-only.redirectscheme.scheme=https"
       #- "traefik.http.middlewares.known-ips.ipwhitelist.sourceRange=192.168.1.7,127.0.0.1/32"
-    
+
+      ## Redirection - this creates the redirect middleware and redirects all http requests to https
+      - traefik.http.routers.https-redirect.entrypoints=http
+      - traefik.http.routers.https-redirect.rule=HostRegexp(`{any:.*}`)
+      - traefik.http.routers.https-redirect.middlewares=https-redirect
+      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
 
 #      - traefik.http.middlewares.secured.chain.middlewares=foo-add-prefix,auth
       

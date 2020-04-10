@@ -32,8 +32,16 @@ services:
       ## PathPrefix (Prefix matcher)
       #- traefik.http.routers.whoami.rule=Host(`whoami.example.com`) && PathPrefix(`/whoami`)
 
+      ## TLS
+      - traefik.http.routers.whoami.tls=true
+      - traefik.http.routers.whoami.entrypoints=https
+      #- traefik.http.routers.whoami.tls.certresolver=default
+      #- traefik.http.routers.whoami.tls.certresolver=letsEncrypt
 
-
+      ## Redirection
+      #- traefik.http.middlewares.whoami.redirectscheme.scheme=https
+      #- traefik.http.middlewares.whoami.redirectscheme.permanent=true
+      #- traefik.http.middlewares.whoami.redirectscheme.port=443
 
       ## Middlewares: Add prefix
       #- traefik.http.middlewares.add-foo.addprefix.prefix=/whoami
@@ -46,10 +54,6 @@ services:
 #      - traefik.http.routers.whoami.entrypoints=https
       ## Uses the Host rule to define which certificate to issue
 #      - traefik.http.routers.whoami.tls.certresolver=mytlschallenge
-
-      ## TLS
-      #- traefik.http.routers.whoami.tls=true
-      #- traefik.http.routers.whoami.tls.certresolver=letsEncrypt
 
       ## Network
       #- --providers.docker.network=frontend_network

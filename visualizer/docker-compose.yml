@@ -23,6 +23,8 @@ services:
       - traefik.http.routers.visualizer.rule=Host(`visualizer.example.com`)
       #- traefik.http.routers.visualizer.rule=Host(`visualizer.example.com`) && Path(`/visualizer`)
       #- traefik.http.routers.whoami.rule=Host(`visualizer.example.com`) && PathPrefix(`/visualizer`)
+      - traefik.http.routers.visualizer.tls=true
+      - traefik.http.routers.visualizer.entrypoints=https
 
 networks:
   frontend_network:

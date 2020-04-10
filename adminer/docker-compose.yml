@@ -20,6 +20,8 @@ services:
       - traefik.http.services.adminer.loadbalancer.server.port=8080
       - traefik.http.routers.adminer.service=adminer
       - traefik.http.routers.adminer.rule=Host(`example.com`) && Path(`/adminer`)
+      - traefik.http.routers.adminer.tls=true
+      - traefik.http.routers.adminer.entrypoints=https
 
 networks:
   backend_network:

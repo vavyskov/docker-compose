@@ -30,6 +30,8 @@ services:
       - traefik.http.services.nginx.loadbalancer.server.port=80
       - traefik.http.routers.nginx.service=nginx
       - traefik.http.routers.nginx.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`)
+      - traefik.http.routers.nginx.tls=true
+      - traefik.http.routers.nginx.entrypoints=https
 
   php-fpm:
     image: vavyskov/php:${PHP_VERSION:-7.4-fpm-alpine3.11}
@@ -181,6 +183,8 @@ services:
       - traefik.http.routers.mailcatcher.service=mailcatcher
       - traefik.http.routers.mailcatcher.rule=Host(`${MAILCATCHER_HOSTNAME:-mailcatcher.example.com}`)
       #- traefik.http.routers.mailcatcher.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`) && Path(`${MAILCATCHER_PATH:-/mailcatcher}`)
+      - traefik.http.routers.mailcatcher.tls=true
+      - traefik.http.routers.mailcatcher.entrypoints=https
 
   adminer:
     image: adminer:${ADMINER_VERSION:-4.7-standalone}
@@ -201,6 +205,8 @@ services:
       - traefik.http.routers.adminer.service=adminer
       #- traefik.http.routers.adminer.rule=Host(`${ADMINER_HOSTNAME:-adminer.example.com}`)
       - traefik.http.routers.adminer.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`) && Path(`${ADMINER_PATH:-/adminer}`)
+      - traefik.http.routers.adminer.tls=true
+      - traefik.http.routers.adminer.entrypoints=https
 
 networks:
   backend_network:
@@ -213,14 +219,14 @@ volumes:
     #driver_opts:
     #  type: nfs
     #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/html_data}
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/volumes/html_data}
   mariadb_data:
     #driver_opts:
     #  type: nfs
     #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/mariadb_data}
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/volumes/mariadb_data}
   postgres_data:
     #driver_opts:
     #  type: nfs
     #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/postgres_data}
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/volumes/postgres_data}

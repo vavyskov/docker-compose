@@ -46,6 +46,9 @@ services:
       #- traefik.http.routers.portainer.rule=Host(`portainer.example.com`) && Path(`/portainer`)
       #- traefik.http.routers.portainer.rule=Host(`portainer.example.com`) && PathPrefix(`/portainer`)
 
+      - traefik.http.routers.portainer.tls=true
+      - traefik.http.routers.portainer.entrypoints=https
+
       ## Middlewares: Strip prefix
       #- traefik.http.middlewares.portainer-strip-prefix.stripprefix.prefixes=/portainer
       #- traefik.http.middlewares.portainer-strip-prefix.stripprefix.forceslash=false
@@ -64,3 +67,7 @@ networks:
 
 volumes:
   portainer_data:
+    #driver_opts:
+    #  type: nfs
+    #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/portainer/volumes/portainer_data}

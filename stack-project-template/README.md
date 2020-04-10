@@ -66,7 +66,7 @@ Volitelně Traefik
 Sendmail (webové prostředí + SSH klient):
 - `echo -e "Subject: Testing" | msmtp --debug -t user@domain.com`
 - `echo -e "Subject: Test Mail\r\n\This is a test mail. Did you receive an email?" | msmtp --debug --from from@yourdomain.com -t to@someone.com`
-- `php -r "mail('to@domain.com','Test Mail from PHP', 'This is a test mail from PHP. Did you receive an email?');"`
+- `php -r "mail('to@domain.com','Test Mail from PHP', 'This is a test mail from PHP. Did you receive an email?', 'From: from@domain.com');"`
 
 Kontrola požadavků:
 - `wp package install git@github.com:johnbillion/ext.git`
@@ -90,7 +90,14 @@ Statické stránky:
 
 Wordpress ručně:
 - `wget https://cs.wordpress.org/latest-cs_CZ.zip`
-- řazení v databázi vyžaduje ruční konfiguraci
+- proxy vyžaduje ruční konfiguraci:
+    - wp-config.php
+        - `define('WP_PROXY_HOST', 'proxy.example.com');`
+        - `define('WP_PROXY_PORT', '8080');`
+        - `define('WP_PROXY_USERNAME', 'user');`
+        - `define('WP_PROXY_PASSWORD', 'password');`
+        - (`define('WP_PROXY_BYPASS_HOST', '*.wordpress.org');`)
+- řazení v databázi vyžaduje ruční konfiguraci:
     - wp-config.php
         - (`define('DB_CHARSET', 'utf8mb4');` - autodetekce je OK)
         - `define('DB_COLLATE', 'utf8mb4_czech_ci');` - autodetekce WP verze 5.4 NEFUNGUJE
@@ -105,8 +112,8 @@ Drupal - ručně:
 - vše ostatní OK
 
 Drupal - composer (docker-machine minimálně 2G RAM)
-- `cd; drupal site:new` [drupal-composer, html] | `drupal quick:start` [drupal-composer, html, standard] - spouští vlastní server...
-    - `cd html; composer install`
+- `cd; drupal site:new` [drupal-composer, html]
+    - `composer install`
     - instalace rozšíření "OK" - současnou chybu verze Drupal 8.5.5 je možné vyřešit viz níže :(
         - https://www.drupal.org/docs/develop/using-composer/starting-a-site-using-drupal-composer-project-templates#s-workaround
         - sites/default/settings.php
