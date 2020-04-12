@@ -53,16 +53,16 @@ services:
 
 
       ## Enable a DNS challenge named "mydnschallenge"
-#      - --certificatesresolvers.mydnschallenge.acme.dnschallenge=true
+      #- --certificatesresolvers.mydnschallenge.acme.dnschallenge=true
       ## Tell which provider to use
-#      - --certificatesresolvers.mydnschallenge.acme.dnschallenge.provider=ovh
+      #- --certificatesresolvers.mydnschallenge.acme.dnschallenge.provider=ovh
 
 
       ## Tell it to use our predefined entrypoint named "http"
-#      - --certificatesresolvers.myhttpchallenge.acme.httpchallenge.entrypoint=http
+      #- --certificatesresolvers.myhttpchallenge.acme.httpchallenge.entrypoint=http
       #- --certificatesresolvers.myhttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
-#      - --certificatesresolvers.myhttpchallenge.acme.email=postmaster@mydomain.com
-#      - --certificatesresolvers.myhttpchallenge.acme.storage=/letsencrypt/acme.json
+      #- --certificatesresolvers.myhttpchallenge.acme.email=postmaster@mydomain.com
+      #- --certificatesresolvers.myhttpchallenge.acme.storage=/letsencrypt/acme.json
 
       ## Log level: ERROR (default) | DEBUG | PANIC | FATAL | WARN | INFO
       #- --log.level=DEBUG

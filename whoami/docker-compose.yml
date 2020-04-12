@@ -16,6 +16,17 @@ services:
           constraints:
             - node.role == manager
           #constraints: [node.role == manager]
+#      update_config:
+#        failure_action: rollback
+#        parallelism: 1
+#        delay: 5s
+#      restart_policy:
+#        condition: on-failure
+#        delay: 5s
+#        max_attempts: 3
+#      resources:
+#        limits:
+#          memory: 128M
     labels:
       ## Explicitly tell Traefik to expose this container (because we disabled expose a service by default)
       - traefik.enable=true
@@ -49,6 +60,8 @@ services:
       ## TLS
       - traefik.http.routers.whoami.tls=true
       - traefik.http.routers.whoami.entrypoints=https
+
+      ## LetsEncrypt
       #- traefik.http.routers.whoami.tls.certresolver=default
       #- traefik.http.routers.whoami.tls.certresolver=letsencrypt
 
@@ -68,3 +81,5 @@ networks:
     driver: overlay
     name: frontend_network
     attachable: true
+#    driver_opts:
+#      encrypted: true

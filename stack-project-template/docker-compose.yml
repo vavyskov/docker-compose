@@ -1,5 +1,10 @@
 version: '3.5'
 
+#configs:
+#  nginx_config:
+#    name: nginx-config-${NGINX_CONFIG:-1}
+#    file: ./config/nginx.conf
+
 services:
   nginx:
     image: vavyskov/nginx:${NGINX_VERSION:-1.17-php-fpm-alpine3.10}
@@ -14,6 +19,11 @@ services:
       ## Hostname: php-fpm (docker service name)
       NGINX_FASTCGI_HOSTNAME: ${NGINX_FASTCGI_HOSTNAME:-php-fpm}
       NGINX_FASTCGI_PORT: ${NGINX_FASTCGI_PORT:-9000}
+    ## Docker Config - store non-sensitive data as configuration files (not encrypted)
+    ## cat nginx.conf | docker config create project_nginx.conf -
+    #configs:
+    #  - source: nginx_config
+    #    target: /etc/nginx/nginx.conf
     ports:
       # - target: 80
       #   published:  8083
@@ -88,8 +98,6 @@ services:
       SSH_PASSWORD: ${SSH_PASSWORD:-password}
       ## Docker Secrets - store sensitive data encrypted by default (password, ssh-key, API key, SSL certificate etc.)
       ## printf "password" | docker secret create project_ssh_password -
-      ## Docker Config - store non-sensitive data as configuration files (not encrypted)
-      ## cat nginx.conf | docker config create project_nginx.conf -
       #SSH_PASSWORD: /run/secrets/project_ssh_password
       GIT_EMAIL: ${GIT_EMAIL:-my@email.com}
       GIT_NAME: ${GIT_NAME:-My Name}
