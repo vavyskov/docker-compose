@@ -6,10 +6,8 @@
 
 tls:
   certificates:
-    - certFile: /etc/ssl/path/example.crt
-      keyFile: /etc/ssl/path/example.key
-#    - certFile: /etc/ssl/path/whoami.crt
-#      keyFile: /etc/ssl/path/whoami.key
+    - certFile: /etc/ssl/path/whoami.crt
+      keyFile: /etc/ssl/path/whoami.key
 #    - certFile: /etc/ssl/path/portainer.crt
 #      keyFile: /etc/ssl/path/portainer.key
 #    - certFile: /etc/ssl/path/traefik.crt

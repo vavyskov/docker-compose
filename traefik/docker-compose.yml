@@ -1,4 +1,4 @@
-version: "3"
+version: '3.5'
 
 #secrets:
 #  ## secret name also used to name the file exposed within the container
@@ -24,6 +24,11 @@ services:
       - --providers.docker=true
       ## Do not expose containers unless explicitly told so
       - --providers.docker.exposedbydefault=false
+      ## ???
+      #- --providers.docker.watch=true
+      #- --providers.docker.swarmmode=true
+      #- --providers.docker.endpoint=unix:///var/run/docker.sock
+      #- --providers.docker.swarmModeRefreshSeconds=15s
       ## Network
       - --providers.docker.network=frontend_network
       ## Traefik tries to find a binding on port to select the container
@@ -39,18 +44,19 @@ services:
       ## Custom certificates
       - --providers.file.directory=/etc/traefik/dynamic
 
-      ## Enable a tls challenge named "mytlschallenge"
-#      - --certificatesresolvers.mytlschallenge.acme.tlschallenge=true
+      # Create mechanism (enable a TLS challenge) to generate certifiacte called "letsencrypt"
+#      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      ## The email to provide to let's encrypt
+#      - --certificatesresolvers.letsencrypt.acme.email=my@email.com
+      ## Tell to store the certificate on a path under our volume
+#      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
 
-      ## Enable a dns challenge named "mydnschallenge"
+
+      ## Enable a DNS challenge named "mydnschallenge"
 #      - --certificatesresolvers.mydnschallenge.acme.dnschallenge=true
       ## Tell which provider to use
 #      - --certificatesresolvers.mydnschallenge.acme.dnschallenge.provider=ovh
 
-      ## The email to provide to let's encrypt
-#      - --certificatesResolvers.mytlschallenge.acme.email=postmaster@mydomain.com
-      ## Tell to store the certificate on a path under our volume
-#      - --certificatesResolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
 
       ## Tell it to use our predefined entrypoint named "http"
 #      - --certificatesresolvers.myhttpchallenge.acme.httpchallenge.entrypoint=http
@@ -58,8 +64,9 @@ services:
 #      - --certificatesresolvers.myhttpchallenge.acme.email=postmaster@mydomain.com
 #      - --certificatesresolvers.myhttpchallenge.acme.storage=/letsencrypt/acme.json
 
-      ## Test/Debug
+      ## Log level: ERROR (default) | DEBUG | PANIC | FATAL | WARN | INFO
       #- --log.level=DEBUG
+
       #- --certificatesResolvers.mytlschallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
 
     ## expose the predefined secret to the container by name
@@ -80,9 +87,9 @@ services:
     volumes:
       ## Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      ## Custom certificates (set path also in dynamic/tls.yml)
+      ## Custom certificates (set path also in dynamic/certificates.yml)
 #      - /etc/ssl/path:/etc/ssl/path:ro
-#      - ./dynamic/tls.yml:/etc/traefik/dynamic/tls.yml:ro
+      - ./dynamic/certificates.yml:/etc/traefik/dynamic/certificates.yml:ro
       ## Create a letsencrypt dir within the folder where the docker-compose file is
       #- ./letsencrypt:/letsencrypt
     ports:
@@ -93,24 +100,30 @@ services:
     networks:
       - frontend_network
     deploy:
+#      mode: replicated
       replicas: 1
       placement:
         constraints:
-          - node.hostname == serverhostname
-#    deploy:
-#      replicas: 1
-#      placement:
-#        constraints:
-#          - node.role == manager
+          - node.role == manager
+#          - node.hostname == serverhostname
+#          - node.labels.traefik == true
+#        preferences:
+#          - spread: node.id
 #    deploy:
 #      mode: global
 #      placement:
 #          constraints:
 #            - node.platform.os == linux
+#      restart_policy:
+#        condition: on-failure
+    ## Dynamic section
     labels:
       - traefik.enable=true
       - traefik.http.services.traefik.loadbalancer.server.port=8080
+      #- traefik.http.services.traefik.loadbalancer.passhostheader=true
       - traefik.http.routers.traefik.service=traefik
+      ## The router 'traefik' will forward request to service api@internal
+      #- traefik.http.routers.traefik.service=api@internal
 
       - traefik.http.routers.traefik.rule=Host(`traefik.example.com`)
       #- traefik.http.routers.traefik.rule=Host(`traefik.example.com`) && Path(`/traefik`)
@@ -119,9 +132,14 @@ services:
       - traefik.http.routers.traefik.tls=true
       - traefik.http.routers.traefik.entrypoints=https
 
-      ## BasicAuth (MD5, SHA1 or BCrypt) - https://www.htaccesstools.com/htpasswd-generator/
-      - traefik.http.routers.traefik.middlewares=auth
-      - traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/
+      ## Tell Traefik, that for router 'traefik' should use following middleware
+      ## BasicAuth (BCrypt or MD5 not SHA1) - https://www.htaccesstools.com/htpasswd-generator/
+      - traefik.http.routers.traefik.middlewares=authtraefik
+      ## In password type $ as $$
+      - traefik.http.middlewares.authtraefik.basicauth.users=traefik:$$2y$$10$$MxGYZbTQLhcfs40HR9wkLuzqYCwCtjVzGfhguf0RTk6sQQrRQqJS2
+      #- traefik.http.middlewares.authtraefik.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/
+      #- traefik.http.middlewares.authtraefik.basicauth.users=admin:$$2y$$05$$1OX5jZ1Kpm/iVKE8tgUhu.STmPkgi0lLxVeP5yEcRioFdV4mcgdTu
+
 
       ## Middlewares: Strip prefix
       #- traefik.http.middlewares.traefik-strip-prefix.stripprefix.prefixes=/traefik
@@ -134,11 +152,14 @@ services:
       #- "traefik.http.middlewares.https-only.redirectscheme.scheme=https"
       #- "traefik.http.middlewares.known-ips.ipwhitelist.sourceRange=192.168.1.7,127.0.0.1/32"
 
-      ## Redirection - this creates the redirect middleware and redirects all http requests to https
-      - traefik.http.routers.https-redirect.entrypoints=http
-      - traefik.http.routers.https-redirect.rule=HostRegexp(`{any:.*}`)
-      - traefik.http.routers.https-redirect.middlewares=https-redirect
-      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+
+      ## Global redirection - this creates the redirect middleware and redirects all http requests to https
+      - traefik.http.routers.http-catchall.entrypoints=http
+      - traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)
+      #- traefik.http.routers.http-catchall.rule=HostRegexp(`{any:.*}`)
+      - traefik.http.routers.http-catchall.middlewares=redirect-to-https
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+
 
 #      - traefik.http.middlewares.secured.chain.middlewares=foo-add-prefix,auth
       
@@ -151,4 +172,6 @@ services:
 
 networks:
   frontend_network:
-    external: true
+    driver: overlay
+    name: frontend_network
+    attachable: true

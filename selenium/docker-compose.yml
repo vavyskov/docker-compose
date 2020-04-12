@@ -2,13 +2,13 @@
 # To deploy the Grid, `docker stack deploy -c docker-compose.yml grid`
 # Stop with `docker stack rm grid`
 
-version: '3.7'
+version: '3.5'
 
 services:
   hub:
    image: selenium/hub:3.141.59-zinc
    ports:
-     - "4444:4444"
+     - 4444:4444
 
   chrome:
     image: selenium/node-chrome:3.141.59-zinc

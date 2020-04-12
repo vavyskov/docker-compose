@@ -1,12 +1,5 @@
 # Traefik
 
-## Requirements:
-1. [Docker CE](https://download.docker.com?target=_blank) or [Docker Toolbox](https://github.com/docker/toolbox/releases/?target=_blank) (Virtualbox)
-    - `docker`
-    - `docker-compose`
-1. [Git](https://git-scm.com/?target=_blank) (optional)
-    - `git`
-
 ## Environments
 This Compose file contains the following environment variables:
 
@@ -21,17 +14,15 @@ You can set environment variables in `.env` file.
 1. Run command:
     - Docker:
 
-          docker network create frontend_network; \
           docker-compose up -d
 
     - Docker Swarm
 
-          docker network create --driver=overlay frontend_network; \
           docker stack deploy --compose-file=docker-compose.yml traefik
 
 ## Quick start (docker)
 
-    docker network create frontend_network; \
+    docker network create -d overlay --attachable frontend_network; \
     docker run -itd \
         --name traefik \
         --publish 80:80 \
@@ -41,9 +32,9 @@ You can set environment variables in `.env` file.
         traefik:2.1
         
 ## Access to Traefik: 
-- **URL:** `http://localhost:8080` (Docker Tools: `192.168.99.100:8080`)
-- **User:** `test`
-- **Password:** `test`
+- **URL:** `http://localhost:8080` (Docker Toolbox: `192.168.99.100:8080`)
+- **User:** `traefik`
+- **Password:** `traefik`
 
 ## Network
 Show IP address:

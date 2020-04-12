@@ -1,12 +1,5 @@
 # Postgres
 
-## Requirements:
-1. [Docker CE](https://download.docker.com?target=_blank) or [Docker Toolbox](https://github.com/docker/toolbox/releases/?target=_blank) (Virtualbox)
-    - `docker`
-    - `docker-compose`
-1. [Git](https://git-scm.com/?target=_blank) (optional)
-    - `git`
-
 ## Environments
 This Compose file contains the following environment variables:
 
@@ -23,18 +16,16 @@ You can set environment variables in `.env` file.
 1. Run command:
     - Docker:
 
-          docker network create backend_network; \
           docker-compose up -d
 
     - Docker Swarm
 
-          docker network create --driver=overlay backend_network; \
           docker stack deploy --compose-file=docker-compose.yml postgres
 
 ## Quick start (docker)
 
     docker volume create --name postgres_data; \
-    docker network create backend_network; \
+    docker network create -d overlay --attachable backend_network; \
     docker run -itd \
         --name postgres \
         --env POSTGRES_USER=postgres \
@@ -46,7 +37,7 @@ You can set environment variables in `.env` file.
         postgres:12
 
 ## Access to Postgres
-- **URL:** `localhost:5432` (Docker Tools: `192.168.99.100:5432`)
+- **URL:** `localhost:5432` (Docker Toolbox: `192.168.99.100:5432`)
 - **Username:** `postgres`
 - **Password:** `postgres`
 

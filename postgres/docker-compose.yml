@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 
 services:
 
@@ -27,7 +27,9 @@ services:
 
 networks:
   backend_network:
-    external: true
+    driver: overlay
+    name: backend_network
+    attachable: true
 
 volumes:
   postgres_data:

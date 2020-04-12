@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 
 services:
   nginx:
@@ -15,6 +15,12 @@ services:
       NGINX_FASTCGI_HOSTNAME: ${NGINX_FASTCGI_HOSTNAME:-php-fpm}
       NGINX_FASTCGI_PORT: ${NGINX_FASTCGI_PORT:-9000}
     ports:
+      # - target: 80
+      #   published:  8083
+      #   mode: host
+      # - target: 443
+      #   published: 444
+      #   mode: host
       - ${NGINX_PORT:-8083}:80
       - ${NGINX_PORT_SSL:-444}:443
     networks:
@@ -80,6 +86,11 @@ services:
       SSH_HOME: ${SSH_HOME:-/var/www}
       SSH_USER: ${SSH_USER:-user}
       SSH_PASSWORD: ${SSH_PASSWORD:-password}
+      ## Docker Secrets - store sensitive data encrypted by default (password, ssh-key, API key, SSL certificate etc.)
+      ## printf "password" | docker secret create project_ssh_password -
+      ## Docker Config - store non-sensitive data as configuration files (not encrypted)
+      ## cat nginx.conf | docker config create project_nginx.conf -
+      #SSH_PASSWORD: /run/secrets/project_ssh_password
       GIT_EMAIL: ${GIT_EMAIL:-my@email.com}
       GIT_NAME: ${GIT_NAME:-My Name}
       SMTP_HOSTNAME: ${SMTP_HOSTNAME:-192.168.99.100}
@@ -105,17 +116,28 @@ services:
       #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
     #working_dir: /var/www/html
     deploy:
+#      mode: replicated
       replicas: 1
       placement:
         constraints:
           - node.role == manager
-      #resources:
-        #limits:
-        #  cpus: '0.001'
-        #  memory: 50M
-      #  reservations:
-          #cpus: '0.0001'
-      #    memory: 2G
+          #- node.role == worker
+          #- node.hostname == serverhostname
+#      update_config:
+#        failure_action: rollback
+#        parallelism: 1
+#        delay: 5s
+#      restart_policy:
+#        condition: on-failure
+#        delay: 5s
+#        max_attempts: 3
+#      resources:
+#        limits:
+#          cpus: '0.001'
+#          memory: 50M
+#        reservations:
+#          cpus: '0.0001'
+#          memory: 2G
 
   mariadb:
     image: mariadb:${MARIADB_VERSION:-10.4}
@@ -210,9 +232,13 @@ services:
 
 networks:
   backend_network:
-    external: true
+    driver: overlay
+    name: backend_network
+    attachable: true
   frontend_network:
-    external: true
+    driver: overlay
+    name: frontend_network
+    attachable: true
 
 volumes:
   html_data:

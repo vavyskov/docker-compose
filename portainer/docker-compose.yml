@@ -1,4 +1,4 @@
-version: '3.2'
+version: '3.5'
 
 services:
 
@@ -9,7 +9,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
     networks:
-      - agent_network
+      - backend_network
     deploy:
       mode: global
       placement:
@@ -29,7 +29,7 @@ services:
       - ${PORTAINER_PORT:-9002}:9000
       - 8000:8000
     networks:
-      - agent_network
+      - backend_network
       - frontend_network
     deploy:
       mode: replicated
@@ -59,11 +59,14 @@ services:
       #- traefik.http.routers.portainer.middlewares=portainer-add-prefix@docker
 
 networks:
-  agent_network:
+  backend_network:
     driver: overlay
+    name: backend_network
     attachable: true
   frontend_network:
-    external: true
+    driver: overlay
+    name: frontend_network
+    attachable: true
 
 volumes:
   portainer_data:

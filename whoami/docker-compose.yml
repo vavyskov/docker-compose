@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 
 services:
 
@@ -15,15 +15,20 @@ services:
       placement:
           constraints:
             - node.role == manager
+          #constraints: [node.role == manager]
     labels:
-      ## Explicitly tell Traefik to expose this container
+      ## Explicitly tell Traefik to expose this container (because we disabled expose a service by default)
       - traefik.enable=true
 
       ## Load balancer (internal port)
       - traefik.http.services.whoami.loadbalancer.server.port=80
 
+      #- traefik.http.services.whoami.loadbalancer.passhostheader=true
+
       ## Servis
       - traefik.http.routers.whoami.service=whoami
+      ## The router 'whoami' will forward request to service api@internal
+      #- traefik.http.routers.whoami.service=api@internal
 
       ## The domain the service will respond to
       - traefik.http.routers.whoami.rule=Host(`whoami.example.com`)
@@ -32,11 +37,20 @@ services:
       ## PathPrefix (Prefix matcher)
       #- traefik.http.routers.whoami.rule=Host(`whoami.example.com`) && PathPrefix(`/whoami`)
 
+      ## Allow request from both predefined entry points "http" and "https"
+      #- traefik.http.routers.whoami.entrypoints=http,https
+
+      ## Allow request only from the predefined entry point named "http"
+      #- traefik.http.routers.whoami.entrypoints=http
+
+      ## Allow request only from the predefined entry point named "https"
+      #- traefik.http.routers.whoami.entrypoints=https
+
       ## TLS
       - traefik.http.routers.whoami.tls=true
       - traefik.http.routers.whoami.entrypoints=https
       #- traefik.http.routers.whoami.tls.certresolver=default
-      #- traefik.http.routers.whoami.tls.certresolver=letsEncrypt
+      #- traefik.http.routers.whoami.tls.certresolver=letsencrypt
 
       ## Redirection
       #- traefik.http.middlewares.whoami.redirectscheme.scheme=https
@@ -47,21 +61,10 @@ services:
       #- traefik.http.middlewares.add-foo.addprefix.prefix=/whoami
       #- traefik.http.routers.whoami.middlewares=add-foo@docker
 
-      ## Allow request only from the predefined entry point named "http"
-#      - traefik.http.routers.whoami.entrypoints=http
-
-      ## Allow request only from the predefined entry point named "https"
-#      - traefik.http.routers.whoami.entrypoints=https
-      ## Uses the Host rule to define which certificate to issue
-#      - traefik.http.routers.whoami.tls.certresolver=mytlschallenge
-
-      ## Network
-      #- --providers.docker.network=frontend_network
-
-      ## Test/Debug
-      #- --log.level=DEBUG
-      #- --certificatesresolvers.myhttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
-
 networks:
+#  frontend_network:
+#    external: true
   frontend_network:
-    external: true
+    driver: overlay
+    name: frontend_network
+    attachable: true

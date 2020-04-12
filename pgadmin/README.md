@@ -1,12 +1,5 @@
 # pgAdmin
 
-## Requirements:
-1. [Docker CE](https://download.docker.com?target=_blank) or [Docker Toolbox](https://github.com/docker/toolbox/releases/?target=_blank) (Virtualbox)
-    - `docker`
-    - `docker-compose`
-1. [Git](https://git-scm.com/?target=_blank) (optional)
-    - `git`
-
 ## Environments
 This Compose file contains the following environment variables:
 
@@ -23,21 +16,17 @@ You can set environment variables in `.env` file.
 1. Run command:
     - Docker:
 
-          docker network create backend_network; \
-          docker network create frontend_network; \
           docker-compose up -d
 
     - Docker Swarm
 
-          docker network create --driver=overlay backend_network; \
-          docker network create --driver=overlay frontend_network; \
           docker stack deploy --compose-file=docker-compose.yml pgadmin
 
 ## Quick start (docker)
 
     docker volume create --name pgadmin_data; \
-    docker network create backend_network; \
-    docker network create frontend_network; \
+    docker network create -d overlay --attachable backend_network; \
+    docker network create -d overlay --attachable frontend_network; \
     docker run -itd \
         --name pgadmin \
         --env PGADMIN_DEFAULT_EMAIL=pgadmin@pgadmin.org \
@@ -49,7 +38,7 @@ You can set environment variables in `.env` file.
         dpage/pgadmin4:4
         
 ## Access to PgAdmin: 
-- **URL:** `http://localhost:5050` (Docker Tools: `192.168.99.100:5050`)
+- **URL:** `http://localhost:5050` (Docker Toolbox: `192.168.99.100:5050`)
 - **Username:** `pgadmin@pgadmin.org`
 - **Password:** `pgadmin`
 
@@ -58,7 +47,7 @@ You can set environment variables in `.env` file.
 - **General** tab:
   - **Name:** MyCustomServerName
 - **Connection** tab:
-  - **Host name/address:** `postgres` (Docker Tools: `192.168.99.100`)
+  - **Host name/address:** `postgres` (Docker Toolbox: `192.168.99.100`)
   - **Port:** `5432`
   - **Username:** `postgres`
   - **Password:** `postgres`
