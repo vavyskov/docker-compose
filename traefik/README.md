@@ -43,3 +43,7 @@ Show IP address:
 
 ## Let's Encrypt
 [Traefik - Let's Encrypt](https://git-scm.com/?target=_blank)
+
+## Custom certificates
+
+Dynamic folder with `certificates.yml` file is the only available method to configure custom certificates!
