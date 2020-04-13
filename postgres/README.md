@@ -16,10 +16,12 @@ You can set environment variables in `.env` file.
 1. Run command:
     - Docker:
 
+          docker network create backend_network; \
           docker-compose up -d
 
     - Docker Swarm
 
+          docker network create --driver=overlay backend_network; \
           docker stack deploy --compose-file=docker-compose.yml postgres
 
 ## Quick start (docker)

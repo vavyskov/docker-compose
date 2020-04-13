@@ -34,6 +34,4 @@ services:
 
 networks:
   frontend_network:
-    driver: overlay
-    name: frontend_network
-    attachable: true
+    external: true

@@ -7,7 +7,7 @@
 1. [Git](https://git-scm.com/?target=_blank) (optional)
     - `git`
 
-For universal use of networks (standalone containers and stacks) it is necessary to create a docker swarm mode:
+## Docker Swarm (optional)
 
 - Docker CE:
 

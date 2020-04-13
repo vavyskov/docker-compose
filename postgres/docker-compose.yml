@@ -28,9 +28,7 @@ services:
 
 networks:
   backend_network:
-    driver: overlay
-    name: backend_network
-    attachable: true
+    external: true
 
 volumes:
   postgres_data:

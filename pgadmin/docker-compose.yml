@@ -43,13 +43,9 @@ services:
 
 networks:
   backend_network:
-    driver: overlay
-    name: backend_network
-    attachable: true
+    external: true
   frontend_network:
-    driver: overlay
-    name: frontend_network
-    attachable: true
+    external: true
 
 volumes:
   pgadmin_data:

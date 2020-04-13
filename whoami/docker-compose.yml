@@ -76,11 +76,11 @@ services:
       #- traefik.http.routers.whoami.middlewares=add-foo@docker
 
 networks:
-#  frontend_network:
-#    external: true
   frontend_network:
-    driver: overlay
-    name: frontend_network
-    attachable: true
-#    driver_opts:
-#      encrypted: true
+    external: true
+#  frontend_network:
+#    driver: overlay
+#    name: frontend_network
+#    attachable: true
+#    #driver_opts:
+#      #encrypted: true

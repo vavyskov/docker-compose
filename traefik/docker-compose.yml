@@ -176,6 +176,10 @@ services:
 
 networks:
   frontend_network:
-    driver: overlay
-    name: frontend_network
-    attachable: true
+    external: true
+#  frontend_network:
+#    driver: overlay
+#    name: frontend_network
+#    attachable: true
+#    #driver_opts:
+#      #encrypted: true
