@@ -3,7 +3,7 @@ version: '3.5'
 services:
   nginx:
     image: vavyskov/nginx:1.17-php-fpm-alpine3.10
-    container_name: project_nginx
+    container_name: stack-lepp_nginx
     volumes:
       - html_data:/var/www/html
     depends_on:
@@ -17,13 +17,13 @@ services:
       - traefik.enable=true
       - traefik.http.services.nginx.loadbalancer.server.port=80
       - traefik.http.routers.nginx.service=nginx
-      - traefik.http.routers.nginx.rule=Host(`project.example.com`)
+      - traefik.http.routers.nginx.rule=Host(`stack-lepp.example.com`)
       - traefik.http.routers.nginx.tls=true
       - traefik.http.routers.nginx.entrypoints=https
 
   php-fpm:
     image: vavyskov/php:7.4-fpm-alpine3.11
-    container_name: project_php-fpm
+    container_name: stack-lepp_php-fpm
     environment:
       PROJECT_MODE: dev
       PHP_USER: user
@@ -41,7 +41,7 @@ services:
 
   ssh:
     image: vavyskov/ssh:php7.4-cli-alpine3.11
-    container_name: project_ssh
+    container_name: stack-lepp_ssh
     depends_on:
       - php-fpm
     environment:
@@ -66,7 +66,7 @@ services:
 
   postgres:
     image: postgres:12.2-alpine
-    container_name: project_postgres
+    container_name: stack-lepp_postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -78,7 +78,6 @@ services:
         published: 5434
     networks:
       - backend_network
-    restart: unless-stopped
     deploy:
       replicas: 1
 
@@ -93,9 +92,9 @@ volumes:
     #driver_opts:
     #  type: nfs
     #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/volumes/html_data}
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/stack-lepp/volumes/html_data}
   postgres_data:
     #driver_opts:
     #  type: nfs
     #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/volumes/postgres_data}
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/stack-lepp/volumes/postgres_data}

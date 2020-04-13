@@ -131,21 +131,6 @@ services:
           - node.role == manager
           #- node.role == worker
           #- node.hostname == serverhostname
-#      update_config:
-#        failure_action: rollback
-#        parallelism: 1
-#        delay: 5s
-#      restart_policy:
-#        condition: on-failure
-#        delay: 5s
-#        max_attempts: 3
-#      resources:
-#        limits:
-#          cpus: '0.001'
-#          memory: 50M
-#        reservations:
-#          cpus: '0.0001'
-#          memory: 2G
 
   mariadb:
     image: mariadb:${MARIADB_VERSION:-10.4}
@@ -164,13 +149,28 @@ services:
         published: ${MARIADB_PORT:-3308}
     networks:
       - backend_network
-    restart: unless-stopped
+    #restart: unless-stopped
     #restart: always
     deploy:
       replicas: 1
       placement:
         constraints:
           - node.role == manager
+#      update_config:
+#        failure_action: rollback
+#        parallelism: 1
+#        delay: 5s
+#      restart_policy:
+#        condition: on-failure
+#        delay: 5s
+#        max_attempts: 3
+#      resources:
+#        limits:
+#          cpus: '0.1'
+#          memory: 2G
+#        reservations:
+#          cpus: '0.0001'
+#          memory: 50M
 
   postgres:
     image: postgres:${POSTGRES_VERSION:-12.2-alpine}
@@ -188,13 +188,28 @@ services:
         published: ${POSTGRES_PORT:-5434}
     networks:
       - backend_network
-    restart: unless-stopped
+    #restart: unless-stopped
     #restart: always
     deploy:
       replicas: 1
       placement:
         constraints:
           - node.role == manager
+#      update_config:
+#        failure_action: rollback
+#        parallelism: 1
+#        delay: 5s
+#      restart_policy:
+#        condition: on-failure
+#        delay: 5s
+#        max_attempts: 3
+#      resources:
+#        limits:
+#          cpus: '0.1'
+#          memory: 2G
+#        reservations:
+#          cpus: '0.0001'
+#          memory: 50M
 
   mailcatcher:
     image: vavyskov/mailcatcher:${MAILCATCHER_VERSION:-alpine3.11}
