@@ -8,7 +8,8 @@ services:
   hub:
    image: selenium/hub:3.141.59-zinc
    ports:
-     - 4444:4444
+     - target: 4444
+       published: 4444
 
   chrome:
     image: selenium/node-chrome:3.141.59-zinc

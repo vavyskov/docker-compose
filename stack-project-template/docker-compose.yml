@@ -25,14 +25,12 @@ services:
     #  - source: nginx_config
     #    target: /etc/nginx/nginx.conf
     ports:
-      # - target: 80
-      #   published:  8083
-      #   mode: host
-      # - target: 443
-      #   published: 444
-      #   mode: host
-      - ${NGINX_PORT:-8083}:80
-      - ${NGINX_PORT_SSL:-444}:443
+      - target: 80
+        published: ${NGINX_PORT:-8083}
+        #mode: host
+      - target: 443
+        published: ${NGINX_PORT_SSL:-444}
+        #mode: host
     networks:
       - backend_network
       - frontend_network
@@ -114,7 +112,9 @@ services:
       #APP_SECRET: ${APP_SECRET}
       #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
     ports:
-      - ${SSH_PORT:-2222}:22
+      ## https://community.containo.us/t/routing-ssh-traffic-with-traefik-v2/717/13
+      - target: 22
+        published: ${SSH_PORT:-2222}
     networks:
       - backend_network
     volumes:
@@ -160,7 +160,8 @@ services:
       #- ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
       - mariadb_data:/var/lib/mysql
     ports:
-      - ${MARIADB_PORT:-3308}:3306
+      - target: 3306
+        published: ${MARIADB_PORT:-3308}
     networks:
       - backend_network
     restart: unless-stopped
@@ -183,7 +184,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
        #- postgres:/data/postgres
     ports:
-      - ${POSTGRES_PORT:-5434}:5432
+      - target: 5432
+        published: ${POSTGRES_PORT:-5434}
     networks:
       - backend_network
     restart: unless-stopped
@@ -198,8 +200,10 @@ services:
     image: vavyskov/mailcatcher:${MAILCATCHER_VERSION:-alpine3.11}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_mailcatcher
     ports:
-      - ${MAILCATCHER_PORT:-1081}:80
-      - ${MAILCATCHER_SMTP_PORT:-1026}:25
+      - target: 80
+        published: ${MAILCATCHER_PORT:-1081}
+      - target: 25
+        published: ${MAILCATCHER_SMTP_PORT:-1026}
     networks:
       - frontend_network
     deploy:
@@ -220,7 +224,8 @@ services:
     image: adminer:${ADMINER_VERSION:-4.7-standalone}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_adminer
     ports:
-      - ${ADMINER_PORT:-8084}:8080
+      - target: 8080
+        published: ${ADMINER_PORT:-8084}
     networks:
       - backend_network
       - frontend_network

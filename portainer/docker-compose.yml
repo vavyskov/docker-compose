@@ -26,8 +26,10 @@ services:
     volumes:
       - portainer_data:/data
     ports:
-      - ${PORTAINER_PORT:-9002}:9000
-      - 8000:8000
+      - target: 9000
+        published: ${PORTAINER_PORT:-9002}
+      - target: 8000
+        published: 8000
     networks:
       - backend_network
       - frontend_network

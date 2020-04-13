@@ -1,0 +1,105 @@
+version: '3.5'
+
+services:
+  nginx:
+    image: vavyskov/nginx:1.17-php-fpm-alpine3.10
+    container_name: project_nginx
+    volumes:
+      - html_data:/var/www/html
+    depends_on:
+      - php-fpm
+    networks:
+      - backend_network
+      - frontend_network
+    deploy:
+      replicas: 1
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.nginx.loadbalancer.server.port=80
+      - traefik.http.routers.nginx.service=nginx
+      - traefik.http.routers.nginx.rule=Host(`project.example.com`)
+      - traefik.http.routers.nginx.tls=true
+      - traefik.http.routers.nginx.entrypoints=https
+
+  php-fpm:
+    image: vavyskov/php:7.4-fpm-alpine3.11
+    container_name: project_php-fpm
+    environment:
+      PROJECT_MODE: dev
+      PHP_USER: user
+      SMTP_HOSTNAME: 192.168.99.100
+      SMTP_PORT: 1026
+      SMTP_FROM: team@example.com
+      SMTP_USER: team
+      SMTP_PASSWORD: password
+    networks:
+      - backend_network
+    volumes:
+      - html_data:/var/www/html
+    deploy:
+      replicas: 1
+
+  ssh:
+    image: vavyskov/ssh:php7.4-cli-alpine3.11
+    container_name: project_ssh
+    depends_on:
+      - php-fpm
+    environment:
+      PROJECT_MODE: dev
+      SSH_USER: user
+      SSH_PASSWORD: password
+      GIT_EMAIL: my@email.com
+      GIT_NAME: My Name
+      PROXY_SERVER: http://user:password@proxy.example.com:8080
+      XDEBUG_HOSTNAME: 192.168.99.100
+    ports:
+      - target: 22
+        published: 2222
+    networks:
+      - backend_network
+    volumes:
+      - html_data:/var/www/html:nocopy
+#      - ~/.ssh:/var/www/.shared/.ssh:ro
+#      - ~/.gitconfig:/var/www/.shared/.gitconfig:ro
+    deploy:
+      replicas: 1
+
+  postgres:
+    image: postgres:12.2-alpine
+    container_name: project_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - target: 5432
+        published: 5434
+    networks:
+      - backend_network
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+
+networks:
+  backend_network:
+    driver: overlay
+    name: backend_network
+    attachable: true
+  frontend_network:
+    driver: overlay
+    name: frontend_network
+    attachable: true
+
+volumes:
+  html_data:
+    #driver_opts:
+    #  type: nfs
+    #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/volumes/html_data}
+  postgres_data:
+    #driver_opts:
+    #  type: nfs
+    #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/project/volumes/postgres_data}

@@ -14,7 +14,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
        #- postgres:/data/postgres
     ports:
-      - ${POSTGRES_PORT:-5432}:5432
+      - target: 5432
+        published: ${POSTGRES_PORT:-5432}
     networks:
       - backend_network
     restart: unless-stopped

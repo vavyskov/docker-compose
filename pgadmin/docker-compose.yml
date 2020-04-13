@@ -21,7 +21,8 @@ services:
        #- /path/to/certificate.key:/certs/server.key
        #- /tmp/servers.json:/pgadmin4/servers.json
     ports:
-      - ${PGADMIN_PORT:-5050}:80
+      - target: 80
+        published: ${PGADMIN_PORT:-5050}
     networks:
       - backend_network
       - frontend_network

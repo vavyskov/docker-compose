@@ -8,7 +8,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - ${VISUALIZER_PORT:-9003}:8080
+      - target: 8080
+        published: ${VISUALIZER_PORT:-9003}
     networks:
       - frontend_network
     deploy:

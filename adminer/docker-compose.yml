@@ -6,7 +6,8 @@ services:
     image: adminer:${ADMINER_VERSION:-4}
     container_name: adminer
     ports:
-      - ${ADMINER_PORT:-8081}:8080
+      - target: 8080
+        published: ${ADMINER_PORT:-8081}
     networks:
       - backend_network
       - frontend_network
