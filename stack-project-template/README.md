@@ -13,13 +13,13 @@ Content:
 
 1. Upravte `.env` dle potřeb (`.env` nefunguje ve Swarm módu).
 1. Příkazem `docker-compose config` si zobrazte výslednou konfiguraci.
-1. Zobrazený výstup si uložte do nového projektu jako `docker-compose.yml` a upravte dle potřeb. 
+1. (Zobrazený výstup si uložte do nového projektu jako `docker-compose.yml` a upravte dle potřeb.) 
 
 ## Notes
 Volitelně Traefik
 
 1. Clone or download this repository
-1. Go inside of directory `cd docker-compose/stack-project`
+1. Go inside of directory `cd docker-compose/stack-project-template`
 1. Run command:
     - Docker:
 
@@ -59,7 +59,8 @@ Volitelně Traefik
     - https://github.com/paslandau/docker-php-tutorial/blob/part_3_structuring-the-docker-setup-for-php-projects/.docker/.shared/scripts/install_php_extensions.sh
     - https://github.com/mlocati/docker-php-extension-installer/
 - Mailcatcher: project.example.com/mailcatcher
-- Swarm Secrets: http://blog.code4hire.com/2018/06/the-rabbit-hole-is-deep-when-trying-to-switch-from-environment-variables-file-to-docker-secrets/
+- Docker Secrets: http://blog.code4hire.com/2018/06/the-rabbit-hole-is-deep-when-trying-to-switch-from-environment-variables-file-to-docker-secrets/
+- Docker Config
 
 ## Testy
 
@@ -155,3 +156,5 @@ Docker Toolbox
         - vytvoření nového
             - `docker-machine create -d virtualbox --virtualbox-memory 4096 default`
             - `docker-machine create -d virtualbox --virtualbox-memory=4096 --virtualbox-cpu-count=2 --virtualbox-disk-size=50000 default`
+            
+Při běhu v dynamickém prostředí je zvykem aplikace monitorovat, často nástrojem [Prometheus](https://prometheus.io/docs/introduction/overview/).

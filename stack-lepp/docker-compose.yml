@@ -1,3 +1,7 @@
+## docker network create --driver=overlay backend_network;
+## docker network create --driver=overlay frontend_network;
+## docker stack deploy --compose-file=docker-compose.yml stack-lepp
+
 version: '3.5'
 
 services:
@@ -26,7 +30,7 @@ services:
     container_name: stack-lepp_php-fpm
     environment:
       PROJECT_MODE: dev
-      PHP_USER: user
+      PHP_USER: devstacklepp
       SMTP_HOSTNAME: 192.168.99.100
       SMTP_PORT: 1026
       SMTP_FROM: team@example.com
@@ -46,8 +50,8 @@ services:
       - php-fpm
     environment:
       PROJECT_MODE: dev
-      SSH_USER: user
-      SSH_PASSWORD: password
+      SSH_USER: devstacklepp
+      SSH_PASSWORD: devstacklepp
       GIT_EMAIL: my@email.com
       GIT_NAME: My Name
       PROXY_SERVER: http://user:password@proxy.example.com:8080
@@ -68,9 +72,9 @@ services:
     image: postgres:12.2-alpine
     container_name: stack-lepp_postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: devstacklepp
+      POSTGRES_PASSWORD: devstacklepp
+      POSTGRES_DB: devstacklepp
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

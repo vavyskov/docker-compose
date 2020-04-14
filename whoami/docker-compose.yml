@@ -1,3 +1,6 @@
+## docker network create --driver=overlay frontend_network;
+## docker stack deploy --compose-file=docker-compose.yml whoami
+
 version: '3.5'
 
 services:
