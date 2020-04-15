@@ -13,13 +13,7 @@ You can set environment variables in `.env` file.
 1. Clone or download this repository
 1. Go inside of directory `cd docker-compose/portainer`
 1. Run command:
-    - Docker:
-
-          docker network create backend_network; \
-          docker network create frontend_network; \
-          docker-compose up -d
-
-    - Docker Swarm
+    - Docker Swarm (only)
 
           docker network create --driver=overlay backend_network; \
           docker network create --driver=overlay frontend_network; \

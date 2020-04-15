@@ -21,7 +21,7 @@ services:
           - node.platform.os == linux
 
   portainer:
-    image: portainer/portainer:${PORTAINER_VERSION:-1.23.0}
+    image: portainer/portainer:${PORTAINER_VERSION:-1.23.2}
     container_name: portainer
 #    environment: 
 #      HTTP_PROXY: example.com:8080
@@ -52,8 +52,8 @@ services:
       #- traefik.http.routers.portainer.rule=Host(`portainer.example.com`) && Path(`/portainer`)
       #- traefik.http.routers.portainer.rule=Host(`portainer.example.com`) && PathPrefix(`/portainer`)
 
-      - traefik.http.routers.portainer.tls=true
-      - traefik.http.routers.portainer.entrypoints=https
+#      - traefik.http.routers.portainer.tls=true
+#      - traefik.http.routers.portainer.entrypoints=https
 
       ## Middlewares: Strip prefix
       #- traefik.http.middlewares.portainer-strip-prefix.stripprefix.prefixes=/portainer

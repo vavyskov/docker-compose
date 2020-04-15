@@ -62,8 +62,8 @@ services:
       #- traefik.http.routers.whoami.entrypoints=https
 
       ## TLS
-      - traefik.http.routers.whoami.tls=true
-      - traefik.http.routers.whoami.entrypoints=https
+#      - traefik.http.routers.whoami.tls=true
+#      - traefik.http.routers.whoami.entrypoints=https
 
       ## LetsEncrypt
       #- traefik.http.routers.whoami.tls.certresolver=default

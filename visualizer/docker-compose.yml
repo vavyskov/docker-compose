@@ -28,8 +28,8 @@ services:
       - traefik.http.routers.visualizer.rule=Host(`visualizer.example.com`)
       #- traefik.http.routers.visualizer.rule=Host(`visualizer.example.com`) && Path(`/visualizer`)
       #- traefik.http.routers.whoami.rule=Host(`visualizer.example.com`) && PathPrefix(`/visualizer`)
-      - traefik.http.routers.visualizer.tls=true
-      - traefik.http.routers.visualizer.entrypoints=https
+#      - traefik.http.routers.visualizer.tls=true
+#      - traefik.http.routers.visualizer.entrypoints=https
       ## BasicAuth (BCrypt or MD5 not SHA1) - https://www.htaccesstools.com/htpasswd-generator/
       - traefik.http.routers.visualizer.middlewares=authvisualizer
       ## In password type $ as $$

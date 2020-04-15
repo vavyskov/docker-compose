@@ -10,12 +10,7 @@ Use [portainer.io](https://www.portainer.io/) instead.
 1. Clone or download this repository
 1. Go inside of directory `cd docker-compose/visualizer`
 1. Run command:
-    - Docker:
-
-          docker network create frontend_network; \
-          docker-compose up -d
-
-    - Docker Swarm
+    - Docker Swarm (only)
 
           docker network create --driver=overlay frontend_network; \
           docker stack deploy --compose-file=docker-compose.yml visualizer

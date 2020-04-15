@@ -1,0 +1,53 @@
+## docker network create --driver=overlay frontend_network;
+## docker stack deploy --compose-file=whoami3.yml whoami3
+
+version: '3.5'
+
+services:
+
+  whoami3:
+    # A container that exposes an API to show its IP address
+    image: containous/whoami:${WHOAMI_VERSION:-v1.4.0}
+    container_name: whoami3
+    ports:
+      - target: 80
+        published: ${WHOAMI_PORT:-8086}
+    networks:
+      - frontend_network
+    deploy:
+      replicas: 1
+      placement:
+          constraints:
+            - node.role == manager
+          #constraints: [node.role == manager]
+#      update_config:
+#        failure_action: rollback
+#        parallelism: 1
+#        delay: 5s
+#      restart_policy:
+#        condition: on-failure
+#        delay: 5s
+#        max_attempts: 3
+#      resources:
+#        limits:
+#          memory: 128M
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.whoami3.loadbalancer.server.port=80
+      - traefik.http.routers.whoami3.service=whoami3
+      - traefik.http.routers.whoami3.rule=Host(`whoami3.example.com`)
+#      - traefik.http.routers.whoami2.entrypoints=http
+
+      ## TLS
+#      - traefik.http.routers.whoami.tls=true
+#      - traefik.http.routers.whoami.entrypoints=https
+
+networks:
+  frontend_network:
+    external: true
+#  frontend_network:
+#    driver: overlay
+#    name: frontend_network
+#    attachable: true
+#    #driver_opts:
+#      #encrypted: true

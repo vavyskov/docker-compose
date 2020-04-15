@@ -16,6 +16,9 @@ You can set environment variables in `.env` file.
 
           docker network create frontend_network; \
           docker-compose up -d
+          
+          docker-compose -f whoami2.yml up -d
+          docker-compose -f whoami3.yml up -d
 
     - Docker Swarm
 

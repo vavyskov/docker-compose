@@ -136,8 +136,8 @@ services:
       #- traefik.http.routers.traefik.rule=Host(`traefik.example.com`) && Path(`/traefik`)
       #- traefik.http.routers.traefik.rule=Host(`traefik.example.com`) && PathPrefix(`/traefik`)
 
-      - traefik.http.routers.traefik.tls=true
-      - traefik.http.routers.traefik.entrypoints=https
+#      - traefik.http.routers.traefik.tls=true
+#      - traefik.http.routers.traefik.entrypoints=https
 
       ## Tell Traefik, that for router 'traefik' should use following middleware
       ## BasicAuth (BCrypt or MD5 not SHA1) - https://www.htaccesstools.com/htpasswd-generator/
@@ -161,11 +161,11 @@ services:
 
 
       ## Global redirection - this creates the redirect middleware and redirects all http requests to https
-      - traefik.http.routers.http-catchall.entrypoints=http
-      - traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)
+#      - traefik.http.routers.http-catchall.entrypoints=http
+#      - traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)
       #- traefik.http.routers.http-catchall.rule=HostRegexp(`{any:.*}`)
-      - traefik.http.routers.http-catchall.middlewares=redirect-to-https
-      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+#      - traefik.http.routers.http-catchall.middlewares=redirect-to-https
+#      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
 
 
 #      - traefik.http.middlewares.secured.chain.middlewares=foo-add-prefix,auth
