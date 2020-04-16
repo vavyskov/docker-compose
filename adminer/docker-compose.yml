@@ -1,20 +1,16 @@
-## docker network create --driver=overlay backend_network;
-## docker network create --driver=overlay frontend_network;
-## docker stack deploy --compose-file=docker-compose.yml adminer
-
 version: '3.5'
 
 services:
 
   adminer:
     image: adminer:${ADMINER_VERSION:-4}
-    container_name: adminer
+    container_name: ${COMPOSE_PROJECT_NAME:-adminer}_adminer
     ports:
       - target: 8080
         published: ${ADMINER_PORT:-8081}
     networks:
-      - backend_network
       - frontend_network
+      - adminer_network
     deploy:
       replicas: 1
       placement:
@@ -29,7 +25,7 @@ services:
       - traefik.http.routers.adminer.entrypoints=https
 
 networks:
-  backend_network:
-    external: true
   frontend_network:
+    external: true
+  adminer_network:
     external: true

@@ -1,19 +1,15 @@
-## docker network create --driver=overlay backend_network;
-## docker network create --driver=overlay frontend_network;
-## docker stack deploy --compose-file=docker-compose.yml portainer
-
 version: '3.5'
 
 services:
 
   agent:
     image: portainer/agent:${AGENT_VERSION:-1.5.1}
-    container_name: portainer_agent
+    container_name: ${COMPOSE_PROJECT_NAME:-portainer}_agent
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
     networks:
-      - backend_network
+      - portainer_network
     deploy:
       mode: global
       placement:
@@ -22,7 +18,7 @@ services:
 
   portainer:
     image: portainer/portainer:${PORTAINER_VERSION:-1.23.2}
-    container_name: portainer
+    container_name: ${COMPOSE_PROJECT_NAME:-portainer}_portainer
 #    environment: 
 #      HTTP_PROXY: example.com:8080
 #      HTTPS_PROXY: example.com:8080
@@ -35,8 +31,8 @@ services:
       - target: 8000
         published: 8000
     networks:
-      - backend_network
       - frontend_network
+      - portainer_network
     deploy:
       mode: replicated
       replicas: 1
@@ -65,9 +61,9 @@ services:
       #- traefik.http.routers.portainer.middlewares=portainer-add-prefix@docker
 
 networks:
-  backend_network:
-    external: true
   frontend_network:
+    external: true
+  portainer_network:
     external: true
 
 volumes:

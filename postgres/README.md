@@ -16,18 +16,18 @@ You can set environment variables in `.env` file.
 1. Run command:
     - Docker:
 
-          docker network create backend_network; \
+          docker network create postgres_network
           docker-compose up -d
 
     - Docker Swarm
 
-          docker network create --driver=overlay backend_network; \
+          docker network create --driver=overlay postgres_network
           docker stack deploy --compose-file=docker-compose.yml postgres
 
 ## Quick start (docker)
 
     docker volume create --name postgres_data; \
-    docker network create -d overlay --attachable backend_network; \
+    docker network create -d overlay --attachable postgres_network; \
     docker run -itd \
         --name postgres \
         --env POSTGRES_USER=postgres \
@@ -46,4 +46,4 @@ You can set environment variables in `.env` file.
 ## Network
 Show IP address:
 
-    docker network inspect backend_network | grep IPv
+    docker network inspect postgres_network | grep IPv

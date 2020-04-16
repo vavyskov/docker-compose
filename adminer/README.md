@@ -14,19 +14,19 @@ You can set environment variables in `.env` file.
 1. Run command:
     - Docker:
 
-          docker network create backend_network; \
-          docker network create frontend_network; \
+          docker network create adminer_network
+          docker network create frontend_network
           docker-compose up -d
 
     - Docker Swarm
 
-          docker network create --driver=overlay backend_network; \
-          docker network create --driver=overlay frontend_network; \
+          docker network create --driver=overlay adminer_network
+          docker network create --driver=overlay frontend_network
           docker stack deploy --compose-file=docker-compose.yml adminer
 
 ## Quick start (docker)
     
-    docker network create -d overlay --attachable backend_network; \
+    docker network create -d overlay --attachable adminer_network; \
     docker network create -d overlay --attachable frontend_network; \
     docker run -itd \
         --name adminer \
@@ -40,5 +40,5 @@ You can set environment variables in `.env` file.
 ## Network
 Show IP address:
 
-    docker network inspect backend_network | grep IPv
+    docker network inspect adminer_network | grep IPv
     docker network inspect frontend_network | grep IPv

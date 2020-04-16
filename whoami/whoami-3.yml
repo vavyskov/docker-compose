@@ -1,0 +1,28 @@
+## Find-Replace: "whoami-3"
+## docker stack deploy --compose-file=whoami-3.yml whoami-3
+
+version: '3.5'
+
+services:
+  whoami-3:
+    image: containous/whoami:${WHOAMI_VERSION:-v1.4.0}
+    container_name: ${COMPOSE_PROJECT_NAME:-whoami-3}_whoami-3
+    ports:
+      - target: 80
+        published: ${WHOAMI_PORT:-8087}
+    networks:
+      - frontend_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.whoami-3.loadbalancer.server.port=80
+      - traefik.http.routers.whoami-3.rule=Host(`whoami-3.example.com`)
+      #- traefik.http.routers.whoami-3.tls=true
+
+networks:
+  frontend_network:
+    external: true

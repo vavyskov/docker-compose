@@ -9,6 +9,10 @@ Content:
 - Mailcatcher
 - Adminer
 
+Other stacks:
+- LEPP (Linux (E)Nginx PostgreSQL PHP) 
+- LEMP (Linux (E)Nginx MySQL/MariaDB PHP)
+
 ## Quick start (docker-compose)
 
 1. Upravte `.env` dle potřeb (`.env` nefunguje ve Swarm módu).
@@ -25,8 +29,8 @@ Volitelně Traefik
 
           docker-compose pull
           
-          docker network create backend_network; \
-          docker network create frontend_network; \
+          docker network create project_network
+          docker network create frontend_network
           docker-compose up -d
 
           docker-compose stop
@@ -36,8 +40,8 @@ Volitelně Traefik
 
           docker-compose pull
           
-          docker network create --driver=overlay backend_network; \
-          docker network create --driver=overlay frontend_network; \
+          docker network create --driver=overlay project_network
+          docker network create --driver=overlay frontend_network
           docker stack deploy --compose-file=docker-compose.yml project
           
           docker stack rm project

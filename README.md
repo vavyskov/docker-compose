@@ -20,3 +20,9 @@
 ## Notes
 
 Stacks "whoami" and "stack-project-template" offer the most documentation.
+
+## ToDo
+
+- stack-project-tamplate/stack-lemp
+- stack-standalone
+- selenium

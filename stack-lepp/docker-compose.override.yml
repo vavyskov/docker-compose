@@ -1,0 +1,94 @@
+## Stack LEPP (Linux (E)Nginx PostgreSQL PHP)
+## Find-Replace: "stack-lepp"
+## docker network create --driver=overlay frontend_network
+## docker network create --driver=overlay stack-lepp_network
+## docker stack deploy --compose-file=stack-lepp.yml stack-lepp
+
+version: '3.5'
+
+services:
+  nginx:
+    image: vavyskov/nginx:1.17-php-fpm-alpine3.10
+    container_name: stack-lepp_nginx
+    volumes:
+      - html_data:/var/www/html:nocopy
+    ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
+    depends_on:
+      - php-fpm
+    ports:
+      - target: 80
+        published: ${NGINX_PORT:-8088}
+    networks:
+      - frontend_network
+      - stack-lepp_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.stack-lepp_nginx.loadbalancer.server.port=80
+      - traefik.http.routers.stack-lepp_nginx.rule=Host(`stack-lepp.example.com`)
+      #- traefik.http.routers.stack-lepp_nginx.tls=true
+
+  ssh:
+    image: vavyskov/ssh:php7.4-cli-alpine3.11
+    container_name: stack-lepp_ssh
+    ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
+    depends_on:
+      - php-fpm
+    environment:
+      PROJECT_MODE: dev
+      SSH_USER: stacklepp
+      SSH_PASSWORD: stacklepp
+      GIT_EMAIL: my@email.com
+      GIT_NAME: My Name
+      PROXY_SERVER: http://user:password@proxy.example.com:8080
+      XDEBUG_HOSTNAME: 192.168.99.100
+    ports:
+      - target: 22
+        published: 2223
+    networks:
+      - stack-lepp_network
+    volumes:
+      - html_data:/var/www/html:nocopy
+#      - ~/.ssh:/var/www/.shared/.ssh:ro
+#      - ~/.gitconfig:/var/www/.shared/.gitconfig:ro
+    deploy:
+      replicas: 1
+
+  postgres:
+    image: postgres:12.2-alpine
+    container_name: stack-lepp_postgres
+    environment:
+      POSTGRES_USER: stacklepp
+      POSTGRES_PASSWORD: stacklepp
+      POSTGRES_DB: stacklepp
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - target: 5432
+        published: 5435
+    networks:
+      - stack-lepp_network
+    deploy:
+      replicas: 1
+
+networks:
+  frontend_network:
+    external: true
+  stack-lepp_network:
+    external: true
+
+volumes:
+  html_data:
+    #driver_opts:
+    #  type: nfs
+    #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/stack-lepp/volumes/html_data}
+  postgres_data:
+    #driver_opts:
+    #  type: nfs
+    #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/stack-lepp/volumes/postgres_data}

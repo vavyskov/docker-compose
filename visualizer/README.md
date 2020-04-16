@@ -12,7 +12,7 @@ Use [portainer.io](https://www.portainer.io/) instead.
 1. Run command:
     - Docker Swarm (only)
 
-          docker network create --driver=overlay frontend_network; \
+          docker network create --driver=overlay frontend_network
           docker stack deploy --compose-file=docker-compose.yml visualizer
 
 

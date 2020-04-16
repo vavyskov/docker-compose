@@ -1,6 +1,3 @@
-## docker network create --driver=overlay frontend_network;
-## docker stack deploy --compose-file=docker-compose.yml whoami
-
 version: '3.5'
 
 services:
@@ -8,7 +5,7 @@ services:
   whoami:
     # A container that exposes an API to show its IP address
     image: containous/whoami:${WHOAMI_VERSION:-v1.4.0}
-    container_name: whoami
+    container_name: ${COMPOSE_PROJECT_NAME:-whoami}_whoami
     ports:
       - target: 80
         published: ${WHOAMI_PORT:-8082}
@@ -70,6 +67,9 @@ services:
       #- traefik.http.routers.whoami.tls.certresolver=letsencrypt
 
       ## Redirection
+      #- traefik.http.routers.whoami.middlewares=redirect-to-https
+      #- traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+
       #- traefik.http.middlewares.whoami.redirectscheme.scheme=https
       #- traefik.http.middlewares.whoami.redirectscheme.permanent=true
       #- traefik.http.middlewares.whoami.redirectscheme.port=443

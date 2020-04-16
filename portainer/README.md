@@ -15,14 +15,14 @@ You can set environment variables in `.env` file.
 1. Run command:
     - Docker Swarm (only)
 
-          docker network create --driver=overlay backend_network; \
-          docker network create --driver=overlay frontend_network; \
+          docker network create --driver=overlay frontend_network
+          docker network create --driver=overlay portainer_network
           docker stack deploy --compose-file=docker-compose.yml portainer
 
 ## Quick start (docker)
 
     docker volume create portainer_data; \
-    docker network create -d overlay --attachable backend_network; \
+    docker network create -d overlay --attachable portainer_network; \
     docker network create -d overlay --attachable frontend_network; \
     docker run -d \ 
         --name portainer \

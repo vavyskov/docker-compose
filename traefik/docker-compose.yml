@@ -1,6 +1,3 @@
-## docker network create --driver=overlay frontend_network;
-## docker stack deploy --compose-file=docker-compose.yml traefik
-
 version: '3.5'
 
 #secrets:
@@ -19,7 +16,7 @@ services:
 
   traefik:
     image: traefik:${TRAEFIK_VERSION:-2.1}
-    container_name: traefik
+    container_name: ${COMPOSE_PROJECT_NAME:-traefik}_traefik
     command:
       ## Traefik will listen on port 8080 by default for API request
       - --api.insecure=true
@@ -112,6 +109,7 @@ services:
       placement:
         constraints:
           - node.role == manager
+#          - node.hostname == node-2
 #          - node.hostname == serverhostname
 #          - node.labels.traefik == true
 #        preferences:
@@ -119,10 +117,12 @@ services:
 #    deploy:
 #      mode: global
 #      placement:
-#          constraints:
-#            - node.platform.os == linux
+#        constraints:
+#          - node.platform.os == linux
 #      restart_policy:
 #        condition: on-failure
+#        preferences:
+#          - spread: node.id
     ## Dynamic section
     labels:
       - traefik.enable=true
@@ -169,7 +169,7 @@ services:
 
 
 #      - traefik.http.middlewares.secured.chain.middlewares=foo-add-prefix,auth
-      
+
       #- traefik.http.middlewares.add-foo.addprefix.prefix=/foo
 
       ## Create a middleware named `foo-add-prefix`
@@ -180,9 +180,8 @@ services:
 networks:
   frontend_network:
     external: true
-#  frontend_network:
+#    attachable: true
 #    driver: overlay
 #    name: frontend_network
-#    attachable: true
 #    #driver_opts:
 #      #encrypted: true

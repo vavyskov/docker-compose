@@ -16,20 +16,20 @@ You can set environment variables in `.env` file.
 1. Run command:
     - Docker:
 
-          docker network create backend_network; \
-          docker network create frontend_network; \
+          docker network create pgadmin_network
+          docker network create frontend_network
           docker-compose up -d
 
     - Docker Swarm
 
-          docker network create --driver=overlay backend_network; \
-          docker network create --driver=overlay frontend_network; \
+          docker network create --driver=overlay pgadmin_network
+          docker network create --driver=overlay frontend_network
           docker stack deploy --compose-file=docker-compose.yml pgadmin
 
 ## Quick start (docker)
 
     docker volume create --name pgadmin_data; \
-    docker network create -d overlay --attachable backend_network; \
+    docker network create -d overlay --attachable pgadmin_network; \
     docker network create -d overlay --attachable frontend_network; \
     docker run -itd \
         --name pgadmin \
@@ -59,5 +59,5 @@ You can set environment variables in `.env` file.
 ## Network
 Show IP address:
 
-    docker network inspect backend_network | grep IPv
+    docker network inspect pgadmin_network | grep IPv
     docker network inspect frontend_network | grep IPv

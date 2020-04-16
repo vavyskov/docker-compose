@@ -1,13 +1,10 @@
-## docker network create --driver=overlay frontend_network;
-## docker stack deploy --compose-file=docker-compose.yml visualizer
-
 version: '3.5'
 
 services:
 
   visualizer:
     image: dockersamples/visualizer:${VISUALIZER_VERSION:-latest}
-    container_name: visualizer
+    container_name: ${COMPOSE_PROJECT_NAME:-visualizer}_visualizer
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
