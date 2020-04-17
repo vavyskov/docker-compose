@@ -1,5 +1,7 @@
 # docker-compose
 
+This git repository allows you to run defined applications in Docker or Docker Swarm mode.
+
 ## Requirements:
 1. [Docker CE](https://download.docker.com?target=_blank) or [Docker Toolbox](https://github.com/docker/toolbox/releases/?target=_blank) (Virtualbox)
     - `docker`

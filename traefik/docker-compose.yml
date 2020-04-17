@@ -128,7 +128,7 @@ services:
       - traefik.enable=true
       - traefik.http.services.traefik.loadbalancer.server.port=8080
       #- traefik.http.services.traefik.loadbalancer.passhostheader=true
-      - traefik.http.routers.traefik.service=traefik
+#      - traefik.http.routers.traefik.service=traefik
       ## The router 'traefik' will forward request to service api@internal
       #- traefik.http.routers.traefik.service=api@internal
 
@@ -137,7 +137,7 @@ services:
       #- traefik.http.routers.traefik.rule=Host(`traefik.example.com`) && PathPrefix(`/traefik`)
 
 #      - traefik.http.routers.traefik.tls=true
-#      - traefik.http.routers.traefik.entrypoints=https
+      #- traefik.http.routers.traefik.entrypoints=https
 
       ## Tell Traefik, that for router 'traefik' should use following middleware
       ## BasicAuth (BCrypt or MD5 not SHA1) - https://www.htaccesstools.com/htpasswd-generator/

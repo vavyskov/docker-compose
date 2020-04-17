@@ -6,23 +6,23 @@
 1. Run command:
     - Docker:
 
-          docker network create stack-lepp_network
+          docker network create lepp_network
           docker network create frontend_network
           docker-compose up -d
 
     - Docker Swarm
           
           docker network create --driver=overlay frontend_network
-          docker network create --driver=overlay stack-lepp_network          
-          docker stack deploy --compose-file=docker-compose.yml stack-lepp
-          docker stack deploy --compose-file=docker-compose.override.yml stack-lepp
+          docker network create --driver=overlay lepp_network          
+          docker stack deploy --compose-file=docker-compose.yml lepp
+          docker stack deploy --compose-file=docker-compose.override.yml lepp
 
 ## Notes
 
 Docker Swarm (docker stack deploy) does not support "depends_on" - blocking until the state you desire is reached.
 - https://github.com/vegardit/await.sh
-- `docker inspect stack-lepp_php-fpm`
-- `docker service inspect stack-lepp_php-fpm`
+- `docker inspect lepp_php-fpm`
+- `docker service inspect lepp_php-fpm`
 - `docker service ls --format '{{.ID}} {{.Name}}' | grep ${serviceName}`
 - If this command returns something there is a container running with your new image:
     - `docker service ps ${ServiceId} --format '{{.CurrentState}} {{.Image}}' | grep Running.*${newImageName}`

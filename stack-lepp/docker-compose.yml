@@ -1,15 +1,15 @@
 ## Stack LEPP (Linux (E)Nginx PostgreSQL PHP)
-## Find-Replace: "stack-lepp"
+## Find-Replace: "lepp"
 ## docker network create --driver=overlay frontend_network
-## docker network create --driver=overlay stack-lepp_network
-## docker stack deploy --compose-file=stack-lepp.yml stack-lepp
+## docker network create --driver=overlay lepp_network
+## docker stack deploy --compose-file=lepp.yml lepp
 
 version: '3.5'
 
 services:
   php-fpm:
     image: vavyskov/php:7.4-fpm-alpine3.11
-    container_name: stack-lepp_php-fpm
+    container_name: lepp_php-fpm
     environment:
       PROJECT_MODE: dev
       PHP_USER: stacklepp
@@ -19,16 +19,14 @@ services:
       SMTP_USER: team
       SMTP_PASSWORD: password
     networks:
-      - stack-lepp_network
+      - lepp_network
     volumes:
       - html_data:/var/www/html
     deploy:
       replicas: 1
 
 networks:
-  frontend_network:
-    external: true
-  stack-lepp_network:
+  lepp_network:
     external: true
 
 volumes:
@@ -36,9 +34,4 @@ volumes:
     #driver_opts:
     #  type: nfs
     #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-    #  device: :${NFS_PATH:-/media/nfs_docker/dev/stack-lepp/volumes/html_data}
-  postgres_data:
-    #driver_opts:
-    #  type: nfs
-    #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-    #  device: :${NFS_PATH:-/media/nfs_docker/dev/stack-lepp/volumes/postgres_data}
+    #  device: :${NFS_PATH:-/media/nfs_docker/dev/lepp/volumes/html_data}
