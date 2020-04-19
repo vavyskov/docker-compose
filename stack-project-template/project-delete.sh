@@ -1,5 +1,5 @@
 #!/bin/sh
 
-## Docker delete (kill) script
+## Delete (kill) project stack
 
 ## ??? Delete data (Docker volumes and NFS storage) ???

@@ -1,7 +1,133 @@
 #!/bin/sh
 set -e
 
-## Docker create (build, compose) script
+##
+## Update images and create (compose) project stack
+##
+
+SWARM_MODE=false
+NETWORK_FRONTEND=frontend_network
+NETWORK_PROJECT=project_network
+
+## Check Docker daemon
+if [ "$(docker ps 1>/dev/null 2>/dev/null; echo $?)" != 0 ]; then
+    printf "\r\n%sCannot connect to the Docker daemon. Is the docker daemon running?%s\r\n\r\n" \
+    "$(tput setaf 1)" "$(tput sgr 0)"
+
+    exit
+fi
+
+##
+## Get variables
+##
+
+## Update images
+printf "\r\n%sDo you want to update stack images? (yes/no)%s [%syes%s]:\r\n" \
+"$(tput setaf 2)" "$(tput sgr 0)" "$(tput setaf 3)" "$(tput sgr 0)"
+while
+    tput bel
+    printf "> "
+    read -r UPDATE
+do
+    case $UPDATE in
+        [Yy]*|'')
+            if [ "$UPDATE" = '' ]; then
+                tput cuu 1
+                tput cuf 2
+                echo 'yes'
+            fi
+            UPDATE=true
+            break
+        ;;
+        [Nn]*)
+            UPDATE=false
+            break
+        ;;
+        * )
+            echo "Answer '$(tput setaf 2)yes$(tput sgr 0)' or '$(tput setaf 2)no$(tput sgr 0)'."
+        ;;
+    esac
+done
+
+## Docker Swarm mode with active leader
+if [ "$(docker node ls 1>/dev/null 2>/dev/null; echo $?)" = 0 ] \
+&& [ "$(docker node ls 2>/dev/null | grep Leader | grep Active)" != "" ]; then
+    printf "\r\n%sDo you want to use Docker Swarm mode? (yes/no)%s [%syes%s]:\r\n" \
+    "$(tput setaf 2)" "$(tput sgr 0)" "$(tput setaf 3)" "$(tput sgr 0)"
+
+    while
+        tput bel
+        printf "> "
+        read -r SWARM_MODE
+    do
+        case $SWARM_MODE in
+            [Yy]*|'')
+                if [ "$UPDATE" = '' ]; then
+                    tput cuu 1
+                    tput cuf 2
+                    echo 'yes'
+                fi
+                SWARM_MODE=true
+                NETWORK_DRIVER=overlay
+                break
+            ;;
+            [Nn]*)
+                SWARM_MODE=false
+                NETWORK_DRIVER=bridge
+                break
+            ;;
+            * )
+                echo "Answer '$(tput setaf 2)yes$(tput sgr 0)' or '$(tput setaf 2)no$(tput sgr 0)'."
+            ;;
+        esac
+    done
+fi
+
+##
+## Create project
+##
+
+## New line
+printf "\r\n"
+
+## Update images
+if [ $UPDATE = true ]; then
+    docker-compose pull
+fi
+
+## Create network
+## $1 network name
+## $2 network driver
+## https://linuxize.com/post/bash-functions/
+create_network() {
+    if [ "$(docker network ls | grep "$1" | grep -v "$2")" != "" ]; then
+        printf "$(tput setaf 1)Network with name '%s' already exists but requires driver '%s'.$(tput sgr 0)\r\n\r\n" "$1" "$2"
+        exit
+    elif [ "$(docker network ls | grep "$1" | grep "$2")" = "" ]; then
+        docker network create --driver "$2" "$1"
+    fi
+}
+
+## Create networks
+## https://linuxize.com/post/bash-for-loop/
+for i in $NETWORK_FRONTEND $NETWORK_PROJECT
+do
+  create_network $i $NETWORK_DRIVER
+done
+
+## Create project
+if [ $SWARM_MODE = false ]; then
+    docker-compose up -d
+else
+    docker stack deploy --compose-file=docker-compose.yml project
+    docker stack deploy --compose-file=docker-compose.override.yml project
+fi
+
+#printf "$(tput setaf 2)Swarm mode$(tput sgr 0): %s\r\n\r\n" $SWARM_MODE
+
+
+
+
 
 ## tput
 ##
@@ -53,71 +179,4 @@ set -e
 ## tput bel     # Play a bell
 ##
 ## Scripts:
-## echo -e "setf 7\nsetb 1" | tput -S  # set fg white and bg red
-
-SWARM_MODE=false
-NETWORK_FRONTEND=frontend_network
-NETWORK_PROJECT=project_network
-
-## Docker
-if [ "$(docker ps 1>/dev/null 2>/dev/null; echo $?)" != 0 ]; then
-    printf "\r\nCannot connect to the Docker daemon. Is the docker daemon running?\r\n\r\n"
-    exit
-fi
-
-## Docker Swarm mode with active leader
-if [ "$(docker node ls 1>/dev/null 2>/dev/null; echo $?)" = 0 ] \
-&& [ "$(docker node ls 2>/dev/null | grep Leader | grep Active)" != "" ]; then
-    printf "\r\n%sDo you want to use Docker Swarm mode? (yes/no)%s [%syes%s]:\r\n" \
-    "$(tput setaf 2)" "$(tput sgr 0)" "$(tput setaf 3)" "$(tput sgr 0)"
-
-    while
-        tput bel
-        printf "> "
-        read -r SWARM_MODE
-    do
-        case $SWARM_MODE in
-            [Yy]*|'')
-                SWARM_MODE=true
-                break
-            ;;
-            [Nn]*)
-                SWARM_MODE=false
-                break
-            ;;
-            * )
-                echo "Answer '$(tput setaf 2)yes$(tput sgr 0)' or '$(tput setaf 2)no$(tput sgr 0)'."
-            ;;
-        esac
-    done
-fi
-
-## Update images
-docker-compose pull
-
-## Set network driver
-if [ ${SWARM_MODE} = false ]; then
-    NETWORK_DRIVER=bridge
-else
-    NETWORK_DRIVER=overlay
-fi
-
-## Create frontend network
-if [ "$(docker network ls | grep ${NETWORK_FRONTEND})" = "" ]; then
-    docker network create --driver ${NETWORK_DRIVER} ${NETWORK_FRONTEND}
-fi
-
-## Create project network
-if [ "$(docker network ls | grep ${NETWORK_PROJECT})" = "" ]; then
-    docker network create --driver ${NETWORK_DRIVER} ${NETWORK_FRONTEND}
-fi
-
-## Create project
-if [ ${SWARM_MODE} = false ]; then
-    docker-compose up -d
-else
-    docker stack deploy --compose-file=docker-compose.yml project
-    docker stack deploy --compose-file=docker-compose.override.yml project
-fi
-
-#printf "$(tput setaf 2)Swarm mode$(tput sgr 0): %s\r\n\r\n" ${SWARM_MODE}
+## echo -e "setf 7\r\nsetb 1" | tput -S  # set fg white and bg red

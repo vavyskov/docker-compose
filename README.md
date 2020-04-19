@@ -26,7 +26,7 @@ Stacks "whoami" and "stack-project-template" offer the most documentation.
 ## ToDo
 
 - otestovat změnu hesla u existujících databází (případně i změnu uživatele a název databáze)
-- project-delete.sh (project-update.sh)
+- project-delete.sh
 - stack-project-tamplate/stack-lemp
 - stack-standalone
 - selenium
