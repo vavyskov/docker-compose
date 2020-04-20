@@ -30,3 +30,4 @@ Stacks "whoami" and "stack-project-template" offer the most documentation.
 - stack-project-tamplate/stack-lemp
 - stack-standalone
 - selenium
+- [healthcheck](https://docs.docker.com/engine/reference/builder/#healthcheck)

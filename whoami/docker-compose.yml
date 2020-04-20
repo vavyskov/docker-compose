@@ -1,11 +1,11 @@
 version: '3.5'
 
 services:
-
   whoami:
     # A container that exposes an API to show its IP address
     image: containous/whoami:${WHOAMI_VERSION:-v1.4.0}
     container_name: ${COMPOSE_PROJECT_NAME:-whoami}_whoami
+    hostname: whoami.example.com
     ports:
       - target: 80
         published: ${WHOAMI_PORT:-8082}
@@ -17,19 +17,19 @@ services:
           constraints:
             - node.role == manager
           #constraints: [node.role == manager]
-#      update_config:
-#        failure_action: rollback
-#        parallelism: 1
-#        delay: 5s
-#      restart_policy:
-#        condition: on-failure
-#        delay: 5s
-#        max_attempts: 3
-#      resources:
-#        limits:
-#          memory: 128M
+      #update_config:
+      #  failure_action: rollback
+      #  parallelism: 1
+      #  delay: 5s
+      #restart_policy:
+      #  condition: on-failure
+      #  delay: 5s
+      #  max_attempts: 3
+      #resources:
+      #  limits:
+      #    memory: 128M
     labels:
-      ## Explicitly tell Traefik to expose this container (because we disabled expose a service by default)
+      ## Explicitly tell Traefik to expose this container
       - traefik.enable=true
 
       ## Load balancer (internal port)
@@ -38,7 +38,7 @@ services:
       #- traefik.http.services.whoami.loadbalancer.passhostheader=true
 
       ## Servis
-      - traefik.http.routers.whoami.service=whoami
+      #- traefik.http.routers.whoami.service=whoami
       ## The router 'whoami' will forward request to service api@internal
       #- traefik.http.routers.whoami.service=api@internal
 
@@ -60,7 +60,7 @@ services:
 
       ## TLS
 #      - traefik.http.routers.whoami.tls=true
-#      - traefik.http.routers.whoami.entrypoints=https
+      #- traefik.http.routers.whoami.entrypoints=https
 
       ## LetsEncrypt
       #- traefik.http.routers.whoami.tls.certresolver=default
