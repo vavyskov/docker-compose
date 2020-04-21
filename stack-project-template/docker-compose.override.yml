@@ -9,18 +9,23 @@ services:
   nginx:
     image: vavyskov/nginx:${NGINX_VERSION:-1.17-php-fpm-alpine3.10}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_nginx
+#    hostname: ${PROJECT_HOSTNAME:-project.example.com}
+#    hostname: project_nginx (docker service name)
     volumes:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
       - html_data:${PROJECT_ROOT:-/var/www/html}:nocopy
+#      - /etc/ss/path:/etc/ssl/path:ro
       #- ./logs:/var/log
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
-      - php-fpm
+      - ${COMPOSE_PROJECT_NAME:-project}_php-fpm
     environment:
       NGINX_ROOT: ${NGINX_ROOT:-/var/www/html/public}
-      ## Hostname: php-fpm (docker service name)
       NGINX_FASTCGI_HOSTNAME: ${NGINX_FASTCGI_HOSTNAME:-php-fpm}
       NGINX_FASTCGI_PORT: ${NGINX_FASTCGI_PORT:-9000}
+#      CERTIFICATE_PATH: ${CERTIFICATE_PATH:-/etc/ssl/path}
+#      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME:-project-example-com.crt}
+#      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME:-project-example-com.key}
     ## Docker Config - store non-sensitive data as configuration files (not encrypted)
     ## cat nginx.conf | docker config create project_nginx.conf -
     #configs:
@@ -45,19 +50,27 @@ services:
           #- node.hostname == serverhostname
     labels:
       - traefik.enable=true
-      - traefik.http.services.nginx.loadbalancer.server.port=80
-#      - traefik.http.routers.nginx.service=nginx
-      - traefik.http.routers.nginx.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`)
-      #- traefik.http.routers.nginx.tls=true
-#      - traefik.http.routers.nginx.entrypoints=https
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_nginx.loadbalancer.server.port=80
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.service=nginx
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`)
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.tls=true
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.entrypoints=https
+    #healthcheck:
+    #  test: curl --fail -s http://localhost:5000/ || exit 1
+    #  ##test: "/usr/bin/curl --silent --fail -o /dev/null -w %{http_code} http://localhost:9200 || exit 1"
+    #  ##test: "/bin/nc -z -w3 localhost 5000 || exit 1"
+    #  ##interval: 1m30s
+    #  interval: 30s
+    #  timeout: 10s
+    #  retries: 3
 
   ssh:
     image: vavyskov/ssh:${SSH_VERSION:-php7.4-cli-alpine3.11}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_ssh
-    #hostname: "web_app_ssh"
+    #hostname: project_ssh (docker service name)
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
-      - php-fpm
+      - ${COMPOSE_PROJECT_NAME:-project}_php-fpm
     environment:
       PROJECT_MODE: ${PROJECT_MODE:-dev}
       SSH_HOME: ${SSH_HOME:-/var/www}
@@ -89,11 +102,11 @@ services:
     volumes:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
       - html_data:${PROJECT_ROOT:-/var/www/html}:nocopy
-      #- ~/.ssh:${SSH_HOME:-/var/www}/.shared/.ssh:ro
-      #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
+#      - ~/.ssh:${SSH_HOME:-/var/www}/.shared/.ssh:ro
+#      - ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
     #working_dir: /var/www/html
     deploy:
-#      mode: replicated
+      #mode: replicated
       replicas: 1
 
   mariadb:
@@ -117,21 +130,21 @@ services:
     #restart: always
     deploy:
       replicas: 1
-#      update_config:
-#        failure_action: rollback
-#        parallelism: 1
-#        delay: 5s
-#      restart_policy:
-#        condition: on-failure
-#        delay: 5s
-#        max_attempts: 3
-#      resources:
-#        limits:
-#          cpus: '0.1'
-#          memory: 2G
-#        reservations:
-#          cpus: '0.0001'
-#          memory: 50M
+      #update_config:
+      #  failure_action: rollback
+      #  parallelism: 1
+      #  delay: 5s
+      #restart_policy:
+      #  condition: on-failure
+      #  delay: 5s
+      #  max_attempts: 3
+      #resources:
+      #  limits:
+      #    cpus: '0.1'
+      #    memory: 2G
+      #  reservations:
+      #    cpus: '0.0001'
+      #    memory: 50M
 
   postgres:
     image: postgres:${POSTGRES_VERSION:-12.2-alpine}
@@ -153,25 +166,28 @@ services:
     #restart: always
     deploy:
       replicas: 1
-#      update_config:
-#        failure_action: rollback
-#        parallelism: 1
-#        delay: 5s
-#      restart_policy:
-#        condition: on-failure
-#        delay: 5s
-#        max_attempts: 3
-#      resources:
-#        limits:
-#          cpus: '0.1'
-#          memory: 2G
-#        reservations:
-#          cpus: '0.0001'
-#          memory: 50M
+      #update_config:
+      #  failure_action: rollback
+      #  parallelism: 1
+      #  delay: 5s
+      #restart_policy:
+      #  condition: on-failure
+      #  delay: 5s
+      #  max_attempts: 3
+      #resources:
+      #  limits:
+      #    cpus: '0.1'
+      #    memory: 2G
+      #  reservations:
+      #    cpus: '0.0001'
+      #    memory: 50M
 
   mailcatcher:
     image: vavyskov/mailcatcher:${MAILCATCHER_VERSION:-alpine3.11}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_mailcatcher
+    #hostname: project_mailcatcher (docker service name)
+    #hostname: ${MAILCATCHER_HOSTNAME:-mailcatcher.example.com}
+    #hostname: ${MAILCATCHER_HOSTNAME:-project.example.com} # /mailcatcher
     ports:
       - target: 80
         published: ${MAILCATCHER_PORT:-1081}
@@ -186,16 +202,19 @@ services:
           - node.role == manager
     labels:
       - traefik.enable=true
-      - traefik.http.services.mailcatcher.loadbalancer.server.port=80
-#      - traefik.http.routers.mailcatcher.service=mailcatcher
-      - traefik.http.routers.mailcatcher.rule=Host(`${MAILCATCHER_HOSTNAME:-mailcatcher.example.com}`)
-      #- traefik.http.routers.mailcatcher.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`) && Path(`${MAILCATCHER_PATH:-/mailcatcher}`)
-      #- traefik.http.routers.mailcatcher.tls=true
-#      - traefik.http.routers.mailcatcher.entrypoints=https
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.loadbalancer.server.port=80
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.service=mailcatcher
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.rule=Host(`${MAILCATCHER_HOSTNAME:-mailcatcher.example.com}`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`) && Path(`${MAILCATCHER_PATH:-/mailcatcher}`)
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.tls=true
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.entrypoints=https
 
   adminer:
     image: adminer:${ADMINER_VERSION:-4.7-standalone}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_adminer
+    #hostname: project_adminer (docker service name)
+    #hostname: ${MAILCATCHER_HOSTNAME:-mailcatcher.example.com}
+    #hostname: ${MAILCATCHER_HOSTNAME:-project.example.com} # /mailcatcher
     ports:
       - target: 8080
         published: ${ADMINER_PORT:-8084}
@@ -209,12 +228,12 @@ services:
           - node.role == manager
     labels:
       - traefik.enable=true
-      - traefik.http.services.adminer.loadbalancer.server.port=8080
-#      - traefik.http.routers.adminer.service=adminer
-      #- traefik.http.routers.adminer.rule=Host(`${ADMINER_HOSTNAME:-adminer.example.com}`)
-      - traefik.http.routers.adminer.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`) && Path(`${ADMINER_PATH:-/adminer}`)
-      #- traefik.http.routers.adminer.tls=true
-#      - traefik.http.routers.adminer.entrypoints=https
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_adminer.loadbalancer.server.port=8080
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.service=adminer
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.rule=Host(`${ADMINER_HOSTNAME:-adminer.example.com}`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`) && Path(`${ADMINER_PATH:-/adminer}`)
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.tls=true
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.entrypoints=https
 
 networks:
   frontend_network:

@@ -10,11 +10,17 @@ services:
   nginx:
     image: vavyskov/nginx:1.17-php-fpm-alpine3.10
     container_name: lepp_nginx
+#    hostname: lepp.example.com
     volumes:
       - html_data:/var/www/html:nocopy
+#      - /etc/ss/path:/etc/ssl/path:ro
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
-      - php-fpm
+      - lepp_php-fpm
+#    environment:
+#      CERTIFICATE_PATH: ${CERTIFICATE_PATH:-/etc/ssl/path}
+#      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME:-project-example-com.crt}
+#      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME:-project-example-com.key}
     ports:
       - target: 80
         published: ${NGINX_PORT:-8088}
@@ -37,7 +43,7 @@ services:
     container_name: lepp_ssh
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
-      - php-fpm
+      - lepp_php-fpm
     environment:
       PROJECT_MODE: dev
       SSH_USER: stacklepp
