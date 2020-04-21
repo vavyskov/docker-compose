@@ -1,4 +1,4 @@
-# Stack Project Template
+# PROJECT template
 
 Content:
 - Linux
@@ -8,10 +8,6 @@ Content:
 - PHP
 - Mailcatcher
 - Adminer
-
-Other stacks:
-- LEPP (Linux (E)Nginx PostgreSQL PHP) 
-- LEMP (Linux (E)Nginx MySQL/MariaDB PHP)
 
 ## Quick start (docker-compose)
 

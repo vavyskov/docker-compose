@@ -16,14 +16,16 @@ services:
 #      - /etc/ss/path:/etc/ssl/path:ro
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
-      - lepp_php-fpm
+      - php-fpm
 #    environment:
 #      CERTIFICATE_PATH: ${CERTIFICATE_PATH:-/etc/ssl/path}
 #      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME:-project-example-com.crt}
 #      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME:-project-example-com.key}
     ports:
       - target: 80
-        published: ${NGINX_PORT:-8088}
+        published: 8088
+      - target: 443
+        published: 448
     networks:
       - frontend_network
       - lepp_network
@@ -43,7 +45,7 @@ services:
     container_name: lepp_ssh
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
-      - lepp_php-fpm
+      - php-fpm
     environment:
       PROJECT_MODE: dev
       SSH_USER: stacklepp

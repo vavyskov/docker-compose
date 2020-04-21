@@ -1,4 +1,10 @@
-# Stack LEPP (Linux (E)Nginx PostgreSQL PHP)
+# Project LEPP
+
+Content:
+- Linux
+- (E)Nginx
+- PostgreSQL
+- PHP
 
 ## Quick start (docker-compose)
 1. Clone or download this repository

@@ -4,13 +4,15 @@
 version: '3.5'
 
 services:
-  whoami-2:
+  whoami:
     image: containous/whoami:${WHOAMI_VERSION:-v1.4.0}
     container_name: ${COMPOSE_PROJECT_NAME:-whoami-2}_whoami-2
     hostname: whoami-2.example.com
     ports:
       - target: 80
         published: ${WHOAMI_PORT:-8086}
+      - target: 443
+        published: ${WHOAMI_PORT_SSL:-445}
     networks:
       - frontend_network
     deploy:

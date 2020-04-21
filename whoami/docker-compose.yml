@@ -9,6 +9,8 @@ services:
     ports:
       - target: 80
         published: ${WHOAMI_PORT:-8082}
+      - target: 443
+        published: ${WHOAMI_PORT_SSL:-444}
     networks:
       - frontend_network
     deploy:

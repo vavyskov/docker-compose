@@ -18,7 +18,7 @@ services:
       #- ./logs:/var/log
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
-      - ${COMPOSE_PROJECT_NAME:-project}_php-fpm
+      - php-fpm
     environment:
       NGINX_ROOT: ${NGINX_ROOT:-/var/www/html/public}
       NGINX_FASTCGI_HOSTNAME: ${NGINX_FASTCGI_HOSTNAME:-php-fpm}
@@ -36,7 +36,7 @@ services:
         published: ${NGINX_PORT:-8083}
         #mode: host
       - target: 443
-        published: ${NGINX_PORT_SSL:-444}
+        published: ${NGINX_PORT_SSL:-447}
         #mode: host
     networks:
       - frontend_network
@@ -70,7 +70,7 @@ services:
     #hostname: project_ssh (docker service name)
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
-      - ${COMPOSE_PROJECT_NAME:-project}_php-fpm
+      - php-fpm
     environment:
       PROJECT_MODE: ${PROJECT_MODE:-dev}
       SSH_HOME: ${SSH_HOME:-/var/www}

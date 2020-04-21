@@ -1,4 +1,4 @@
-# Stack Standalone 
+# Project ALONE 
 
 Content:
 - Traefik !!!
