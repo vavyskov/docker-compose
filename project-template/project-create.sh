@@ -110,10 +110,12 @@ if [ $SWARM_MODE = true ]; then
             docker secret rm "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" >/dev/null
         fi
 
-        ## Create new secret (remove line break ???)
+        ## Create new secret
         echo "$SECRET_VALUE" | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
-        #echo "$SECRET_VALUE" | tr -d '\r\n' | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
-        #echo "$SECRET_VALUE" | tr -d '\r' | tr -d '\n' | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
+        ## Create new secret (remove line break and trim whitespace)
+        ## Example: echo 'rn=rn \r \n ' | hexdump -C
+        ## Example: echo 'rn=rn \r \n ' | sed 's/\\r//g' | sed 's/\\n//g' | xargs | hexdump -C
+        #echo "$SECRET_VALUE" | sed 's/\\r//g' | sed 's/\\n//g' | xargs | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
     done < .env
 fi
 
