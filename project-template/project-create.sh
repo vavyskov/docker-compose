@@ -2,54 +2,7 @@
 set -e
 
 ##
-## Update images and create (compose) project stack
-##
-
-FILENAME='.env'
-
-## Convert .env to secrets
-while read -r line; do
-
-    ## Eliminate any lines that are empty, or start with # (comments)
-    if [ -z "$line" ] || [ "$line" != "$(echo "$line" | sed '/^#/d')" ]; then
-        continue
-    fi
-
-    ## Split the line by '=' and change name to lower characters
-    SECRET_NAME=$(echo "$line" | cut -d= -f1 | tr '[:upper:]' '[:lower:]')
-    SECRET_VALUE=$(echo "$line" | cut -d= -f2)
-
-    ## .sh variables
-    if [ "$SECRET_NAME" = 'compose_project_name' ]; then
-        COMPOSE_PROJECT_NAME="$SECRET_VALUE"
-    fi
-
-## ToDo: Detect swarm
-    ## Remove old secret
-#    if [ "$(docker secret ls | grep "$SECRET_NAME")" != "" ]; then
-#        docker secret rm "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" >/dev/null
-#    fi
-
-## ToDo: Detect swarm
-    ## Create new secret (remove line break ???)
-#    echo "$SECRET_VALUE" | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
-    #echo "$SECRET_VALUE" | tr -d '\r\n' | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
-    #echo "$SECRET_VALUE" | tr -d '\r' | tr -d '\n' | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
-
-## ToDo: Remove this break
-break
-
-done < $FILENAME
-
-## .env variables
-#COMPOSE_PROJECT_NAME=project
-
-## .sh variables
-NETWORK_FRONTEND=frontend_network
-NETWORK_PROJECT="${COMPOSE_PROJECT_NAME}_network"
-
-##
-## Get variables UI
+## Update Docker images and create Docker project
 ##
 
 ## Check Docker daemon
@@ -60,7 +13,27 @@ if [ "$(docker ps 1>/dev/null 2>/dev/null; echo $?)" != 0 ]; then
     exit
 fi
 
-## Update images
+## Check .env file
+if [ ! -f .env ]; then
+    printf "\r\n%sFile '.env' does not exist.%s\r\n\r\n" \
+    "$(tput setaf 1)" "$(tput sgr 0)"
+    exit
+else
+    ## Get COMPOSE_PROJECT_NAME variable (exists, not comment, not empty)
+    if [ -n "$(cat < .env | grep COMPOSE_PROJECT_NAME= | sed '/^#/d' | cut -d= -f2)" ]; then
+        COMPOSE_PROJECT_NAME=$(cat < .env | grep COMPOSE_PROJECT_NAME= | cut -d= -f2)
+    else
+        printf "\r\n%s'COMPOSE_PROJECT_NAME' variable is not set.%s\r\n\r\n" \
+        "$(tput setaf 1)" "$(tput sgr 0)"
+        exit
+    fi
+fi
+
+##
+## Get variables from UI
+##
+
+## Update Docker images?
 printf "\r\n%sDo you want to update stack images? (yes/no)%s [%syes%s]:\r\n" \
 "$(tput setaf 2)" "$(tput sgr 0)" "$(tput setaf 3)" "$(tput sgr 0)"
 while
@@ -88,7 +61,7 @@ do
     esac
 done
 
-## Docker Swarm mode with active leader
+## Docker Swarm mode with active leader?
 if [ "$(docker node ls 1>/dev/null 2>/dev/null; echo $?)" = 0 ] \
 && [ "$(docker node ls 2>/dev/null | grep Leader | grep Active)" != "" ]; then
     printf "\r\n%sDo you want to use Docker Swarm mode? (yes/no)%s [%syes%s]:\r\n" \
@@ -101,7 +74,7 @@ if [ "$(docker node ls 1>/dev/null 2>/dev/null; echo $?)" = 0 ] \
     do
         case $SWARM_MODE in
             [Yy]*|'')
-                if [ "$UPDATE" = '' ]; then
+                if [ "$SWARM_MODE" = '' ]; then
                     tput cuu 1
                     tput cuf 2
                     echo 'yes'
@@ -119,21 +92,53 @@ if [ "$(docker node ls 1>/dev/null 2>/dev/null; echo $?)" = 0 ] \
     done
 fi
 
+## Convert .env file to secrets
+printf "\r\nConverting '.env' file to secrets...\r\n"
+if [ $SWARM_MODE = true ]; then
+    while read -r line; do
+        ## Eliminate any lines that are empty, or start with # (comments)
+        if [ -z "$line" ] || [ "$line" != "$(echo "$line" | sed '/^#/d')" ]; then
+            continue
+        fi
+
+        ## Split the line by '=' and change name to lower characters
+        SECRET_NAME=$(echo "$line" | cut -d= -f1 | tr '[:upper:]' '[:lower:]')
+        SECRET_VALUE=$(echo "$line" | cut -d= -f2)
+
+        ## Remove old secret
+        if [ "$(docker secret ls | grep "$SECRET_NAME")" != "" ]; then
+            docker secret rm "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" >/dev/null
+        fi
+
+        ## Create new secret (remove line break ???)
+        echo "$SECRET_VALUE" | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
+        #echo "$SECRET_VALUE" | tr -d '\r\n' | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
+        #echo "$SECRET_VALUE" | tr -d '\r' | tr -d '\n' | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
+    done < .env
+fi
+
 ##
 ## Create project
 ##
+
+## .sh variables
+NETWORK_FRONTEND=frontend_network
+NETWORK_PROJECT="${COMPOSE_PROJECT_NAME}_network"
 
 ## New line
 printf "\r\n"
 
 ## Update images
 if [ $UPDATE = true ]; then
-    docker-compose pull
+    printf "Pulling images...\r\n"
+    docker-compose pull 2>/dev/null
 fi
 
-## Create network
-## $1 network name
-## $2 network driver
+##
+## Create networks
+##
+## $1 ~ network name
+## $2 ~ network driver
 ## https://linuxize.com/post/bash-functions/
 create_network() {
     if [ "$(docker network ls | grep "$1" | grep -v "$2")" != "" ]; then
@@ -144,19 +149,22 @@ create_network() {
     fi
 }
 
-## Create networks
-## https://linuxize.com/post/bash-for-loop/
+## Set network driver
 if [ $SWARM_MODE != true ]; then
     NETWORK_DRIVER=bridge
 else
     NETWORK_DRIVER=overlay
 fi
+
+## https://linuxize.com/post/bash-for-loop/
 for i in $NETWORK_FRONTEND $NETWORK_PROJECT
 do
   create_network "$i" $NETWORK_DRIVER
 done
 
+##
 ## Create project
+##
 if [ $SWARM_MODE != true ]; then
     docker-compose up -d
 else
@@ -169,7 +177,7 @@ fi
 
 
 
-
+##
 ## tput
 ##
 ## Foreground & background colour commands:
