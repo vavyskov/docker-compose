@@ -23,6 +23,22 @@ This git repository allows you to run defined applications in Docker or Docker S
 
 Stacks "whoami" and "stack-project-template" offer the most documentation.
 
+## Commands
+
+Show all used ports: 
+
+    docker ps -q | xargs -n1 docker port | cut -d: -f2 | sort -n
+    docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}" -a
+    docker ps -q | xargs -n 1 docker inspect -f '{{ .Name }} {{range $p, $conf := .NetworkSettings.Ports}} {{$p}}{{end}}' | sed 's#^/##'
+
+Summary of the currently used space
+
+    docker system df
+    
+Resource usage statistics
+
+    docker stats
+
 ## ToDo
 
 - otestovat změnu hesla u existujících databází (případně i změnu uživatele a název databáze)
