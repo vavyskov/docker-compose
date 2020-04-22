@@ -68,7 +68,7 @@ networks:
 
 volumes:
   portainer_data:
-    #driver_opts:
-    #  type: nfs
-    #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-    #  device: :${NFS_PATH:-/media/nfs_docker/dev/portainer/volumes/portainer_data}
+#    driver_opts:
+#      type: nfs
+#      o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
+#      device: :${NFS_PATH:-/media/nfs_docker/dev/portainer/volumes/portainer_data}

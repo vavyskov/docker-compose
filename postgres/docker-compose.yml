@@ -32,7 +32,7 @@ networks:
 
 volumes:
   postgres_data:
-    #driver_opts:
-    #  type: nfs
-    #  o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-    #  device: :${NFS_PATH:-/media/nfs_docker/dev/postgres/volumes/postgres_data}
+#    driver_opts:
+#      type: nfs
+#      o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
+#      device: :${NFS_PATH:-/media/nfs_docker/dev/postgres/volumes/postgres_data}
