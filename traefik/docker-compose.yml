@@ -35,7 +35,7 @@ services:
       ## Traefik will listen to incoming request on the port 80 (HTTP - custom name)
       - --entrypoints.http.address=:80
       ## Traefik will listen to incoming request on the port 443 (HTTPS - custom name)
-#      - --entrypoints.https.address=:443
+      - --entrypoints.https.address=:443
 
       ## Traefik will listen to incoming request on the port 3306 (MySQL - custom name)
       #- --entrypoints.mysql.address=:3306
