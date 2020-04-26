@@ -6,12 +6,14 @@
 
 tls:
   certificates:
-    - certFile: /etc/ssl/path/whoami.crt
-      keyFile: /etc/ssl/path/whoami.key
+    - certFile: /etc/ssl/path/project-example-com.crt
+      keyFile: /etc/ssl/path/project-example-com.key
+    - certFile: /etc/ssl/path/traefik-example-com.crt
+      keyFile: /etc/ssl/path/traefik-example-com.key
+    - certFile: /etc/ssl/path/whoami-example-com.crt
+      keyFile: /etc/ssl/path/whoami-example-com.key
 #    - certFile: /etc/ssl/path/portainer.crt
 #      keyFile: /etc/ssl/path/portainer.key
-#    - certFile: /etc/ssl/path/traefik.crt
-#      keyFile: /etc/ssl/path/traefik.key
 #  stores:
 #    default:
 #      defaultCertificate:

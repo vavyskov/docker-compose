@@ -19,18 +19,16 @@ services:
             - node.role == manager
     labels:
       - traefik.enable=true
-      - traefik.http.services.visualizer.loadbalancer.server.port=8080
-      #- traefik.http.services.visualizer.loadbalancer.passhostheader=true
-      - traefik.http.routers.visualizer.service=visualizer
-      - traefik.http.routers.visualizer.rule=Host(`visualizer.example.com`)
-      #- traefik.http.routers.visualizer.rule=Host(`visualizer.example.com`) && Path(`/visualizer`)
-      #- traefik.http.routers.whoami.rule=Host(`visualizer.example.com`) && PathPrefix(`/visualizer`)
-#      - traefik.http.routers.visualizer.tls=true
-#      - traefik.http.routers.visualizer.entrypoints=https
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-visualizer}_visualizer.loadbalancer.server.port=8080
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-visualizer}_visualizer.rule=Host(`visualizer.example.com`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-visualizer}_visualizer.rule=Host(`visualizer.example.com`) && Path(`/visualizer`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-visualizer}_visualizer.rule=Host(`visualizer.example.com`) && PathPrefix(`/visualizer`)
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-visualizer}_visualizer.tls=true
+
       ## BasicAuth (BCrypt or MD5 not SHA1) - https://www.htaccesstools.com/htpasswd-generator/
-      - traefik.http.routers.visualizer.middlewares=authvisualizer
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-visualizer}_visualizer.middlewares=${COMPOSE_PROJECT_NAME:-visualizer}_auth-users
       ## In password type $ as $$
-      - traefik.http.middlewares.authvisualizer.basicauth.users=visualizer:$$2y$$10$$uLQiFnpnlXso2it40SpzgOkvBsSEu34qMD6X1hvFVHB6qZgbfRRQu
+      - traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-visualizer}_auth-users.basicauth.users=visualizer:$$2y$$10$$uLQiFnpnlXso2it40SpzgOkvBsSEu34qMD6X1hvFVHB6qZgbfRRQu
 
 networks:
   frontend_network:

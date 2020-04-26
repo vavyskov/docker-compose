@@ -5,9 +5,9 @@ set -e
 ## Update Docker images and create Docker project
 ##
 
-## Check Docker daemon
-if [ "$(docker ps 1>/dev/null 2>/dev/null; echo $?)" != 0 ]; then
-    printf "\r\n%sCannot connect to the Docker daemon. Is the docker daemon running?%s\r\n\r\n" \
+## Check Docker Daemon
+if [ "$(docker container ls 1>/dev/null 2>/dev/null; echo $?)" != 0 ]; then
+    printf "\r\n%sCannot connect to the 'Docker Daemon'. Is the Docker Daemon running?%s\r\n\r\n" \
     "$(tput setaf 1)" "$(tput sgr 0)"
 
     exit
@@ -55,7 +55,7 @@ do
             UPDATE=false
             break
         ;;
-        * )
+        *)
             echo "Answer '$(tput setaf 2)yes$(tput sgr 0)' or '$(tput setaf 2)no$(tput sgr 0)'."
         ;;
     esac
@@ -85,7 +85,7 @@ if [ "$(docker node ls 1>/dev/null 2>/dev/null; echo $?)" = 0 ] \
             [Nn]*)
                 break
             ;;
-            * )
+            *)
                 echo "Answer '$(tput setaf 2)yes$(tput sgr 0)' or '$(tput setaf 2)no$(tput sgr 0)'."
             ;;
         esac

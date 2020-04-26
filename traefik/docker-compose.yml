@@ -87,6 +87,7 @@ services:
       ## Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
       ## Custom certificates (set path also in dynamic/certificates.yml)
+#      - ./certificates:/etc/ssl/path:ro
 #      - /etc/ssl/path:/etc/ssl/path:ro
 #      - ./dynamic/certificates.yml:/etc/traefik/dynamic/certificates.yml:ro
       ## Create a letsencrypt dir within the folder where the docker-compose file is
@@ -125,54 +126,50 @@ services:
     ## Dynamic section
     labels:
       - traefik.enable=true
-      - traefik.http.services.traefik.loadbalancer.server.port=8080
-      #- traefik.http.services.traefik.loadbalancer.passhostheader=true
-      #- traefik.http.routers.traefik.service=traefik
-      ## The router 'traefik' will forward request to service api@internal
-      #- traefik.http.routers.traefik.service=api@internal
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-traefik}_traefik.loadbalancer.server.port=8080
+      #- traefik.http.services.${COMPOSE_PROJECT_NAME:-traefik}_traefik.loadbalancer.passhostheader=true
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.service=${COMPOSE_PROJECT_NAME:-traefik}_traefik
+      ## The router 'traefik_traefik' will forward request to service api@internal
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.service=api@internal
 
-      - traefik.http.routers.traefik.rule=Host(`traefik.example.com`)
-      #- traefik.http.routers.traefik.rule=Host(`traefik.example.com`) && Path(`/traefik`)
-      #- traefik.http.routers.traefik.rule=Host(`traefik.example.com`) && PathPrefix(`/traefik`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.rule=Host(`traefik.example.com`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.rule=Host(`traefik.example.com`) && Path(`/traefik`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.rule=Host(`traefik.example.com`) && PathPrefix(`/traefik`)
 
-#      - traefik.http.routers.traefik.tls=true
-      #- traefik.http.routers.traefik.entrypoints=https
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.tls=true
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.entrypoints=https
 
       ## Tell Traefik, that for router 'traefik' should use following middleware
       ## BasicAuth (BCrypt or MD5 not SHA1) - https://www.htaccesstools.com/htpasswd-generator/
-      - traefik.http.routers.traefik.middlewares=authtraefik
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.middlewares=${COMPOSE_PROJECT_NAME:-traefik}_auth-users
       ## In password type $ as $$
-      - traefik.http.middlewares.authtraefik.basicauth.users=traefik:$$2y$$10$$MxGYZbTQLhcfs40HR9wkLuzqYCwCtjVzGfhguf0RTk6sQQrRQqJS2
-      #- traefik.http.middlewares.authtraefik.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/
-      #- traefik.http.middlewares.authtraefik.basicauth.users=admin:$$2y$$05$$1OX5jZ1Kpm/iVKE8tgUhu.STmPkgi0lLxVeP5yEcRioFdV4mcgdTu
+      - traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_auth-users.basicauth.users=traefik:$$2y$$10$$MxGYZbTQLhcfs40HR9wkLuzqYCwCtjVzGfhguf0RTk6sQQrRQqJS2
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_auth-users.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_auth-users.basicauth.users=admin:$$2y$$05$$1OX5jZ1Kpm/iVKE8tgUhu.STmPkgi0lLxVeP5yEcRioFdV4mcgdTu
 
       ## Global redirection - this creates the redirect middleware and redirects all http requests to https
-#      - traefik.http.routers.http-catchall.entrypoints=http
-#      - traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)
-      ##- traefik.http.routers.http-catchall.rule=HostRegexp(`{any:.*}`)
-#      - traefik.http.routers.http-catchall.middlewares=redirect-to-https
-#      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
-
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.entrypoints=http
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.rule=hostregexp(`{host:.+}`)
+      ##- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.rule=HostRegexp(`{any:.*}`)
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.middlewares=${COMPOSE_PROJECT_NAME:-traefik}_redirect-to-https
+#      - traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_redirect-to-https.redirectscheme.scheme=https
 
       ## Middlewares: Strip prefix
-      #- traefik.http.middlewares.traefik-strip-prefix.stripprefix.prefixes=/traefik
-      #- traefik.http.middlewares.traefik-strip-prefix.stripprefix.forceslash=false
-      #- traefik.http.routers.traefik.middlewares=traefik-strip-prefix@docker
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_strip-prefix.stripprefix.prefixes=/traefik
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_strip-prefix.stripprefix.forceslash=false
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.middlewares=${COMPOSE_PROJECT_NAME:-traefik}_strip-prefix@docker
 
+      ## Chain middlewares (traefik_https-only + traefik_auth-users + traefik_known-ips)
+      #- "traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_secured.chain.middlewares=${COMPOSE_PROJECT_NAME:-traefik}_https-only,${COMPOSE_PROJECT_NAME:-traefik}_known-ips,${COMPOSE_PROJECT_NAME:-traefik}_auth-users"
+      #- "traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_https-only.redirectscheme.scheme=https"
+      #- "traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_auth-users.basicauth.users=test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"
+      #- "traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_known-ips.ipwhitelist.sourceRange=192.168.1.7,127.0.0.1/32"
 
-      #- "traefik.http.middlewares.secured.chain.middlewares=https-only,known-ips,auth-users"
-      #- "traefik.http.middlewares.auth-users.basicauth.users=test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"
-      #- "traefik.http.middlewares.https-only.redirectscheme.scheme=https"
-      #- "traefik.http.middlewares.known-ips.ipwhitelist.sourceRange=192.168.1.7,127.0.0.1/32"
-
-      #- traefik.http.middlewares.secured.chain.middlewares=foo-add-prefix,auth
-
-      #- traefik.http.middlewares.add-foo.addprefix.prefix=/foo
-
-      ## Create a middleware named `foo-add-prefix`
-      #- "traefik.http.middlewares.foo-add-prefix.addprefix.prefix=/traefik/dashboard"
-      ## Apply the middleware named `foo-add-prefix` to the router named `traefik`
-      #- "traefik.http.routers.traefik.middlewares=foo-add-prefix@docker"
+      ## Middlewares: Add prefix
+      ## Create a middleware named `traefik_add-prefix`
+      #- "traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_add-prefix.addprefix.prefix=/traefik/dashboard"
+      ## Apply the middleware named `traefik_add-prefix` to the router named `traefik_traefik`
+      #- "traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.middlewares=${COMPOSE_PROJECT_NAME:-traefik}_add-prefix@docker"
 
 networks:
   frontend_network:

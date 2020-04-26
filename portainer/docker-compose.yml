@@ -41,24 +41,20 @@ services:
           - node.role == manager
     labels:
       - traefik.enable=true
-      - traefik.http.services.portainer.loadbalancer.server.port=9000
-      - traefik.http.routers.portainer.service=portainer
-
-      - traefik.http.routers.portainer.rule=Host(`portainer.example.com`)
-      #- traefik.http.routers.portainer.rule=Host(`portainer.example.com`) && Path(`/portainer`)
-      #- traefik.http.routers.portainer.rule=Host(`portainer.example.com`) && PathPrefix(`/portainer`)
-
-#      - traefik.http.routers.portainer.tls=true
-#      - traefik.http.routers.portainer.entrypoints=https
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-portainer}_portainer.loadbalancer.server.port=9000
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-portainer}_portainer.rule=Host(`portainer.example.com`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-portainer}_portainer.rule=Host(`portainer.example.com`) && Path(`/portainer`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-portainer}_portainer.rule=Host(`portainer.example.com`) && PathPrefix(`/portainer`)
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-portainer}_portainer.tls=true
 
       ## Middlewares: Strip prefix
-      #- traefik.http.middlewares.portainer-strip-prefix.stripprefix.prefixes=/portainer
-      #- traefik.http.middlewares.portainer-strip-prefix.stripprefix.forceslash=false
-      #- traefik.http.routers.portainer.middlewares=portainer-strip-prefix@docker
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-portainer}_strip-prefix.stripprefix.prefixes=/portainer
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-portainer}_strip-prefix.stripprefix.forceslash=false
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-portainer}_portainer.middlewares=${COMPOSE_PROJECT_NAME:-portainer}_strip-prefix@docker
 
       ## Middlewares: Add prefix
-      #- traefik.http.middlewares.portainer-add-prefix.addprefix.prefix=/portainer
-      #- traefik.http.routers.portainer.middlewares=portainer-add-prefix@docker
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-portainer}_add-prefix.addprefix.prefix=/portainer
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-portainer}_portainer.middlewares=${COMPOSE_PROJECT_NAME:-portainer}_add-prefix@docker
 
 networks:
   frontend_network:

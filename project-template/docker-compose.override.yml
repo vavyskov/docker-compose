@@ -9,8 +9,8 @@ services:
   nginx:
     image: vavyskov/nginx:${NGINX_VERSION:-1.17-php-fpm-alpine3.10}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_nginx
-#    hostname: ${PROJECT_HOSTNAME:-project.example.com}
-#    hostname: project_nginx (docker service name)
+    #hostname: ${PROJECT_HOSTNAME:-project.example.com}
+    #hostname: project_nginx (docker service name)
     volumes:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
       - html_data:${PROJECT_ROOT:-/var/www/html}:nocopy
@@ -40,6 +40,9 @@ services:
         #mode: host
     networks:
       - frontend_network
+      #frontend_network:
+      #  aliases:
+      #    - ${PROJECT_HOSTNAME:-project.example.com}
       - project_network
     deploy:
       replicas: 1
@@ -51,10 +54,11 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_nginx.loadbalancer.server.port=80
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.service=nginx
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`)
-#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.tls=true
+#     - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.tls=true
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.service=${COMPOSE_PROJECT_NAME:-project}_nginx
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.entrypoints=https
+      #- traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_nginx.loadbalancer.passhostheader=true
     #healthcheck:
     #  test: curl --fail -s http://localhost:5000/ || exit 1
     #  ##test: "/usr/bin/curl --silent --fail -o /dev/null -w %{http_code} http://localhost:9200 || exit 1"
@@ -97,6 +101,8 @@ services:
       ## https://community.containo.us/t/routing-ssh-traffic-with-traefik-v2/717/13
       - target: 22
         published: ${SSH_PORT:-2222}
+      #- target: 9000
+      #  published: ${XDEBUG_PORT:-9004}
     networks:
       - project_network
     volumes:
@@ -108,6 +114,9 @@ services:
     deploy:
       #mode: replicated
       replicas: 1
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_ssh.loadbalancer.server.port=9000
 
   mariadb:
     image: mariadb:${MARIADB_VERSION:-10.4}
@@ -203,11 +212,11 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.loadbalancer.server.port=80
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.service=mailcatcher
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.rule=Host(`${MAILCATCHER_HOSTNAME:-mailcatcher.example.com}`)
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`) && Path(`${MAILCATCHER_PATH:-/mailcatcher}`)
 #      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.tls=true
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.entrypoints=https
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.service=mailcatcher
 
   adminer:
     image: adminer:${ADMINER_VERSION:-4.7-standalone}
@@ -229,11 +238,11 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_adminer.loadbalancer.server.port=8080
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.service=adminer
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.rule=Host(`${ADMINER_HOSTNAME:-adminer.example.com}`)
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`) && Path(`${ADMINER_PATH:-/adminer}`)
 #      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.tls=true
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.entrypoints=https
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.service=adminer
 
 networks:
   frontend_network:

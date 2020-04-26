@@ -5,7 +5,7 @@ services:
     # A container that exposes an API to show its IP address
     image: containous/whoami:${WHOAMI_VERSION:-v1.4.0}
     container_name: ${COMPOSE_PROJECT_NAME:-whoami}_whoami
-    hostname: whoami.example.com
+    #hostname: whoami.example.com
     ports:
       - target: 80
         published: ${WHOAMI_PORT:-8082}
@@ -35,50 +35,50 @@ services:
       - traefik.enable=true
 
       ## Load balancer (internal port)
-      - traefik.http.services.whoami.loadbalancer.server.port=80
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-whoami}_whoami.loadbalancer.server.port=80
 
-      #- traefik.http.services.whoami.loadbalancer.passhostheader=true
+      #- traefik.http.services.${COMPOSE_PROJECT_NAME:-whoami}_whoami.loadbalancer.passhostheader=true
 
       ## Servis
-      #- traefik.http.routers.whoami.service=whoami
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.service=${COMPOSE_PROJECT_NAME:-whoami}_whoami
       ## The router 'whoami' will forward request to service api@internal
-      #- traefik.http.routers.whoami.service=api@internal
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.service=api@internal
 
       ## The domain the service will respond to
-      - traefik.http.routers.whoami.rule=Host(`whoami.example.com`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.rule=Host(`whoami.example.com`)
       ## Path (Exact match)
-      #- traefik.http.routers.whoami.rule=Host(`whoami.example.com`) && Path(`/whoami`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.rule=Host(`whoami.example.com`) && Path(`/whoami`)
       ## PathPrefix (Prefix matcher)
-      #- traefik.http.routers.whoami.rule=Host(`whoami.example.com`) && PathPrefix(`/whoami`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.rule=Host(`whoami.example.com`) && PathPrefix(`/whoami`)
 
       ## Allow request from both predefined entry points "http" and "https"
-      #- traefik.http.routers.whoami.entrypoints=http,https
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.entrypoints=http,https
 
       ## Allow request only from the predefined entry point named "http"
-      #- traefik.http.routers.whoami.entrypoints=http
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.entrypoints=http
 
       ## Allow request only from the predefined entry point named "https"
-      #- traefik.http.routers.whoami.entrypoints=https
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.entrypoints=https
 
       ## TLS
-#      - traefik.http.routers.whoami.tls=true
-      #- traefik.http.routers.whoami.entrypoints=https
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.tls=true
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.entrypoints=https
 
       ## LetsEncrypt
-      #- traefik.http.routers.whoami.tls.certresolver=default
-      #- traefik.http.routers.whoami.tls.certresolver=letsencrypt
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.tls.certresolver=default
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.tls.certresolver=letsencrypt
 
       ## Redirection
-      #- traefik.http.routers.whoami.middlewares=redirect-to-https
-      #- traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.middlewares=${COMPOSE_PROJECT_NAME:-whoami}_redirect-to-https
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-whoami}_redirect-to-https.redirectscheme.scheme=https
 
-      #- traefik.http.middlewares.whoami.redirectscheme.scheme=https
-      #- traefik.http.middlewares.whoami.redirectscheme.permanent=true
-      #- traefik.http.middlewares.whoami.redirectscheme.port=443
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-whoami}_whoami.redirectscheme.scheme=https
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-whoami}_whoami.redirectscheme.permanent=true
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-whoami}_whoami.redirectscheme.port=443
 
       ## Middlewares: Add prefix
-      #- traefik.http.middlewares.add-foo.addprefix.prefix=/whoami
-      #- traefik.http.routers.whoami.middlewares=add-foo@docker
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-whoami}_add-foo.addprefix.prefix=/whoami
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.middlewares=${COMPOSE_PROJECT_NAME:-whoami}_add-foo@docker
 
 networks:
   frontend_network:

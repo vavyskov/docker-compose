@@ -25,11 +25,16 @@ Stacks "whoami" and "stack-project-template" offer the most documentation.
 
 ## Commands
 
-Show all used ports: 
+List all containers in a user-defined docker network e.g. "frontend_network"?
 
-    docker ps -q | xargs -n1 docker port | cut -d: -f2 | sort -n
-    docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}" -a
-    docker ps -q | xargs -n 1 docker inspect -f '{{ .Name }} {{range $p, $conf := .NetworkSettings.Ports}} {{$p}}{{end}}' | sed 's#^/##'
+    docker network inspect frontend_network | grep Name | tail -n +2 | cut -d':' -f2 | tr -d ',"'
+    docker inspect -f '{{json .Containers}}' frontend_network | python -m json.tool
+
+List all used ports (it does not work in Swarm mode): 
+
+    docker container ls -q | xargs -n1 docker port | cut -d: -f2 | sort -n
+    docker container ls --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}" -a
+    docker container ls -q | xargs -n 1 docker inspect -f '{{ .Name }} {{range $p, $conf := .NetworkSettings.Ports}} {{$p}}{{end}}' | sed 's#^/##'
 
 Summary of the currently used space
 
@@ -42,8 +47,9 @@ Resource usage statistics
 ## ToDo
 
 - otestovat změnu hesla u existujících databází (případně i změnu uživatele a název databáze)
-- project-delete.sh
-- stack-project-tamplate/stack-lemp
-- stack-standalone
+- project-template/project-delete.sh
+- project-standalone
+- project-lemp
+- Middlewares Prefix (/adminer, /pgadmin, /mailcatcher)
 - selenium
 - [healthcheck](https://docs.docker.com/engine/reference/builder/#healthcheck)

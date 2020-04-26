@@ -17,9 +17,11 @@ You can set environment variables in `.env` file.
           docker network create frontend_network
           (docker network create --attachable frontend_network)
           docker-compose up -d
-          
-          docker-compose -f whoami2.yml up -d
-          docker-compose -f whoami3.yml up -d
+ 
+      - You can set a different project name (default project name is the name of the current directory) by using flag `-p`, `--project-name` or by file `.env` (COMPOSE_PROJECT_NAME):
+    
+            docker-compose -p whoami-2 -f whoami-2.yml up -d
+            docker-compose -p whoami-3 -f whoami-3.yml up -d
 
     - Docker Swarm
 

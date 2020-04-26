@@ -14,15 +14,13 @@ services:
     deploy:
       replicas: 1
       placement:
-          constraints:
-            - node.role == manager
+        constraints:
+          - node.role == manager
     labels:
       - traefik.enable=true
-      - traefik.http.services.adminer.loadbalancer.server.port=8080
-      - traefik.http.routers.adminer.service=adminer
-      - traefik.http.routers.adminer.rule=Host(`example.com`) && Path(`/adminer`)
-      - traefik.http.routers.adminer.tls=true
-      - traefik.http.routers.adminer.entrypoints=https
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-adminer}_adminer.loadbalancer.server.port=8080
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-adminer}_adminer.rule=Host(`example.com`) && Path(`/adminer`)
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-adminer}_adminer.tls=true
 
 networks:
   frontend_network:

@@ -10,7 +10,7 @@ services:
   nginx:
     image: vavyskov/nginx:1.17-php-fpm-alpine3.10
     container_name: lepp_nginx
-#    hostname: lepp.example.com
+    #hostname: lepp.example.com
     volumes:
       - html_data:/var/www/html:nocopy
 #      - /etc/ss/path:/etc/ssl/path:ro
@@ -36,9 +36,9 @@ services:
           - node.role == manager
     labels:
       - traefik.enable=true
-      - traefik.http.services.lepp_nginx.loadbalancer.server.port=80
-      - traefik.http.routers.lepp_nginx.rule=Host(`lepp.example.com`)
-#      - traefik.http.routers.lepp_nginx.tls=true
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-lepp}_lepp_nginx.loadbalancer.server.port=80
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-lepp}_nginx.rule=Host(`lepp.example.com`)
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-lepp}_nginx.tls=true
 
   ssh:
     image: vavyskov/ssh:php7.4-cli-alpine3.11
