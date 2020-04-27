@@ -65,6 +65,9 @@ services:
 #      - ~/.gitconfig:/var/www/.shared/.gitconfig:ro
     deploy:
       replicas: 1
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-lepp}_ssh.loadbalancer.server.port=9000
 
   postgres:
     image: postgres:12.2-alpine
