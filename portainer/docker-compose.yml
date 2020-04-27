@@ -64,6 +64,7 @@ networks:
 
 volumes:
   portainer_data:
+    name: ${COMPOSE_PROJECT_NAME:-portainer}_portainer_data
 #    driver_opts:
 #      type: nfs
 #      o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw

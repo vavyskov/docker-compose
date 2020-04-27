@@ -47,6 +47,7 @@ networks:
 
 volumes:
   pgadmin_data:
+    name: ${COMPOSE_PROJECT_NAME:-pgadmin}_pgadmin_data
 #    driver_opts:
 #      type: nfs
 #      o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw

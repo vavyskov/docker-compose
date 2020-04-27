@@ -32,6 +32,7 @@ networks:
 
 volumes:
   postgres_data:
+    name: ${COMPOSE_PROJECT_NAME:-postgres}_postgres_data
 #    driver_opts:
 #      type: nfs
 #      o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
