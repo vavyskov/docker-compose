@@ -71,6 +71,7 @@ services:
   ssh:
     image: vavyskov/ssh:${SSH_VERSION:-php7.4-cli-alpine3.11}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_ssh
+#    hostname: ${PROJECT_HOSTNAME:-project.example.com}
     #hostname: project_ssh (docker service name)
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:

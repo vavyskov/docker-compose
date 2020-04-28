@@ -18,6 +18,9 @@ services:
     depends_on:
       - php-fpm
 #    environment:
+#      NGINX_ROOT: /var/www/html/public
+#      NGINX_FASTCGI_HOSTNAME: php-fpm
+#      NGINX_FASTCGI_PORT: 9000
 #      CERTIFICATE_PATH: ${CERTIFICATE_PATH:-/etc/ssl/path}
 #      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME:-project-example-com.crt}
 #      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME:-project-example-com.key}
@@ -36,24 +39,25 @@ services:
           - node.role == manager
     labels:
       - traefik.enable=true
-      - traefik.http.services.${COMPOSE_PROJECT_NAME:-lepp}_lepp_nginx.loadbalancer.server.port=80
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-lepp}_nginx.rule=Host(`lepp.example.com`)
-#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-lepp}_nginx.tls=true
+      - traefik.http.services.lepp_lepp_nginx.loadbalancer.server.port=80
+      - traefik.http.routers.lepp_nginx.rule=Host(`lepp.example.com`)
+#      - traefik.http.routers.lepp_nginx.tls=true
 
   ssh:
     image: vavyskov/ssh:php7.4-cli-alpine3.11
     container_name: lepp_ssh
+#    hostname: lepp.example.com
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
       - php-fpm
     environment:
       PROJECT_MODE: dev
-      SSH_USER: stacklepp
-      SSH_PASSWORD: stacklepp
+      SSH_USER: lepp
+      SSH_PASSWORD: lepp
       GIT_EMAIL: my@email.com
       GIT_NAME: My Name
       PROXY_SERVER: http://user:password@proxy.example.com:8080
-      XDEBUG_HOSTNAME: 192.168.99.100
+      XDEBUG_HOSTNAME: 192.168.99.107
     ports:
       - target: 22
         published: 2223
@@ -73,9 +77,9 @@ services:
     image: postgres:12.2-alpine
     container_name: lepp_postgres
     environment:
-      POSTGRES_USER: stacklepp
-      POSTGRES_PASSWORD: stacklepp
-      POSTGRES_DB: stacklepp
+      POSTGRES_USER: lepp
+      POSTGRES_PASSWORD: lepp
+      POSTGRES_DB: lepp
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
