@@ -19,10 +19,10 @@ services:
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
       - php-fpm
-    environment:
-      NGINX_ROOT: ${NGINX_ROOT:-/var/www/html/public}
-      NGINX_FASTCGI_HOSTNAME: ${NGINX_FASTCGI_HOSTNAME:-php-fpm}
-      NGINX_FASTCGI_PORT: ${NGINX_FASTCGI_PORT:-9000}
+#    environment:
+      #NGINX_ROOT: ${NGINX_ROOT:-/var/www/html/public}
+      #FASTCGI_HOSTNAME: ${FASTCGI_HOSTNAME:-php-fpm}
+      #FASTCGI_PORT: ${FASTCGI_PORT:-9001}
 #      CERTIFICATE_PATH: ${CERTIFICATE_PATH:-/etc/ssl/path}
 #      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME:-project-example-com.crt}
 #      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME:-project-example-com.key}
@@ -31,13 +31,13 @@ services:
     #configs:
     #  - source: nginx_config
     #    target: /etc/nginx/nginx.conf
-    ports:
-      - target: 80
-        published: ${NGINX_PORT:-8083}
-        #mode: host
-      - target: 443
-        published: ${NGINX_PORT_SSL:-447}
-        #mode: host
+    #ports:
+    #  - target: 80
+    #    published: ${NGINX_PORT:-8083}
+    #    #mode: host
+    #  - target: 443
+    #    published: ${NGINX_PORT_SSL:-447}
+    #    #mode: host
     networks:
       - frontend_network
       #frontend_network:
@@ -94,7 +94,7 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD:-password}
       ## Proxy server example: ${PROXY_SERVER:-http://user:password@proxy.example.com:8080}
       PROXY_SERVER: ${PROXY_SERVER}
-      XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME:-192.168.99.100}
+      XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME:-192.168.99.107}
       #APP_ENV: ${APP_ENV}
       #APP_SECRET: ${APP_SECRET}
       #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
@@ -103,7 +103,7 @@ services:
       - target: 22
         published: ${SSH_PORT:-2222}
       #- target: 9000
-      #  published: ${XDEBUG_PORT:-9004}
+      #  published: ${XDEBUG_PORT:-9000}
     networks:
       - project_network
     volumes:

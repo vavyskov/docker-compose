@@ -10,8 +10,9 @@ services:
     #  - mariadb
     #  - postgres
     environment:
+      #FASTCGI_PORT: ${FASTCGI_PORT:-9001}
       PROJECT_MODE: ${PROJECT_MODE:-dev}
-      PHP_HOME: ${PHP_HOME:-/var/www}
+      #PHP_HOME: ${PHP_HOME:-/var/www}
       PHP_USER: ${PHP_USER:-user}
       SMTP_HOSTNAME: ${SMTP_HOSTNAME:-192.168.99.100}
       SMTP_PORT: ${SMTP_PORT:-1026}
@@ -22,6 +23,7 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD:-password}
       ## Proxy server example: ${PROXY_SERVER:-http://user:password@proxy.example.com:8080}
 #      PROXY_SERVER: ${PROXY_SERVER}
+      XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME:-192.168.99.107}
       #APP_ENV: ${APP_ENV}
       #APP_SECRET: ${APP_SECRET}
       #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7

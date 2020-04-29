@@ -92,7 +92,52 @@ if [ "$(docker node ls 1>/dev/null 2>/dev/null; echo $?)" = 0 ] \
     done
 fi
 
+##
+## Create project
+##
+
+## .sh variables
+NETWORK_FRONTEND=frontend_network
+NETWORK_PROJECT="${COMPOSE_PROJECT_NAME}_network"
+
+## Update images
+if [ $UPDATE = true ]; then
+    printf "\r\nPulling images...\r\n"
+    docker-compose pull 2>/dev/null
+fi
+
+##
+## Create networks
+##
+## $1 ~ network name
+## $2 ~ network driver
+## https://linuxize.com/post/bash-functions/
+create_network() {
+    if [ "$(docker network ls | grep "$1" | grep -v "$2")" != "" ]; then
+        printf "$(tput setaf 1)Network with name '%s' already exists but requires driver '%s'.$(tput sgr 0)\r\n\r\n" "$1" "$2"
+        exit
+    elif [ "$(docker network ls | grep "$1" | grep "$2")" = "" ]; then
+        docker network create --driver "$2" "$1"
+    fi
+}
+
+## Set network driver
+if [ $SWARM_MODE != true ]; then
+    NETWORK_DRIVER=bridge
+else
+    NETWORK_DRIVER=overlay
+fi
+
+## https://linuxize.com/post/bash-for-loop/
+printf "\r\nCreating network...\r\n"
+for i in $NETWORK_FRONTEND $NETWORK_PROJECT
+do
+  create_network "$i" $NETWORK_DRIVER
+done
+
+##
 ## Convert .env file to secrets
+##
 printf "\r\nConverting '.env' file to secrets...\r\n"
 if [ $SWARM_MODE = true ]; then
     while read -r line; do
@@ -122,54 +167,12 @@ fi
 ##
 ## Create project
 ##
-
-## .sh variables
-NETWORK_FRONTEND=frontend_network
-NETWORK_PROJECT="${COMPOSE_PROJECT_NAME}_network"
-
-## New line
-printf "\r\n"
-
-## Update images
-if [ $UPDATE = true ]; then
-    printf "Pulling images...\r\n"
-    docker-compose pull 2>/dev/null
-fi
-
-##
-## Create networks
-##
-## $1 ~ network name
-## $2 ~ network driver
-## https://linuxize.com/post/bash-functions/
-create_network() {
-    if [ "$(docker network ls | grep "$1" | grep -v "$2")" != "" ]; then
-        printf "$(tput setaf 1)Network with name '%s' already exists but requires driver '%s'.$(tput sgr 0)\r\n\r\n" "$1" "$2"
-        exit
-    elif [ "$(docker network ls | grep "$1" | grep "$2")" = "" ]; then
-        docker network create --driver "$2" "$1"
-    fi
-}
-
-## Set network driver
+printf "\r\nCreating project...\r\n"
 if [ $SWARM_MODE != true ]; then
-    NETWORK_DRIVER=bridge
+    ## Show only Error not Warning
+    docker-compose --log-level ERROR up -d
 else
-    NETWORK_DRIVER=overlay
-fi
-
-## https://linuxize.com/post/bash-for-loop/
-for i in $NETWORK_FRONTEND $NETWORK_PROJECT
-do
-  create_network "$i" $NETWORK_DRIVER
-done
-
-##
-## Create project
-##
-if [ $SWARM_MODE != true ]; then
-    docker-compose up -d
-else
+    # ToDo: Show only Error not Warning ("--log-level" | 2>&1 | 2>/dev/null)
     docker stack deploy --compose-file=docker-compose.yml "$COMPOSE_PROJECT_NAME"
     docker stack deploy --compose-file=docker-compose.override.yml "$COMPOSE_PROJECT_NAME"
 fi

@@ -2,7 +2,7 @@
 ## Find-Replace: "lepp"
 ## docker network create --driver=overlay frontend_network
 ## docker network create --driver=overlay lepp_network
-## docker stack deploy --compose-file=lepp.yml lepp
+## docker stack deploy --compose-file=docker-compose.override.yml lepp
 
 version: '3.5'
 
@@ -19,16 +19,16 @@ services:
       - php-fpm
 #    environment:
 #      NGINX_ROOT: /var/www/html/public
-#      NGINX_FASTCGI_HOSTNAME: php-fpm
-#      NGINX_FASTCGI_PORT: 9000
+#      FASTCGI_HOSTNAME: php-fpm
+#      FASTCGI_PORT: 9000
 #      CERTIFICATE_PATH: ${CERTIFICATE_PATH:-/etc/ssl/path}
 #      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME:-project-example-com.crt}
 #      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME:-project-example-com.key}
-    ports:
-      - target: 80
-        published: 8088
-      - target: 443
-        published: 448
+    #ports:
+    #  - target: 80
+    #    published: 8088
+    #  - target: 443
+    #    published: 448
     networks:
       - frontend_network
       - lepp_network
