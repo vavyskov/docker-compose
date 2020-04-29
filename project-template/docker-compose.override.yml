@@ -94,7 +94,7 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD:-password}
       ## Proxy server example: ${PROXY_SERVER:-http://user:password@proxy.example.com:8080}
       PROXY_SERVER: ${PROXY_SERVER}
-      XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME:-192.168.99.107}
+      XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME:-192.168.99.1}
       #APP_ENV: ${APP_ENV}
       #APP_SECRET: ${APP_SECRET}
       #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
@@ -115,9 +115,6 @@ services:
     deploy:
       #mode: replicated
       replicas: 1
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_ssh.loadbalancer.server.port=9000
 
   mariadb:
     image: mariadb:${MARIADB_VERSION:-10.4}

@@ -57,7 +57,7 @@ services:
       GIT_EMAIL: my@email.com
       GIT_NAME: My Name
       PROXY_SERVER: http://user:password@proxy.example.com:8080
-      XDEBUG_HOSTNAME: 192.168.99.107
+      XDEBUG_HOSTNAME: 192.168.99.1
     ports:
       - target: 22
         published: 2223
