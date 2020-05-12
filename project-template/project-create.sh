@@ -20,8 +20,8 @@ if [ ! -f .env ]; then
     exit
 else
     ## Get COMPOSE_PROJECT_NAME variable (exists, not comment, not empty)
-    if [ -n "$(cat < .env | grep COMPOSE_PROJECT_NAME= | sed '/^#/d' | cut -d= -f2)" ]; then
-        COMPOSE_PROJECT_NAME=$(cat < .env | grep COMPOSE_PROJECT_NAME= | cut -d= -f2)
+    if [ -n "$(cat < .env | grep COMPOSE_PROJECT_NAME= | sed '/^#/d' | cut -d= -f2 | xargs)" ]; then
+        COMPOSE_PROJECT_NAME=$(cat < .env | grep COMPOSE_PROJECT_NAME= | cut -d= -f2 | xargs)
     else
         printf "\r\n%s'COMPOSE_PROJECT_NAME' variable is not set.%s\r\n\r\n" \
         "$(tput setaf 1)" "$(tput sgr 0)"
@@ -136,33 +136,386 @@ do
 done
 
 ##
-## Convert .env file to secrets
+## Convert .secret.env file to secrets and environment variables
 ##
-printf "\r\nConverting '.env' file to secrets...\r\n"
-if [ $SWARM_MODE = true ]; then
-    while read -r line; do
-        ## Eliminate any lines that are empty, or start with # (comments)
-        if [ -z "$line" ] || [ "$line" != "$(echo "$line" | sed '/^#/d')" ]; then
-            continue
-        fi
+printf "\r\nConverting '.secret.env' file...\r\n"
+while read -r line; do
+    ## Eliminate any lines that are empty, or start with # (comments)
+    if [ -z "$line" ] || [ "$line" != "$(echo "$line" | sed '/^#/d')" ]; then
+        continue
+    fi
 
-        ## Split the line by '=' and change name to lower characters
-        SECRET_NAME=$(echo "$line" | cut -d= -f1 | tr '[:upper:]' '[:lower:]')
-        SECRET_VALUE=$(echo "$line" | cut -d= -f2)
+    ## Split the line by '=' and change name to lower characters
+    SECRET_NAME=$(echo "$line" | cut -d= -f1 | tr '[:upper:]' '[:lower:]')
+    SECRET_VALUE=$(echo "$line" | cut -d= -f2 | xargs)
 
+    if [ $SWARM_MODE = true ]; then
         ## Remove old secret
         if [ "$(docker secret ls | grep "$SECRET_NAME")" != "" ]; then
             docker secret rm "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" >/dev/null
         fi
 
         ## Create new secret
-        echo "$SECRET_VALUE" | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
+        echo "${SECRET_VALUE}" | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
         ## Create new secret (remove line break and trim whitespace)
         ## Example: echo 'rn=rn \r \n ' | hexdump -C
         ## Example: echo 'rn=rn \r \n ' | sed 's/\\r//g' | sed 's/\\n//g' | xargs | hexdump -C
         #echo "$SECRET_VALUE" | sed 's/\\r//g' | sed 's/\\n//g' | xargs | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
-    done < .env
-fi
+
+        ## Declare environment
+#        eval "$(echo "${SECRET_NAME}" | tr '[:lower:]' '[:upper:]')=/run/secrets/${COMPOSE_PROJECT_NAME}_${SECRET_NAME}"
+        eval "$(echo "${SECRET_NAME}" | tr '[:lower:]' '[:upper:]')='${SECRET_VALUE}'"
+
+    else
+        ## Declare environment
+        eval "$(echo "${SECRET_NAME}" | tr '[:lower:]' '[:upper:]')='${SECRET_VALUE}'"
+    fi
+done < .secret.env
+
+##
+## Get variables from .env file
+##
+. .env
+
+
+
+
+## ENV substitution not working :(
+#envsubst  < docker-compose.override.yml-backup > test.yml
+
+
+
+##
+## Create docker-compose.yml file
+##
+cat << EOF > docker-compose.yml
+version: '3.5'
+
+services:
+  php-fpm:
+    image: vavyskov/php:${PHP_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_php-fpm
+    #hostname: "web_app_fpm"
+    ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
+    #depends_on:
+    #  - mariadb
+    #  - postgres
+    environment:
+      #FASTCGI_PORT: ${FASTCGI_PORT}
+      PROJECT_MODE: ${PROJECT_MODE}
+      #PHP_HOME: ${PHP_HOME}
+      PHP_USER: ${PHP_USER}
+      SMTP_HOSTNAME: ${SMTP_HOSTNAME}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_FROM: ${SMTP_FROM}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+#      PROXY_SERVER: ${PROXY_SERVER}
+      XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME}
+      #APP_ENV: ${APP_ENV}
+      #APP_SECRET: ${APP_SECRET}
+      #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
+    networks:
+      - project_network
+    volumes:
+      - html_data:${PROJECT_ROOT}
+      #- ~/.ssh:${SSH_HOME}/.shared/.ssh:ro
+      #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
+    #working_dir: /var/www/html
+    deploy:
+      replicas: 1
+
+networks:
+  project_network:
+    external: true
+
+volumes:
+  html_data:
+    name: ${COMPOSE_PROJECT_NAME}_html_data
+#    driver_opts:
+#      type: nfs
+#      o: addr=${NFS_HOSTNAME},nolock,soft,rw
+#      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/html_data
+
+EOF
+
+##
+## Create docker-compose.override.yml file
+##
+cat << EOF > docker-compose.override.yml
+version: '3.5'
+
+#configs:
+#  nginx_config:
+#    name: nginx-config-${NGINX_CONFIG:-1}
+#    file: ./config/nginx.conf
+
+services:
+  nginx:
+    image: vavyskov/nginx:${NGINX_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_nginx
+    hostname: ${PROJECT_HOSTNAME}
+    #hostname: project_nginx (docker service name)
+    volumes:
+      ## 'nocopy' flag to disable copying of data from a container when a volume is created
+      - html_data:${PROJECT_ROOT}:nocopy
+#      - /etc/ss/path:/etc/ssl/path:ro
+      #- ./logs:/var/log
+    ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
+    depends_on:
+      - php-fpm
+#    environment:
+      #NGINX_ROOT: ${NGINX_ROOT}
+      #FASTCGI_HOSTNAME: ${FASTCGI_HOSTNAME}
+      #FASTCGI_PORT: ${FASTCGI_PORT}
+#      CERTIFICATE_PATH: ${CERTIFICATE_PATH}
+#      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME}
+#      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME}
+    ## Docker Config - store non-sensitive data as configuration files (not encrypted)
+    ## cat nginx.conf | docker config create project_nginx.conf -
+    #configs:
+    #  - source: nginx_config
+    #    target: /etc/nginx/nginx.conf
+    #ports:
+    #  - target: 80
+    #    published: ${NGINX_PORT}
+    #    #mode: host
+    #  - target: 443
+    #    published: ${NGINX_PORT_SSL}
+    #    #mode: host
+    networks:
+      - frontend_network
+      #frontend_network:
+      #  aliases:
+      #    - ${PROJECT_HOSTNAME}
+      - project_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+          #- node.role == worker
+          #- node.hostname == serverhostname
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}_nginx.loadbalancer.server.port=80
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.rule=Host(\`${PROJECT_HOSTNAME}\`)
+#     - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.tls=true
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.service=${COMPOSE_PROJECT_NAME}_nginx
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.entrypoints=https
+      #- traefik.http.services.${COMPOSE_PROJECT_NAME}_nginx.loadbalancer.passhostheader=true
+    #healthcheck:
+    #  test: curl --fail -s http://localhost:5000/ || exit 1
+    #  ##test: "/usr/bin/curl --silent --fail -o /dev/null -w %{http_code} http://localhost:9200 || exit 1"
+    #  ##test: "/bin/nc -z -w3 localhost 5000 || exit 1"
+    #  ##interval: 1m30s
+    #  interval: 30s
+    #  timeout: 10s
+    #  retries: 3
+
+  ssh:
+    image: vavyskov/ssh:${SSH_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_ssh
+#    hostname: ${PROJECT_HOSTNAME}
+    #hostname: project_ssh (docker service name)
+    ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
+    depends_on:
+      - php-fpm
+#    secrets:
+#      - project_ssh_password
+    environment:
+      PROJECT_MODE: ${PROJECT_MODE}
+      SSH_HOME: ${SSH_HOME}
+      SSH_USER: ${SSH_USER}
+      SSH_PASSWORD: ${SSH_PASSWORD}
+      GIT_EMAIL: ${GIT_EMAIL}
+      GIT_NAME: ${GIT_NAME}
+      SMTP_HOSTNAME: ${SMTP_HOSTNAME}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_FROM: ${SMTP_FROM}
+      ## SMTP user example: ${SMTP_USER}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      PROXY_SERVER: ${PROXY_SERVER}
+      XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME}
+      #APP_ENV: ${APP_ENV}
+      #APP_SECRET: ${APP_SECRET}
+      #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
+    ports:
+      ## https://community.containo.us/t/routing-ssh-traffic-with-traefik-v2/717/13
+      - target: 22
+        published: ${SSH_PORT}
+      #- target: 9000
+      #  published: ${XDEBUG_PORT}
+    networks:
+      - project_network
+    volumes:
+      ## 'nocopy' flag to disable copying of data from a container when a volume is created
+      - html_data:${PROJECT_ROOT}:nocopy
+#      - ~/.ssh:${SSH_HOME}/.shared/.ssh:ro
+#      - ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
+    #working_dir: /var/www/html
+    deploy:
+      #mode: replicated
+      replicas: 1
+
+  mariadb:
+    image: mariadb:${MARIADB_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_mariadb
+    environment:
+      MYSQL_DATABASE: ${MARIADB_DATABASE}
+      MYSQL_USER: ${MARIADB_USER}
+      MYSQL_PASSWORD: ${MARIADB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    command: ["mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_czech_ci"]
+    volumes:
+      #- ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - target: 3306
+        published: ${MARIADB_PORT}
+    networks:
+      - project_network
+    #restart: unless-stopped
+    #restart: always
+    deploy:
+      replicas: 1
+      #update_config:
+      #  failure_action: rollback
+      #  parallelism: 1
+      #  delay: 5s
+      #restart_policy:
+      #  condition: on-failure
+      #  delay: 5s
+      #  max_attempts: 3
+      #resources:
+      #  limits:
+      #    cpus: '0.1'
+      #    memory: 2G
+      #  reservations:
+      #    cpus: '0.0001'
+      #    memory: 50M
+
+  postgres:
+    image: postgres:${POSTGRES_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+      #PGDATA: /data/postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+       #- postgres:/data/postgres
+    ports:
+      - target: 5432
+        published: ${POSTGRES_PORT}
+    networks:
+      - project_network
+    #restart: unless-stopped
+    #restart: always
+    deploy:
+      replicas: 1
+      #update_config:
+      #  failure_action: rollback
+      #  parallelism: 1
+      #  delay: 5s
+      #restart_policy:
+      #  condition: on-failure
+      #  delay: 5s
+      #  max_attempts: 3
+      #resources:
+      #  limits:
+      #    cpus: '0.1'
+      #    memory: 2G
+      #  reservations:
+      #    cpus: '0.0001'
+      #    memory: 50M
+
+  mailcatcher:
+    image: vavyskov/mailcatcher:${MAILCATCHER_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_mailcatcher
+    #hostname: project_mailcatcher (docker service name)
+    #hostname: ${MAILCATCHER_HOSTNAME}
+    #hostname: ${MAILCATCHER_HOSTNAME} # /mailcatcher
+    ports:
+      - target: 80
+        published: ${MAILCATCHER_PORT}
+      - target: 25
+        published: ${MAILCATCHER_SMTP_PORT}
+    networks:
+      - frontend_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}_mailcatcher.loadbalancer.server.port=80
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.rule=Host(\`${MAILCATCHER_HOSTNAME}\`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.rule=Host(\`${PROJECT_HOSTNAME}\`) && Path(\`${MAILCATCHER_PATH}\`)
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.tls=true
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.entrypoints=https
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.service=mailcatcher
+
+  adminer:
+    image: adminer:${ADMINER_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_adminer
+    #hostname: project_adminer (docker service name)
+    #hostname: ${MAILCATCHER_HOSTNAME}
+    #hostname: ${MAILCATCHER_HOSTNAME} # /mailcatcher
+    ports:
+      - target: 8080
+        published: ${ADMINER_PORT}
+    networks:
+      - frontend_network
+      - project_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}_adminer.loadbalancer.server.port=8080
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(\`${ADMINER_HOSTNAME}\`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(\`${PROJECT_HOSTNAME}\`) && Path(\`${ADMINER_PATH}\`)
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.tls=true
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.entrypoints=https
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.service=adminer
+
+networks:
+  frontend_network:
+    external: true
+  project_network:
+    external: true
+
+volumes:
+  html_data:
+    name: ${COMPOSE_PROJECT_NAME}_html_data
+#    driver_opts:
+#      type: nfs
+#      o: addr=${NFS_HOSTNAME},nolock,soft,rw
+#      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/html_data
+  mariadb_data:
+    name: ${COMPOSE_PROJECT_NAME}_mariadb_data
+#    driver_opts:
+#      type: nfs
+#      o: addr=${NFS_HOSTNAME},nolock,soft,rw
+#      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/mariadb_data
+  postgres_data:
+    name: ${COMPOSE_PROJECT_NAME}_postgres_data
+#    driver_opts:
+#      type: nfs
+#      o: addr=${NFS_HOSTNAME},nolock,soft,rw
+#      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/postgres_data
+
+#secrets:
+#  project_ssh_password:
+#    external: true
+
+EOF
 
 ##
 ## Create project

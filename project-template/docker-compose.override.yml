@@ -2,30 +2,30 @@ version: '3.5'
 
 #configs:
 #  nginx_config:
-#    name: nginx-config-${NGINX_CONFIG:-1}
+#    name: nginx-config-1
 #    file: ./config/nginx.conf
 
 services:
   nginx:
-    image: vavyskov/nginx:${NGINX_VERSION:-1.17-php-fpm-alpine3.10}
-    container_name: ${COMPOSE_PROJECT_NAME:-project}_nginx
-    hostname: ${PROJECT_HOSTNAME:-project.example.com}
+    image: vavyskov/nginx:1.17-php-fpm-alpine3.10
+    container_name: project_nginx
+    hostname: project.example.com
     #hostname: project_nginx (docker service name)
     volumes:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
-      - html_data:${PROJECT_ROOT:-/var/www/html}:nocopy
+      - html_data:/var/www/html:nocopy
 #      - /etc/ss/path:/etc/ssl/path:ro
       #- ./logs:/var/log
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
       - php-fpm
 #    environment:
-      #NGINX_ROOT: ${NGINX_ROOT:-/var/www/html/public}
-      #FASTCGI_HOSTNAME: ${FASTCGI_HOSTNAME:-php-fpm}
-      #FASTCGI_PORT: ${FASTCGI_PORT:-9001}
-#      CERTIFICATE_PATH: ${CERTIFICATE_PATH:-/etc/ssl/path}
-#      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME:-project-example-com.crt}
-#      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME:-project-example-com.key}
+      #NGINX_ROOT: 
+      #FASTCGI_HOSTNAME: 
+      #FASTCGI_PORT: 
+#      CERTIFICATE_PATH: 
+#      CERTIFICATE_FILENAME: 
+#      CERTIFICATE_KEYNAME: 
     ## Docker Config - store non-sensitive data as configuration files (not encrypted)
     ## cat nginx.conf | docker config create project_nginx.conf -
     #configs:
@@ -33,16 +33,16 @@ services:
     #    target: /etc/nginx/nginx.conf
     #ports:
     #  - target: 80
-    #    published: ${NGINX_PORT:-8083}
+    #    published: 
     #    #mode: host
     #  - target: 443
-    #    published: ${NGINX_PORT_SSL:-447}
+    #    published: 
     #    #mode: host
     networks:
       - frontend_network
       #frontend_network:
       #  aliases:
-      #    - ${PROJECT_HOSTNAME:-project.example.com}
+      #    - project.example.com
       - project_network
     deploy:
       replicas: 1
@@ -53,12 +53,12 @@ services:
           #- node.hostname == serverhostname
     labels:
       - traefik.enable=true
-      - traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_nginx.loadbalancer.server.port=80
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`)
-#     - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.tls=true
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.service=${COMPOSE_PROJECT_NAME:-project}_nginx
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_nginx.entrypoints=https
-      #- traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_nginx.loadbalancer.passhostheader=true
+      - traefik.http.services.project_nginx.loadbalancer.server.port=80
+      - traefik.http.routers.project_nginx.rule=Host(`project.example.com`)
+#     - traefik.http.routers.project_nginx.tls=true
+      #- traefik.http.routers.project_nginx.service=project_nginx
+      #- traefik.http.routers.project_nginx.entrypoints=https
+      #- traefik.http.services.project_nginx.loadbalancer.passhostheader=true
     #healthcheck:
     #  test: curl --fail -s http://localhost:5000/ || exit 1
     #  ##test: "/usr/bin/curl --silent --fail -o /dev/null -w %{http_code} http://localhost:9200 || exit 1"
@@ -69,68 +69,66 @@ services:
     #  retries: 3
 
   ssh:
-    image: vavyskov/ssh:${SSH_VERSION:-php7.4-cli-alpine3.11}
-    container_name: ${COMPOSE_PROJECT_NAME:-project}_ssh
-#    hostname: ${PROJECT_HOSTNAME:-project.example.com}
+    image: vavyskov/ssh:php7.4-cli-alpine3.11
+    container_name: project_ssh
+#    hostname: project.example.com
     #hostname: project_ssh (docker service name)
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
       - php-fpm
+#    secrets:
+#      - project_ssh_password
     environment:
-      PROJECT_MODE: ${PROJECT_MODE:-dev}
-      SSH_HOME: ${SSH_HOME:-/var/www}
-      SSH_USER: ${SSH_USER:-user}
-      SSH_PASSWORD: ${SSH_PASSWORD:-password}
-      ## Docker Secrets - store sensitive data encrypted by default (password, ssh-key, API key, SSL certificate etc.)
-      ## printf "password" | docker secret create project_ssh_password -
-      #SSH_PASSWORD: /run/secrets/project_ssh_password
-      GIT_EMAIL: ${GIT_EMAIL:-my@email.com}
-      GIT_NAME: ${GIT_NAME:-My Name}
-      SMTP_HOSTNAME: ${SMTP_HOSTNAME:-192.168.99.100}
-      SMTP_PORT: ${SMTP_PORT:-1026}
+      PROJECT_MODE: dev
+      SSH_HOME: /var/www
+      SSH_USER: user
+      SSH_PASSWORD: password
+      GIT_EMAIL: my@email.com
+      GIT_NAME: My Name
+      SMTP_HOSTNAME: 192.168.99.107
+      SMTP_PORT: 1026
       SMTP_FROM: team@example.com
-      ## SMTP user example: ${SMTP_USER:-user}
-      SMTP_USER: ${SMTP_USER}
-      SMTP_PASSWORD: ${SMTP_PASSWORD:-password}
-      ## Proxy server example: ${PROXY_SERVER:-http://user:password@proxy.example.com:8080}
-      PROXY_SERVER: ${PROXY_SERVER}
-      XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME:-192.168.99.1}
-      #APP_ENV: ${APP_ENV}
-      #APP_SECRET: ${APP_SECRET}
-      #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
+      ## SMTP user example: 
+      SMTP_USER: 
+      SMTP_PASSWORD: password
+      PROXY_SERVER: 
+      XDEBUG_HOSTNAME: 192.168.99.1
+      #APP_ENV: 
+      #APP_SECRET: 
+      #DATABASE_HOSTNAME: mysql://mariadb:mariadb@database:3306/mariadb?serverVersion=5.7
     ports:
       ## https://community.containo.us/t/routing-ssh-traffic-with-traefik-v2/717/13
       - target: 22
-        published: ${SSH_PORT:-2222}
+        published: 2222
       #- target: 9000
-      #  published: ${XDEBUG_PORT:-9000}
+      #  published: 
     networks:
       - project_network
     volumes:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
-      - html_data:${PROJECT_ROOT:-/var/www/html}:nocopy
-#      - ~/.ssh:${SSH_HOME:-/var/www}/.shared/.ssh:ro
-#      - ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
+      - html_data:/var/www/html:nocopy
+#      - ~/.ssh:/var/www/.shared/.ssh:ro
+#      - ~/.gitconfig:/var/www/.shared/.gitconfig:ro
     #working_dir: /var/www/html
     deploy:
       #mode: replicated
       replicas: 1
 
   mariadb:
-    image: mariadb:${MARIADB_VERSION:-10.4}
-    container_name: ${COMPOSE_PROJECT_NAME:-project}_mariadb
+    image: mariadb:10.4
+    container_name: project_mariadb
     environment:
-      MYSQL_DATABASE: ${MARIADB_DATABASE:-mariadb}
-      MYSQL_USER: ${MARIADB_USER:-mariadb}
-      MYSQL_PASSWORD: ${MARIADB_PASSWORD:-mariadb}
-      MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: mariadb
+      MYSQL_USER: mariadb
+      MYSQL_PASSWORD: mariadb
+      MYSQL_ROOT_PASSWORD: root
     command: ["mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_czech_ci"]
     volumes:
       #- ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
       - mariadb_data:/var/lib/mysql
     ports:
       - target: 3306
-        published: ${MARIADB_PORT:-3308}
+        published: 3308
     networks:
       - project_network
     #restart: unless-stopped
@@ -154,19 +152,19 @@ services:
       #    memory: 50M
 
   postgres:
-    image: postgres:${POSTGRES_VERSION:-12.2-alpine}
-    container_name: ${COMPOSE_PROJECT_NAME:-project}_postgres
+    image: postgres:12.2-alpine
+    container_name: project_postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DATABASE:-postgres}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
       #PGDATA: /data/postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
        #- postgres:/data/postgres
     ports:
       - target: 5432
-        published: ${POSTGRES_PORT:-5434}
+        published: 5434
     networks:
       - project_network
     #restart: unless-stopped
@@ -190,16 +188,16 @@ services:
       #    memory: 50M
 
   mailcatcher:
-    image: vavyskov/mailcatcher:${MAILCATCHER_VERSION:-alpine3.11}
-    container_name: ${COMPOSE_PROJECT_NAME:-project}_mailcatcher
+    image: vavyskov/mailcatcher:alpine3.11
+    container_name: project_mailcatcher
     #hostname: project_mailcatcher (docker service name)
-    #hostname: ${MAILCATCHER_HOSTNAME:-mailcatcher.example.com}
-    #hostname: ${MAILCATCHER_HOSTNAME:-project.example.com} # /mailcatcher
+    #hostname: mailcatcher.example.com
+    #hostname: mailcatcher.example.com # /mailcatcher
     ports:
       - target: 80
-        published: ${MAILCATCHER_PORT:-1081}
+        published: 1081
       - target: 25
-        published: ${MAILCATCHER_SMTP_PORT:-1026}
+        published: 1026
     networks:
       - frontend_network
     deploy:
@@ -209,22 +207,22 @@ services:
           - node.role == manager
     labels:
       - traefik.enable=true
-      - traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.loadbalancer.server.port=80
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.rule=Host(`${MAILCATCHER_HOSTNAME:-mailcatcher.example.com}`)
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`) && Path(`${MAILCATCHER_PATH:-/mailcatcher}`)
-#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.tls=true
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.entrypoints=https
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_mailcatcher.service=mailcatcher
+      - traefik.http.services.project_mailcatcher.loadbalancer.server.port=80
+      - traefik.http.routers.project_mailcatcher.rule=Host(`mailcatcher.example.com`)
+      #- traefik.http.routers.project_mailcatcher.rule=Host(`project.example.com`) && Path(``)
+#      - traefik.http.routers.project_mailcatcher.tls=true
+      #- traefik.http.routers.project_mailcatcher.entrypoints=https
+      #- traefik.http.routers.project_mailcatcher.service=mailcatcher
 
   adminer:
-    image: adminer:${ADMINER_VERSION:-4.7-standalone}
-    container_name: ${COMPOSE_PROJECT_NAME:-project}_adminer
+    image: adminer:4.7-standalone
+    container_name: project_adminer
     #hostname: project_adminer (docker service name)
-    #hostname: ${MAILCATCHER_HOSTNAME:-mailcatcher.example.com}
-    #hostname: ${MAILCATCHER_HOSTNAME:-project.example.com} # /mailcatcher
+    #hostname: mailcatcher.example.com
+    #hostname: mailcatcher.example.com # /mailcatcher
     ports:
       - target: 8080
-        published: ${ADMINER_PORT:-8084}
+        published: 8084
     networks:
       - frontend_network
       - project_network
@@ -235,12 +233,12 @@ services:
           - node.role == manager
     labels:
       - traefik.enable=true
-      - traefik.http.services.${COMPOSE_PROJECT_NAME:-project}_adminer.loadbalancer.server.port=8080
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.rule=Host(`${ADMINER_HOSTNAME:-adminer.example.com}`)
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.rule=Host(`${PROJECT_HOSTNAME:-project.example.com}`) && Path(`${ADMINER_PATH:-/adminer}`)
-#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.tls=true
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.entrypoints=https
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-project}_adminer.service=adminer
+      - traefik.http.services.project_adminer.loadbalancer.server.port=8080
+      #- traefik.http.routers.project_adminer.rule=Host(``)
+      - traefik.http.routers.project_adminer.rule=Host(`project.example.com`) && Path(`/adminer`)
+#      - traefik.http.routers.project_adminer.tls=true
+      #- traefik.http.routers.project_adminer.entrypoints=https
+      #- traefik.http.routers.project_adminer.service=adminer
 
 networks:
   frontend_network:
@@ -250,20 +248,25 @@ networks:
 
 volumes:
   html_data:
-    name: ${COMPOSE_PROJECT_NAME:-project}_html_data
+    name: project_html_data
 #    driver_opts:
 #      type: nfs
-#      o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-#      device: :${NFS_PATH:-/media/nfs_docker/dev/project/volumes/html_data}
+#      o: addr=nfs.example.com,nolock,soft,rw
+#      device: :/media/nfs_docker/dev/project/volumes/html_data
   mariadb_data:
-    name: ${COMPOSE_PROJECT_NAME:-project}_mariadb_data
+    name: project_mariadb_data
 #    driver_opts:
 #      type: nfs
-#      o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-#      device: :${NFS_PATH:-/media/nfs_docker/dev/project/volumes/mariadb_data}
+#      o: addr=nfs.example.com,nolock,soft,rw
+#      device: :/media/nfs_docker/dev/project/volumes/mariadb_data
   postgres_data:
-    name: ${COMPOSE_PROJECT_NAME:-project}_postgres_data
+    name: project_postgres_data
 #    driver_opts:
 #      type: nfs
-#      o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
-#      device: :${NFS_PATH:-/media/nfs_docker/dev/project/volumes/postgres_data}
+#      o: addr=nfs.example.com,nolock,soft,rw
+#      device: :/media/nfs_docker/dev/project/volumes/postgres_data
+
+#secrets:
+#  project_ssh_password:
+#    external: true
+
