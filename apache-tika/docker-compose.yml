@@ -1,0 +1,21 @@
+version: '3.5'
+
+services:
+  apache-tika:
+    image: apache/tika:${APACHE-TIKA_VERSION:-1.24}
+    container_name: ${COMPOSE_PROJECT_NAME:-apache-tika}_apache-tika
+    networks:
+      - apache-tika_network
+    ports:
+      - target: 9998
+        published: ${APACHE-TIKA_PORT:-9998}
+    deploy:
+      replicas: 1
+    placement:
+      constraints:
+        - node.role == manager
+
+networks:
+  apache-tika_network:
+    name: apache-tika_network
+    external: true

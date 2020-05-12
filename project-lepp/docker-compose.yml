@@ -12,12 +12,13 @@ services:
     container_name: lepp_php-fpm
     environment:
       PROJECT_MODE: dev
-      PHP_USER: stacklepp
+      PHP_USER: lepp
       SMTP_HOSTNAME: 192.168.99.100
       SMTP_PORT: 1026
       SMTP_FROM: team@example.com
       SMTP_USER: team
       SMTP_PASSWORD: password
+      XDEBUG_HOSTNAME: 192.168.99.1
     networks:
       - lepp_network
     volumes:

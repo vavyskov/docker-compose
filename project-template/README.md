@@ -116,13 +116,13 @@ Drupal - ručně:
 Drupal - composer (docker-machine minimálně 2G RAM)
 - `cd; drupal site:new` [drupal-composer, html]
     - `composer install`
-    - instalace rozšíření "OK" - současnou chybu verze Drupal 8.5.5 je možné vyřešit viz níže :(
+    - instalace rozšíření "OK" - současnou chybu verze Drupal 8.8.5 je možné vyřešit viz níže :(
         - https://www.drupal.org/docs/develop/using-composer/starting-a-site-using-drupal-composer-project-templates#s-workaround
         - sites/default/settings.php
             - `$settings['skip_permissions_hardening'] = TRUE;`
     - vše ostatní OK
 - `cd; composer create-project drupal-composer/drupal-project:8.x-dev html --no-interaction; cd html; composer install`
-    - instalace rozšíření "OK" - současnou chybu verze Drupal 8.5.5 je možné vyřešit viz níže :(
+    - instalace rozšíření "OK" - současnou chybu verze Drupal 8.8.5 je možné vyřešit viz níže :(
         - https://www.drupal.org/docs/develop/using-composer/starting-a-site-using-drupal-composer-project-templates#s-workaround
         - sites/default/settings.php
             - `$settings['skip_permissions_hardening'] = TRUE;`

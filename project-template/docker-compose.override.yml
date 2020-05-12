@@ -9,7 +9,7 @@ services:
   nginx:
     image: vavyskov/nginx:${NGINX_VERSION:-1.17-php-fpm-alpine3.10}
     container_name: ${COMPOSE_PROJECT_NAME:-project}_nginx
-    #hostname: ${PROJECT_HOSTNAME:-project.example.com}
+    hostname: ${PROJECT_HOSTNAME:-project.example.com}
     #hostname: project_nginx (docker service name)
     volumes:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
