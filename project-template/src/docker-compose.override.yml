@@ -7,7 +7,7 @@ version: '3.5'
 
 services:
   nginx:
-    image: vavyskov/nginx:1.17-php-fpm-alpine3.10
+    image: vavyskov/nginx:1.18-php-fpm-alpine3.11
     container_name: project_nginx
     hostname: project.example.com
     #hostname: project_nginx (docker service name)
@@ -15,11 +15,15 @@ services:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
       - html_data:/var/www/html:nocopy
 #      - /etc/ss/path:/etc/ssl/path:ro
-      #- ./logs:/var/log
+      #- ./logs/nginx:/var/log/nginx
+      #- /etc/localtime:/etc/localtime:ro
+      #- /etc/timezone:/etc/timezone:ro
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
       - php-fpm
-#    environment:
+    #environment:
+      #ACCESS_LOG: 
+      #ERROR_LOG: 
       #NGINX_ROOT: 
       #FASTCGI_HOSTNAME: 
       #FASTCGI_PORT: 
@@ -51,6 +55,11 @@ services:
           - node.role == manager
           #- node.role == worker
           #- node.hostname == serverhostname
+    #logging:
+    #  driver: json-file
+    #  options:
+    #    max-size: 10m
+    #    max-file: 3
     labels:
       - traefik.enable=true
       - traefik.http.services.project_nginx.loadbalancer.server.port=80
@@ -154,9 +163,12 @@ services:
   postgres:
     image: postgres:12.2-alpine
     container_name: project_postgres
+    secrets:
+      - postgres_password
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+#      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_DB: postgres
       #PGDATA: /data/postgres
     volumes:
@@ -266,7 +278,9 @@ volumes:
 #      o: addr=nfs.example.com,nolock,soft,rw
 #      device: :/media/nfs_docker/dev/project/volumes/postgres_data
 
-#secrets:
+secrets:
 #  project_ssh_password:
 #    external: true
+  postgres_password:
+    file: ./secrets/POSTGRES_PASSWORD
 

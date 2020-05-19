@@ -136,41 +136,39 @@ do
 done
 
 ##
-## Convert .secret.env file to secrets and environment variables
+## Convert .secrets.env file to secrets and environment variables
 ##
-printf "\r\nConverting '.secret.env' file...\r\n"
-while read -r line; do
-    ## Eliminate any lines that are empty, or start with # (comments)
-    if [ -z "$line" ] || [ "$line" != "$(echo "$line" | sed '/^#/d')" ]; then
-        continue
-    fi
-
-    ## Split the line by '=' and change name to lower characters
-    SECRET_NAME=$(echo "$line" | cut -d= -f1 | tr '[:upper:]' '[:lower:]')
-    SECRET_VALUE=$(echo "$line" | cut -d= -f2 | xargs)
-
-    if [ $SWARM_MODE = true ]; then
-        ## Remove old secret
-        if [ "$(docker secret ls | grep "$SECRET_NAME")" != "" ]; then
-            docker secret rm "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" >/dev/null
-        fi
-
-        ## Create new secret
-        echo "${SECRET_VALUE}" | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
-        ## Create new secret (remove line break and trim whitespace)
-        ## Example: echo 'rn=rn \r \n ' | hexdump -C
-        ## Example: echo 'rn=rn \r \n ' | sed 's/\\r//g' | sed 's/\\n//g' | xargs | hexdump -C
-        #echo "$SECRET_VALUE" | sed 's/\\r//g' | sed 's/\\n//g' | xargs | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
-
-        ## Declare environment
+#printf "\r\nConverting '.secrets.env' file...\r\n"
+#while read -r line; do
+#    ## Eliminate any lines that are empty, or start with # (comments)
+#    if [ -z "$line" ] || [ "$line" != "$(echo "$line" | sed '/^#/d')" ]; then
+#        continue
+#    fi
+#
+#    ## Split the line by '=' and change name to lower characters
+#    SECRET_NAME=$(echo "$line" | cut -d= -f1 | tr '[:upper:]' '[:lower:]')
+#    SECRET_VALUE=$(echo "$line" | cut -d= -f2 | xargs)
+#
+#    if [ $SWARM_MODE = true ]; then
+#        ## Remove old secret
+#        if [ "$(docker secret ls | grep "$SECRET_NAME")" != "" ]; then
+#            docker secret rm "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" >/dev/null
+#        fi
+#
+#        ## Create new secret
+#        echo "${SECRET_VALUE}" | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
+#        ## Create new secret (remove line break and trim whitespace)
+#        ## Example: echo 'rn=rn \r \n ' | hexdump -C
+#        ## Example: echo 'rn=rn \r \n ' | sed 's/\\r//g' | sed 's/\\n//g' | xargs | hexdump -C
+#        #echo "$SECRET_VALUE" | sed 's/\\r//g' | sed 's/\\n//g' | xargs | docker secret create "${COMPOSE_PROJECT_NAME}_${SECRET_NAME}" - >/dev/null
+#
+#        ## Declare environment
 #        eval "$(echo "${SECRET_NAME}" | tr '[:lower:]' '[:upper:]')=/run/secrets/${COMPOSE_PROJECT_NAME}_${SECRET_NAME}"
-        eval "$(echo "${SECRET_NAME}" | tr '[:lower:]' '[:upper:]')='${SECRET_VALUE}'"
-
-    else
-        ## Declare environment
-        eval "$(echo "${SECRET_NAME}" | tr '[:lower:]' '[:upper:]')='${SECRET_VALUE}'"
-    fi
-done < .secret.env
+#    else
+#        ## Declare environment
+#        eval "$(echo "${SECRET_NAME}" | tr '[:lower:]' '[:upper:]')='${SECRET_VALUE}'"
+#    fi
+#done < .secrets.env
 
 ##
 ## Get variables from .env file
@@ -260,11 +258,15 @@ services:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
       - html_data:${PROJECT_ROOT}:nocopy
 #      - /etc/ss/path:/etc/ssl/path:ro
-      #- ./logs:/var/log
+      #- ./logs/nginx:/var/log/nginx
+      #- /etc/localtime:/etc/localtime:ro
+      #- /etc/timezone:/etc/timezone:ro
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
       - php-fpm
-#    environment:
+    #environment:
+      #ACCESS_LOG: ${ACCESS_LOG}
+      #ERROR_LOG: ${ERROR_LOG}
       #NGINX_ROOT: ${NGINX_ROOT}
       #FASTCGI_HOSTNAME: ${FASTCGI_HOSTNAME}
       #FASTCGI_PORT: ${FASTCGI_PORT}
@@ -296,6 +298,11 @@ services:
           - node.role == manager
           #- node.role == worker
           #- node.hostname == serverhostname
+    #logging:
+    #  driver: json-file
+    #  options:
+    #    max-size: 10m
+    #    max-file: 3
     labels:
       - traefik.enable=true
       - traefik.http.services.${COMPOSE_PROJECT_NAME}_nginx.loadbalancer.server.port=80
@@ -399,9 +406,12 @@ services:
   postgres:
     image: postgres:${POSTGRES_VERSION}
     container_name: ${COMPOSE_PROJECT_NAME}_postgres
+    secrets:
+      - postgres_password
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+#      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_DB: ${POSTGRES_DATABASE}
       #PGDATA: /data/postgres
     volumes:
@@ -511,9 +521,11 @@ volumes:
 #      o: addr=${NFS_HOSTNAME},nolock,soft,rw
 #      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/postgres_data
 
-#secrets:
+secrets:
 #  project_ssh_password:
 #    external: true
+  postgres_password:
+    file: ./secrets/POSTGRES_PASSWORD
 
 EOF
 
