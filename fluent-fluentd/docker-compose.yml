@@ -1,0 +1,40 @@
+version: '3.5'
+
+services:
+  fluent-fluentd:
+    image: fluent/fluentd:${FLUENT-FLUENTD_VERSION:-v1.10-1}
+    container_name: ${COMPOSE_PROJECT_NAME:-fluent-fluentd}_fluent-fluentd
+    networks:
+      - fluent-fluentd_network
+    volumes:
+      - fluent-fluentd_data:/fluentd/log
+    ports:
+      - target: 24224
+        published: ${FLUENT-FLUENTD_PORT:-24224}
+      - target: 24224
+        published: ${FLUENT-FLUENTD_PORT:-24224}
+        protocol: udp
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 3
+
+networks:
+  frontend_network:
+    external: true
+  fluent-fluentd_network:
+    external: true
+
+volumes:
+  fluent-fluentd_data:
+    name: ${COMPOSE_PROJECT_NAME:-fluent-fluentd}_fluent-fluentd_data
+#    driver_opts:
+#      type: nfs
+#      o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,rw
+#      device: :${NFS_PATH:-/media/nfs_docker/dev/${COMPOSE_PROJECT_NAME:-fluent-fluentd}/volumes/fluent-fluentd_data}
