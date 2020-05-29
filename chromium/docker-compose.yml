@@ -16,9 +16,22 @@ services:
         published: 9222
     networks:
       - frontend_network
+#      - chromium_network
+#    volumes:
+#      - tmp_data:/tmp:ro,nocopy
     deploy:
       replicas: 1
 
 networks:
   frontend_network:
     external: true
+#  chromium_network:
+#    external: true
+
+#volumes:
+#  tmp_data:
+#    name: chromium_tmp_data
+#    driver_opts:
+#      type: nfs
+#      o: addr=${NFS_HOSTNAME:-nfs.example.com},nolock,soft,ro
+#      device: :${NFS_PATH:-/media/nfs_docker/dev/chromium/volumes/tmp_data}
