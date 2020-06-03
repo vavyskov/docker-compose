@@ -2,7 +2,8 @@ version: "3.5"
 
 services:
   chromium:
-    image: zenika/alpine-chrome:81-with-puppeteer
+    #image: zenika/alpine-chrome:81-with-puppeteer
+    image: vavyskov/chromium
     container_name: chromium_chromium
     command:
       - chromium-browser
