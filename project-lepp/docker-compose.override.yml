@@ -77,6 +77,8 @@ services:
       POSTGRES_USER: lepp
       POSTGRES_PASSWORD: lepp
       POSTGRES_DB: lepp
+      LC_COLLATE: utf8mb4_czech_ci
+      LC_CTYPE: utf8mb4_czech_ci
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

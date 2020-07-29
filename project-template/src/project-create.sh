@@ -413,6 +413,8 @@ services:
 #      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_DB: ${POSTGRES_DATABASE}
+      LC_COLLATE: utf8mb4_czech_ci
+      LC_CTYPE: utf8mb4_czech_ci
       #PGDATA: /data/postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data

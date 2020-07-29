@@ -32,6 +32,8 @@ You can set environment variables in `.env` file.
         --name postgres \
         --env POSTGRES_USER=postgres \
         --env POSTGRES_PASSWORD=postgres \
+        --env LC_COLLATE=utf8mb4_czech_ci \
+        --env LC_CTYPE=utf8mb4_czech_ci \
         --volume postgres_data:/var/lib/postgresql/data \
         --publish 5432:5432 \
         --network frontend_network \
