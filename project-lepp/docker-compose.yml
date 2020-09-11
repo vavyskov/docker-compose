@@ -12,6 +12,7 @@ services:
     container_name: lepp_php-fpm
     environment:
       PROJECT_MODE: dev
+      #TIME_ZONE: UTC
       PHP_USER: lepp
       SMTP_HOSTNAME: 192.168.99.100
       SMTP_PORT: 1026

@@ -89,6 +89,7 @@ services:
 #      - project_ssh_password
     environment:
       PROJECT_MODE: dev
+      #TIME_ZONE: UTC
       SSH_HOME: /var/www
       SSH_USER: user
       SSH_PASSWORD: password

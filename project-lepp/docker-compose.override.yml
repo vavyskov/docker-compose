@@ -52,6 +52,7 @@ services:
       - php-fpm
     environment:
       PROJECT_MODE: dev
+      #TIME_ZONE: UTC
       SSH_USER: lepp
       SSH_PASSWORD: lepp
       GIT_EMAIL: my@email.com

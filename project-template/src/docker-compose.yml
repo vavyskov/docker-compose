@@ -12,6 +12,7 @@ services:
     environment:
       #FASTCGI_PORT: 
       PROJECT_MODE: dev
+      #TIME_ZONE: UTC
       #PHP_HOME: 
       PHP_USER: user
       SMTP_HOSTNAME: 192.168.99.107
