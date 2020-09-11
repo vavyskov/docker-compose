@@ -18,6 +18,7 @@ services:
     depends_on:
       - php-fpm
 #    environment:
+#      TIME_ZONE: UTC
 #      NGINX_ROOT: /var/www/html/public
 #      FASTCGI_HOSTNAME: php-fpm
 #      FASTCGI_PORT: 9000
