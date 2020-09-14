@@ -111,7 +111,7 @@ Wordpress - cli:
 
 Drupal - ručně:
 - `wget https://www.drupal.org/download-latest/zip`
-- ??? status - aby bylo vše OK, je třeba vysypat cache (nebo přejít na adresu /update.php/selection)
+- status - aby bylo vše OK, je třeba vysypat cache (nebo přejít na adresu /update.php/selection)
 - vše ostatní OK
 
 Drupal - composer (docker-machine minimálně 2G RAM)
@@ -131,20 +131,24 @@ Drupal - composer (docker-machine minimálně 2G RAM)
 - `cd; drupal quick:start` [drupal-composer, html, standard] - spouští vlastní server...
     - !!! nefunguje
 
-Docker
-- `docker stats` (Ctrl+C - exit)
-- `docker stats project_ssh`
-
 Symfony - symfony:
 - `symfony new --full html`
 - instalace OK
 - další položky ???
+
+Moodle - ručně:
+- `wget https://download.moodle.org/download.php/direct/stable39/moodle-latest-39.zip`
+    - odkazy uvedené na https://download.moodle.org/releases/latest/ není možné pro stažení z terminálu (wget, curl) použít - stažené archivy nejsou kompletní :( 
 
 Možnost aktualizace CLI nástrojů z SSH-PHP-CLI?
 - wp cli update (permission denied)
 - drupal self-update (permission denied)
 - symfony self-update (?)
 - composer self-update (?)
+
+Docker
+- `docker stats` (Ctrl+C - exit)
+- `docker stats project_ssh`
 
 Docker Toolbox
 - Memory
