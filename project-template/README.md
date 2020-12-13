@@ -13,7 +13,7 @@ Content:
 
 1. Upravte `.env` dle potřeb (`.env` nefunguje ve Swarm módu).
 1. Příkazem `docker-compose config` si zobrazte výslednou konfiguraci.
-1. (Zobrazený výstup si uložte do nového projektu jako `docker-compose.yml` a upravte dle potřeb.) 
+1. (Zobrazený výstup si uložte do nového projektu jako `docker-compose.yml` a upravte dle potřeb.)
 
 ## Notes
 Volitelně Traefik
@@ -90,6 +90,7 @@ Testované položky:
 
 Statické stránky:
 - funkčnost více HTML souborů v různých adresářích
+- sending e-mails (Docker Toolbox, SMTP port 1025): OK
 
 Wordpress ručně:
 - `wget https://cs.wordpress.org/latest-cs_CZ.zip`
@@ -104,14 +105,18 @@ Wordpress ručně:
     - wp-config.php
         - (`define('DB_CHARSET', 'utf8mb4');` - autodetekce je OK)
         - `define('DB_COLLATE', 'utf8mb4_czech_ci');` - autodetekce WP verze 5.4 NEFUNGUJE
-- vše OK
+- sending e-mails (Docker Toolbox, SMTP port 1025): OK
+- vše ostatní OK
 
 Wordpress - cli:
 - stažení WP OK
 
 Drupal - ručně:
 - `wget https://www.drupal.org/download-latest/zip`
-- status - aby bylo vše OK, je třeba vysypat cache (nebo přejít na adresu /update.php/selection)
+- ??? status - aby bylo vše OK, je třeba vysypat cache (nebo přejít na adresu /update.php/selection)
+- sending e-mails (Docker Toolbox, SMTP port 1025):
+    - Drupal 7 require module https://www.drupal.org/project/smtp (set Server and Port): OK
+    - Drupal 9: how to correctly install module https://www.drupal.org/project/smtp (missing phpmailer/phpmailer) ???
 - vše ostatní OK
 
 Drupal - composer (docker-machine minimálně 2G RAM)
@@ -121,12 +126,17 @@ Drupal - composer (docker-machine minimálně 2G RAM)
         - https://www.drupal.org/docs/develop/using-composer/starting-a-site-using-drupal-composer-project-templates#s-workaround
         - sites/default/settings.php
             - `$settings['skip_permissions_hardening'] = TRUE;`
+    - sending e-mails (Docker Toolbox, SMTP port 1025): ???
     - vše ostatní OK
-- `cd; composer create-project drupal-composer/drupal-project:8.x-dev html --no-interaction; cd html; composer install`
+- `cd; composer create-project drupal/recommended-project:9.1.0 html --no-install; cd html; composer install`
+    - ???
+    - sending e-mails (Docker Toolbox, SMTP port 1025): Drupal 9 require module https://www.drupal.org/project/smtp (set Server and Port): OK
+- (`cd; composer create-project drupal-composer/drupal-project:8.x-dev html --no-interaction; cd html; composer install`)
     - instalace rozšíření "OK" - současnou chybu verze Drupal 8.8.5 je možné vyřešit viz níže :(
         - https://www.drupal.org/docs/develop/using-composer/starting-a-site-using-drupal-composer-project-templates#s-workaround
         - sites/default/settings.php
             - `$settings['skip_permissions_hardening'] = TRUE;`
+    - sending e-mails (Docker Toolbox, SMTP port 1025): ???
     - vše ostatní OK
 - `cd; drupal quick:start` [drupal-composer, html, standard] - spouští vlastní server...
     - !!! nefunguje
@@ -155,12 +165,12 @@ Docker Toolbox
     - `VBoxManage showvminfo default | grep Memory` | `docker-machine ssh default free` | `docker-machine inspect`
         - změna výchozího nastavení
             - `~/.docker/machine/machines/default/config.json` | `~/.docker/machine/default/config.json`
-        - konfigurace stávajícího: 
+        - konfigurace stávajícího:
             - `docker-machine stop default`
               `VBoxManage modifyvm default --memory 4096` (min. 2048)
               `docker-machine start default`
         - vytvoření nového
             - `docker-machine create -d virtualbox --virtualbox-memory 4096 default`
             - `docker-machine create -d virtualbox --virtualbox-memory=4096 --virtualbox-cpu-count=2 --virtualbox-disk-size=50000 default`
-            
+
 Při běhu v dynamickém prostředí je zvykem aplikace monitorovat, často nástrojem [Prometheus](https://prometheus.io/docs/introduction/overview/).
