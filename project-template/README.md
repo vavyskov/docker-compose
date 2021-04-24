@@ -124,7 +124,7 @@ Drupal - composer (docker-machine minimálně 2G RAM)
     - `composer install`
     - instalace rozšíření "OK" - současnou chybu verze Drupal 8.8.5 je možné vyřešit viz níže :(
         - https://www.drupal.org/docs/develop/using-composer/starting-a-site-using-drupal-composer-project-templates#s-workaround
-        - sites/default/settings.php
+        - dočasně v sites/default/settings.local.php (sites/default/settings.php) odkomentujte (vložte) řádek:
             - `$settings['skip_permissions_hardening'] = TRUE;`
     - sending e-mails (Docker Toolbox, SMTP port 1025): ???
     - vše ostatní OK
@@ -134,7 +134,7 @@ Drupal - composer (docker-machine minimálně 2G RAM)
 - (`cd; composer create-project drupal-composer/drupal-project:8.x-dev html --no-interaction; cd html; composer install`)
     - instalace rozšíření "OK" - současnou chybu verze Drupal 8.8.5 je možné vyřešit viz níže :(
         - https://www.drupal.org/docs/develop/using-composer/starting-a-site-using-drupal-composer-project-templates#s-workaround
-        - sites/default/settings.php
+        - dočasně v sites/default/settings.local.php (sites/default/settings.php) odkomentujte (vložte) řádek:
             - `$settings['skip_permissions_hardening'] = TRUE;`
     - sending e-mails (Docker Toolbox, SMTP port 1025): ???
     - vše ostatní OK
