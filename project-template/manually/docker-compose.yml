@@ -20,6 +20,7 @@ services:
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
 #      PROXY_SERVER: ${PROXY_SERVER}
+      HOST_USER_ID: ${HOST_USER_ID}
       XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME}
       #APP_ENV: ${APP_ENV}
       #APP_SECRET: ${APP_SECRET}
@@ -28,6 +29,8 @@ services:
       - project_network
     volumes:
       - html_data:${PROJECT_ROOT}
+#      - ./project:${PROJECT_ROOT}:cached
+#      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
       #- ~/.ssh:${SSH_HOME}/.shared/.ssh:ro
       #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
     #working_dir: /var/www/html

@@ -56,7 +56,8 @@ Volitelně Traefik
 
 ## ToDo
 
-- envsubst (project-create.sh)
+- autogenerator
+  - envsubst (project-create.sh)
 - Docker Secrets: http://blog.code4hire.com/2018/06/the-rabbit-hole-is-deep-when-trying-to-switch-from-environment-variables-file-to-docker-secrets/
 - docker-share (sdílení společného nastavení "project mode ???", "php.ini", "PHP extensions" mezi kontejnery PHP-FPM a SSH-PHP-CLI)
     - https://github.com/paslandau/docker-php-tutorial/blob/part_3_structuring-the-docker-setup-for-php-projects/.docker/.shared/scripts/install_php_extensions.sh

@@ -120,7 +120,7 @@ services:
     deploy:
       #mode: replicated
       ## Current number of nodes: $(docker node ls -q | wc -l)
-      replicas: ${TRAEFIK_REPLICAS:-3}
+#      replicas: ${TRAEFIK_REPLICAS:-3}
       placement:
         constraints:
           - node.role == manager

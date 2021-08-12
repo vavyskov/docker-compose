@@ -14,6 +14,8 @@ services:
     volumes:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
       - html_data:${PROJECT_ROOT}:nocopy
+#      - ./project:${PROJECT_ROOT}:cached
+#      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
 #      - /etc/ss/path:/etc/ssl/path:ro
       #- ./logs:/var/log
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
@@ -31,9 +33,9 @@ services:
     #configs:
     #  - source: nginx_config
     #    target: /etc/nginx/nginx.conf
-    #ports:
-    #  - target: 80
-    #    published: ${NGINX_PORT}
+    ports:
+      - target: 80
+        published: ${NGINX_PORT}
     #    #mode: host
     #  - target: 443
     #    published: ${NGINX_PORT_SSL}
@@ -93,6 +95,7 @@ services:
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       PROXY_SERVER: ${PROXY_SERVER}
+      HOST_USER_ID: ${HOST_USER_ID}
       XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME}
       #APP_ENV: ${APP_ENV}
       #APP_SECRET: ${APP_SECRET}
@@ -108,6 +111,8 @@ services:
     volumes:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
       - html_data:${PROJECT_ROOT}:nocopy
+#      - ./project:${PROJECT_ROOT}:cached
+#      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
 #      - ~/.ssh:${SSH_HOME}/.shared/.ssh:ro
 #      - ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
     #working_dir: /var/www/html
