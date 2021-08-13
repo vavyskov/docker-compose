@@ -33,9 +33,9 @@ services:
     #configs:
     #  - source: nginx_config
     #    target: /etc/nginx/nginx.conf
-    ports:
-      - target: 80
-        published: ${NGINX_PORT}
+#    ports:
+#      - target: 80
+#        published: ${NGINX_PORT}
     #    #mode: host
     #  - target: 443
     #    published: ${NGINX_PORT_SSL}
@@ -97,6 +97,7 @@ services:
       PROXY_SERVER: ${PROXY_SERVER}
       HOST_USER_ID: ${HOST_USER_ID}
       XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME}
+#      XDEBUG_PORT: ${XDEBUG_PORT}
       #APP_ENV: ${APP_ENV}
       #APP_SECRET: ${APP_SECRET}
       #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
@@ -218,6 +219,7 @@ services:
       - traefik.http.services.${COMPOSE_PROJECT_NAME}_mailcatcher.loadbalancer.server.port=80
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.rule=Host(`${MAILCATCHER_HOSTNAME}`)
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.rule=Host(`${PROJECT_HOSTNAME}`) && Path(`${MAILCATCHER_PATH}`)
+      ## HTTPS only
 #      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.tls=true
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.entrypoints=https
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.service=mailcatcher
@@ -242,8 +244,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.${COMPOSE_PROJECT_NAME}_adminer.loadbalancer.server.port=8080
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`${ADMINER_HOSTNAME}`)
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`${PROJECT_HOSTNAME}`) && Path(`${ADMINER_PATH}`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`${ADMINER_HOSTNAME}`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`${PROJECT_HOSTNAME}`) && Path(`${ADMINER_PATH}`)
+      ## HTTPS only
 #      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.tls=true
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.entrypoints=https
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.service=adminer
