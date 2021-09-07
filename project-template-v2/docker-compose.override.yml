@@ -1,0 +1,170 @@
+version: "3.7"
+
+services:
+  nginx:
+    image: wodby/nginx:${NGINX_TAG}
+    container_name: "${COMPOSE_PROJECT_NAME}_nginx"
+    depends_on:
+      - php
+    environment:
+      NGINX_STATIC_OPEN_FILE_CACHE: "off"
+      NGINX_ERROR_LOG_LEVEL: $NGINX_ERROR_LOG_LEVEL
+      NGINX_BACKEND_HOST: $NGINX_BACKEND_HOST
+      NGINX_SERVER_ROOT: $NGINX_SERVER_ROOT
+      NGINX_VHOST_PRESET: $NGINX_VHOST_PRESET
+#      NGINX_DRUPAL_FILE_PROXY_URL: http://example.com
+    volumes:
+#      - ./:/var/www/html:cached
+      - codebase:/var/www/html
+    labels:
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.rule=Host(`${PROJECT_BASE_URL}`)"
+
+#  apache:
+#    image: wodby/apache:$APACHE_TAG
+#    container_name: "${COMPOSE_PROJECT_NAME}_apache"
+#    depends_on:
+#      - php
+#    environment:
+#      APACHE_LOG_LEVEL: $APACHE_LOG_LEVEL
+#      APACHE_BACKEND_HOST: $APACHE_BACKEND_HOST
+#      APACHE_DOCUMENT_ROOT: $APACHE_DOCUMENT_ROOT
+#      APACHE_VHOST_PRESET: $APACHE_VHOST_PRESET
+#    volumes:
+##      - ./:/var/www/html:cached
+#      - codebase:/var/www/html
+#    labels:
+#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_apache.rule=Host(`${PROJECT_BASE_URL}`)"
+
+  mariadb:
+    image: wodby/mariadb:${MARIADB_TAG}
+    container_name: "${COMPOSE_PROJECT_NAME}_mariadb"
+    stop_grace_period: 30s
+    environment:
+      MYSQL_ROOT_PASSWORD: $MARIADB_ROOT_PASSWORD
+      MYSQL_DATABASE: $MARIADB_DATABESE
+      MYSQL_USER: $MARIADB_USER
+      MYSQL_PASSWORD: $MARIADB_PASSWORD
+    volumes:
+#      - ./mariadb-init:/docker-entrypoint-initdb.d # Place init .sql file(s) here.
+#      - /path/to/mariadb/data/on/host:/var/lib/mysql # Use bind mount
+    - mariadb_data:/var/lib/mysql
+
+  postgres:
+    image: wodby/postgres:${POSTGRES_TAG}
+    container_name: "${COMPOSE_PROJECT_NAME}_postgres"
+    stop_grace_period: 30s
+    environment:
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DATABASE
+      POSTGRES_USER: $POSTGRES_USER
+    volumes:
+#    - ./postgres-init:/docker-entrypoint-initdb.d # Place init file(s) here.
+#    - /path/to/postgres/data/on/host:/var/lib/postgresql/data # Use bind mount
+    - postgres_data:/var/lib/postgresql/data
+
+  mailcatcher:
+    image: vavyskov/mailcatcher:${MAILCATCHER_VERSION}
+#    build: ../../docker-mailcatcher/0.7.1/alpine3.13
+    container_name: ${COMPOSE_PROJECT_NAME}_mailcatcher
+    ports:
+#      - target: 1080
+#        published: ${MAILCATCHER_PORT}
+      - target: 1025
+        published: ${SMTP_PORT}
+#    networks:
+#      - frontend_network
+    labels:
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}_mailcatcher.loadbalancer.server.port=1080"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.rule=Host(`mailcatcher.${PROJECT_BASE_URL}`)"
+
+
+#  node:
+#    image: wodby/node:$NODE_TAG
+#    container_name: "${COMPOSE_PROJECT_NAME}_node"
+#    working_dir: /var/www/html/path/to/theme/to/build
+#    labels:
+#    - "traefik.http.services.${COMPOSE_PROJECT_NAME}_node.loadbalancer.server.port=3000"
+#    - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_node.rule=Host(`node.${PROJECT_BASE_URL}`)"
+#    expose:
+#    - "3000"
+#    volumes:
+#    - ./:/var/www/html
+#    command: sh -c 'yarn install && yarn run start'
+
+#  crond:
+##    image: wodby/php-dev:$PHP_TAG
+#    image: wodby/php:$PHP_TAG
+#    container_name: "${COMPOSE_PROJECT_NAME}_crond"
+#    environment:
+#      CRONTAB: "0 * * * * drush -r ${NGINX_SERVER_ROOT} cron"
+#    command: sudo -E LD_PRELOAD=/usr/lib/preloadable_libiconv.so crond -f -d 0
+#    volumes:
+##      - ./:/var/www/html:cached
+#      - codebase:/var/www/html
+
+#  drupal-node:
+#    image: wodby/drupal-node:$DRUPAL_NODE_TAG
+#    container_name: "${COMPOSE_PROJECT_NAME}_drupal_nodejs"
+#    labels:
+#    - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_drupal_node.rule=Host(`drupal_node.${PROJECT_BASE_URL}`)"
+#    environment:
+#      NODE_SERVICE_KEY: node-service-key
+
+  adminer:
+    container_name: "${COMPOSE_PROJECT_NAME}_adminer"
+    image: wodby/adminer:${ADMINER_TAG}
+    environment:
+      ADMINER_DEFAULT_DB_DRIVER: $MARIADB_DRIVER
+      ADMINER_DEFAULT_DB_HOST: $MARIADB_HOST
+      ADMINER_DEFAULT_DB_NAME: $MARIADB_HOST
+    labels:
+    - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`adminer.${PROJECT_BASE_URL}`)"
+
+#  rsyslog:
+#    container_name: "${COMPOSE_PROJECT_NAME}_rsyslog"
+#    image: wodby/rsyslog:$RSYSLOG_TAG
+
+#  opensmtpd:
+#    container_name: "${COMPOSE_PROJECT_NAME}_opensmtpd"
+#    image: wodby/opensmtpd:$OPENSMTPD_TAG
+
+#  xhprof:
+#    image: wodby/xhprof:$XHPROF_TAG
+#    container_name: "${COMPOSE_PROJECT_NAME}_xhprof"
+#    restart: always
+#    volumes:
+#    - files:/mnt/files
+#    labels:
+#    - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_xhprof.rule=Host(`xhprof.${PROJECT_BASE_URL}`)"
+
+#  chrome:
+#    image: selenium/standalone-chrome:$SELENIUM_CHROME_TAG
+#    container_name: "${COMPOSE_PROJECT_NAME}_chrome"
+#    volumes:
+#    - /dev/shm:/dev/shm
+#    entrypoint:
+#    - chromedriver
+#    - "--no-sandbox"
+#    - "--disable-dev-shm-usage"
+#    - "--log-path=/tmp/chromedriver.log"
+#    - "--verbose"
+#    - "--whitelisted-ips="
+
+  traefik:
+    image: traefik:v2.0
+    container_name: "${COMPOSE_PROJECT_NAME}_traefik"
+    command: --api.insecure=true --providers.docker
+    ports:
+      - '80:80'
+      - '8080:8080' # Dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+## For production
+  codebase:
+## For Xdebug profiler
+#  files:
+## Database
+  mariadb_data:
+  postgres_data:
