@@ -36,7 +36,13 @@ services:
 #      - mutagen:/var/www/html
 ## For XHProf and Xdebug profiler traces
 #      - files:/mnt/files
+    networks:
+      - backend_network
 
+networks:
+  backend_network:
+    external: true
+    name: ${COMPOSE_PROJECT_NAME}_network
 
 volumes:
 ## For production

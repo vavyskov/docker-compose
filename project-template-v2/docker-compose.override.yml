@@ -16,7 +16,14 @@ services:
     volumes:
 #      - ./:/var/www/html:cached
       - codebase:/var/www/html
+    ports:
+      - target: 80
+        published: ${NGINX_PORT}
+    networks:
+      - frontend_network
+      - backend_network
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.rule=Host(`${PROJECT_BASE_URL}`)"
 
 #  apache:
@@ -33,6 +40,7 @@ services:
 ##      - ./:/var/www/html:cached
 #      - codebase:/var/www/html
 #    labels:
+#      - traefik.enable=true
 #      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_apache.rule=Host(`${PROJECT_BASE_URL}`)"
 
   mariadb:
@@ -47,7 +55,9 @@ services:
     volumes:
 #      - ./mariadb-init:/docker-entrypoint-initdb.d # Place init .sql file(s) here.
 #      - /path/to/mariadb/data/on/host:/var/lib/mysql # Use bind mount
-    - mariadb_data:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - backend_network
 
   postgres:
     image: wodby/postgres:${POSTGRES_TAG}
@@ -58,33 +68,36 @@ services:
       POSTGRES_DB: $POSTGRES_DATABASE
       POSTGRES_USER: $POSTGRES_USER
     volumes:
-#    - ./postgres-init:/docker-entrypoint-initdb.d # Place init file(s) here.
-#    - /path/to/postgres/data/on/host:/var/lib/postgresql/data # Use bind mount
-    - postgres_data:/var/lib/postgresql/data
+#      - ./postgres-init:/docker-entrypoint-initdb.d # Place init file(s) here.
+#      - /path/to/postgres/data/on/host:/var/lib/postgresql/data # Use bind mount
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend_network
 
   mailcatcher:
     image: vavyskov/mailcatcher:${MAILCATCHER_VERSION}
 #    build: ../../docker-mailcatcher/0.7.1/alpine3.13
     container_name: ${COMPOSE_PROJECT_NAME}_mailcatcher
     ports:
-#      - target: 1080
-#        published: ${MAILCATCHER_PORT}
+      - target: 1080
+        published: ${MAILCATCHER_PORT}
       - target: 1025
         published: ${SMTP_PORT}
-#    networks:
-#      - frontend_network
+    networks:
+      - frontend_network
     labels:
+      - traefik.enable=true
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}_mailcatcher.loadbalancer.server.port=1080"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.rule=Host(`mailcatcher.${PROJECT_BASE_URL}`)"
-
 
 #  node:
 #    image: wodby/node:$NODE_TAG
 #    container_name: "${COMPOSE_PROJECT_NAME}_node"
 #    working_dir: /var/www/html/path/to/theme/to/build
 #    labels:
-#    - "traefik.http.services.${COMPOSE_PROJECT_NAME}_node.loadbalancer.server.port=3000"
-#    - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_node.rule=Host(`node.${PROJECT_BASE_URL}`)"
+#      - traefik.enable=true
+#      - "traefik.http.services.${COMPOSE_PROJECT_NAME}_node.loadbalancer.server.port=3000"
+#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_node.rule=Host(`node.${PROJECT_BASE_URL}`)"
 #    expose:
 #    - "3000"
 #    volumes:
@@ -106,7 +119,8 @@ services:
 #    image: wodby/drupal-node:$DRUPAL_NODE_TAG
 #    container_name: "${COMPOSE_PROJECT_NAME}_drupal_nodejs"
 #    labels:
-#    - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_drupal_node.rule=Host(`drupal_node.${PROJECT_BASE_URL}`)"
+#      - traefik.enable=true
+#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_drupal_node.rule=Host(`drupal_node.${PROJECT_BASE_URL}`)"
 #    environment:
 #      NODE_SERVICE_KEY: node-service-key
 
@@ -117,8 +131,12 @@ services:
       ADMINER_DEFAULT_DB_DRIVER: $MARIADB_DRIVER
       ADMINER_DEFAULT_DB_HOST: $MARIADB_HOST
       ADMINER_DEFAULT_DB_NAME: $MARIADB_HOST
+    networks:
+      - frontend_network
+      - backend_network
     labels:
-    - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`adminer.${PROJECT_BASE_URL}`)"
+      - traefik.enable=true
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`adminer.${PROJECT_BASE_URL}`)"
 
 #  rsyslog:
 #    container_name: "${COMPOSE_PROJECT_NAME}_rsyslog"
@@ -135,7 +153,8 @@ services:
 #    volumes:
 #    - files:/mnt/files
 #    labels:
-#    - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_xhprof.rule=Host(`xhprof.${PROJECT_BASE_URL}`)"
+#      - traefik.enable=true
+#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_xhprof.rule=Host(`xhprof.${PROJECT_BASE_URL}`)"
 
 #  chrome:
 #    image: selenium/standalone-chrome:$SELENIUM_CHROME_TAG
@@ -153,12 +172,30 @@ services:
   traefik:
     image: traefik:v2.0
     container_name: "${COMPOSE_PROJECT_NAME}_traefik"
-    command: --api.insecure=true --providers.docker
+    command:
+      - --api.insecure=true
+      - --providers.docker
+#      - --providers.docker.network=frontend_network
+      - --providers.docker.network=frontend_network
     ports:
       - '80:80'
       - '8080:8080' # Dashboard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+#    network_mode: "host"
+    networks:
+      - frontend_network
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}_traefik.loadbalancer.server.port=8080
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_traefik.rule=Host(`traefik.${PROJECT_BASE_URL}`)"
+
+networks:
+  frontend_network:
+    external: true
+  backend_network:
+    external: true
+    name: ${COMPOSE_PROJECT_NAME}_network
 
 volumes:
 ## For production

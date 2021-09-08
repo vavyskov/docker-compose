@@ -2,15 +2,21 @@
 
 Často používané "docker" příkazy:
 
-    docker-compose up -d
+    sh project_up.sh
+
     docker exec -it <container-id> sh
       exit
-    docker-compose down
+
+    sh project_down.sh
 
 Často používané "swarm" příkazy:
 
-    sh stack-deploy_project.sh
-    docker stack rm <STACK-NAME>
+    sh stack_deploy.sh
+
+    docker service ls
+    docker stack ls
+
+    sh stack_rm.sh
 
 - Swarm nepodporuje `.env`, ale je možné to "obejít" pomocí "docker-copmpose config"
 - Swarm nepodporuje `depends_on`, ale je možné to "obejít" postupným spuštěním
