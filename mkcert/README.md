@@ -28,7 +28,7 @@ You can set environment variables in `.env` file.
     docker run --rm -v $PWD:/root/.local/share/mkcert vavyskov/mkcert:1.4.3-alpine3.13
 
     docker run --rm \
-        -v $PWD:/certs \
+        -v $PWD:/root/.local/share/mkcert \
         -e SERVER_HOSTNAMES="*.local *.example.com" \
         -e HOST_USER_ID="1000" \
         -e HOST_USER_NAME="user" \
