@@ -1,0 +1,21 @@
+http:
+  routers:
+    traefik:
+      rule: "Host(`traefik.example.com`)"
+      service: "api@internal"
+      tls:
+        domains:
+          - main: "localhost.dev"
+            sans:
+              - "*.localhost.dev"
+          - main: "localhost.test"
+            sans:
+              - "*.localhost.test"
+          - main: "example.com"
+            sans:
+              - "*.example.com"
+
+tls:
+  certificates:
+    - certFile: "/etc/ssl/certificates/server.crt"
+      keyFile: "/etc/ssl/certificates/server.key"
