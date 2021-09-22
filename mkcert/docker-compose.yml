@@ -9,4 +9,4 @@ services:
       HOST_USER_ID: 1000
       HOST_USER_NAME: user
     volumes:
-      - ./certs:/root/.local/share/mkcert
+      - ./certificates:/root/.local/share/mkcert
