@@ -5,7 +5,7 @@ A fast and simple way to generate CA and SSL certificates for your local dev env
 ## Environments
 This Compose file contains the following environment variables:
 
-- `SERVER_HOSTNAMES` the default value is **\*.local \*.example.com**
+- `SERVER_HOSTNAMES` the default value is **\*.localhost.dev \*.localhost.test \*.example.com \*.example.edu**
 - `HOST_USER_ID` the default value is **1000**
 - `HOST_USER_NAME` the default value is **user**
 
