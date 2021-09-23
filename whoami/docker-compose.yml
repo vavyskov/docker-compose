@@ -62,17 +62,17 @@ services:
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.rule=Host(`whoami.example.com`) && PathPrefix(`/whoami`)
 
       ## Allow request from both predefined entry points "http" and "https"
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.entrypoints=http,https
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.entrypoints=web,websecure
 
       ## Allow request only from the predefined entry point named "http"
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.entrypoints=http
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.entrypoints=web
 
       ## Allow request only from the predefined entry point named "https"
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.entrypoints=https
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.entrypoints=websecure
 
       ## TLS
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.tls=true
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.entrypoints=https
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.entrypoints=websecure
 
       ## LetsEncrypt
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami}_whoami.tls.certresolver=default

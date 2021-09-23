@@ -67,7 +67,7 @@ services:
       - traefik.http.routers.project_nginx.rule=Host(`project.example.com`)
 #     - traefik.http.routers.project_nginx.tls=true
       #- traefik.http.routers.project_nginx.service=project_nginx
-      #- traefik.http.routers.project_nginx.entrypoints=https
+      #- traefik.http.routers.project_nginx.entrypoints=websecure
       #- traefik.http.services.project_nginx.loadbalancer.passhostheader=true
     #healthcheck:
     #  test: curl --fail -s http://localhost:5000/ || exit 1
@@ -227,7 +227,7 @@ services:
       - traefik.http.routers.project_mailcatcher.rule=Host(`mailcatcher.example.com`)
       #- traefik.http.routers.project_mailcatcher.rule=Host(`project.example.com`) && Path(``)
 #      - traefik.http.routers.project_mailcatcher.tls=true
-      #- traefik.http.routers.project_mailcatcher.entrypoints=https
+      #- traefik.http.routers.project_mailcatcher.entrypoints=websecure
       #- traefik.http.routers.project_mailcatcher.service=mailcatcher
 
   adminer:
@@ -253,7 +253,7 @@ services:
       #- traefik.http.routers.project_adminer.rule=Host(``)
       - traefik.http.routers.project_adminer.rule=Host(`project.example.com`) && Path(`/adminer`)
 #      - traefik.http.routers.project_adminer.tls=true
-      #- traefik.http.routers.project_adminer.entrypoints=https
+      #- traefik.http.routers.project_adminer.entrypoints=websecure
       #- traefik.http.routers.project_adminer.service=adminer
 
 networks:

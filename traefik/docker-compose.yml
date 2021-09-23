@@ -10,6 +10,8 @@ services:
       HOST_USER_NAME: ${HOST_USER_NAME:-user}
     volumes:
       - ./certificates:/root/.local/share/mkcert
+    networks:
+      - frontend_network
 
 networks:
   frontend_network:

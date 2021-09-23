@@ -102,6 +102,9 @@ services:
       ## Dashboard
       - target: 8080
         published: ${TRAEFIK_PORT:-8080}
+      ## Node
+      - target: 3000
+        published: 3000
       ## Development
 #      - target: 9000
 #        published: 9000
@@ -145,7 +148,7 @@ services:
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.rule=Host(`traefik.example.com`) && PathPrefix(`/traefik`)
 
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.tls=true
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.entrypoints=https
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.entrypoints=websecure
 
 #      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik=true
 
@@ -160,7 +163,7 @@ services:
       #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_auth-users.basicauth.users=admin:$$2y$$05$$1OX5jZ1Kpm/iVKE8tgUhu.STmPkgi0lLxVeP5yEcRioFdV4mcgdTu
 
       ## Global redirection - this creates the redirect middleware and redirects all http requests to https
-#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.entrypoints=http
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.entrypoints=web
 #      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.rule=hostregexp(`{host:.+}`)
       ##- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.rule=HostRegexp(`{any:.*}`)
 #      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.middlewares=${COMPOSE_PROJECT_NAME:-traefik}_redirect-to-https

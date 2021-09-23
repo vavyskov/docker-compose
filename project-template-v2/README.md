@@ -22,6 +22,29 @@
 - Swarm nepodporuje `depends_on`, ale je možné to "obejít" postupným spuštěním
 - Swarm vyžaduje URL `127.0.0.1` (`localhost` nefunguje)
 
+## Access to project:
+- **URL:** `http://localhost:8088` (Docker Toolbox: `192.168.99.100:8088`)
+
+## Configure your system `hosts` file:
+
+- `127.0.0.1 project.example.com` (Docker CE)
+- `192.168.99.100 project.example.com` (Docker Toolbox)
+
+Path:
+- Linux: `/etc/hosts`
+- macOX: `/private/etc/hosts`
+- Windows: `C:\Windows\System32\drivers\etc\hosts`
+
+## Adding trusted root certificate authority
+1. Operating system
+    - **Linux (Debian)**:
+
+          sudo cp rootCA.pem /usr/local/share/ca-certificates/rootCA.crt
+          sudo update-ca-certificates
+
+2. Browsers:
+    - **Chrome**: Settings -> Privacy and security -> Security -> Manage certificates -> Authorities -> Import (rootCA.pem)
+
 ## Kontrola
 
 1. Git:

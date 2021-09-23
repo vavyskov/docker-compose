@@ -31,38 +31,59 @@ docker network create ${COMPOSE_PROJECT_NAME}_network
 ## Create and start containers
 docker-compose up -d
 
+## TPUT
+BLACK_FG=`tput setaf 0`
+RED_FG=`tput setaf 1`
+GREEN_FG=`tput setaf 2`
+YELLOW_FG=`tput setaf 3`
+BLUE_FG=`tput setaf 4`
+MAGENTA_FG=`tput setaf 5`
+CYAN_FG=`tput setaf 6`
+WHITE_FG=`tput setaf 7`
+RESET_FG=`tput setaf 9`
+
+BLACK_BG=`tput setab 0`
+RED_BG=`tput setab 1`
+GREEN_BG=`tput setab 2`
+YELLOW_BG=`tput setab 3`
+BLUE_BG=`tput setab 4`
+MAGENTA_BG=`tput setab 5`
+CYAN_BG=`tput setab 6`
+WHITE_BG=`tput setab 7`
+RESET_BG=`tput setab 9`
+
+MOVE_UP=`tput cuu 1`
+MOVE_TO_0_0=`tput cup 0 0`
+CLEAR_LINE=`tput el 1`
+
+UNDERLINE=`tput smul`
+RESET_UNDERLINE=`tput rmul`
+INVERSE=`tput smso` # Start "standout" mode (tput rev)
+RESET_INVERSE=`tput rmso` # End "standout" mode
+
+BOLD=`tput bold`
+BLINK=`tput blink`
+INVISIBLE=`tput invis`
+
+CLAER_TERMINAL=`tput reset` ## (tput init | reset)
+RESET_ALL=`tput sgr0`
+
 ## Show URLs
 echo ""
-tput smul
-echo "Project URLs:"
-tput rmul
-echo "http://${PROJECT_BASE_URL}"
-echo "http://adminer.${PROJECT_BASE_URL}"
-echo "http://mailcatcher.${PROJECT_BASE_URL}"
+echo "${UNDERLINE}Project URLs:${RESET_ALL}"
+echo "${BLUE_FG}https://${PROJECT_BASE_URL}"
+echo "https://adminer-${PROJECT_BASE_URL}"
+echo "https://mailcatcher-${PROJECT_BASE_URL}${RESET_ALL}"
 echo ""
-
-## Notes
-## tput smul # set underline
-## tput rmul # remove underline
-##
-## tput smso # set bold on
-## tput rmso # remove bold
-##
-## tput setaf 1 #red
-## tput setaf 2 #green
-##
-## tput cup 0 0 # move to pos 0,0
-##
-## tput reset
 
 ## Open URLs in browser
 ## Linux
-#xdg-open "http://mailcatcher.${PROJECT_BASE_URL}"
-#xdg-open "http://adminer.${PROJECT_BASE_URL}"
+#xdg-open "http://mailcatcher-${PROJECT_BASE_URL}"
+#xdg-open "http://adminer-${PROJECT_BASE_URL}"
 #xdg-open "http://${PROJECT_BASE_URL}"
 ## macOS
-#open "http://mailcatcher.${PROJECT_BASE_URL}"
-#open "http://adminer.${PROJECT_BASE_URL}"
+#open "http://mailcatcher-${PROJECT_BASE_URL}"
+#open "http://adminer-${PROJECT_BASE_URL}"
 #open "http://${PROJECT_BASE_URL}"
 ## Windows
-#start "http://mailcatcher.${PROJECT_BASE_URL}" "http://adminer.${PROJECT_BASE_URL}" "http://${PROJECT_BASE_URL}"
+#start "http://mailcatcher-${PROJECT_BASE_URL}" "http://adminer-${PROJECT_BASE_URL}" "http://${PROJECT_BASE_URL}"

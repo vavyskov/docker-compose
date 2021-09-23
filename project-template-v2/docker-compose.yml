@@ -29,11 +29,11 @@ services:
 
       SSH_AUTH_SOCK: /ssh-agent
     volumes:
-#      - ./:/var/www/html:cached # Dev
-      - codebase:/var/www/html # Prod
+#      - ./:${PROJECT_ROOT}:cached # Dev
+      - codebase:${PROJECT_ROOT} # Prod
       - $SSH_AUTH_SOCK:/ssh-agent:ro # Forward local machine SSH key to docker (ssh-forwarding on macOS hosts - instead of mounting the path of $SSH_AUTH_SOCK, you have to mount this path - /run/host-services/ssh-auth.sock)
 ## Alternative for macOS users: Mutagen https://wodby.com/docs/stacks/drupal/local#docker-for-mac
-#      - mutagen:/var/www/html
+#      - mutagen:${PROJECT_ROOT}
 ## For XHProf and Xdebug profiler traces
 #      - files:/mnt/files
     networks:

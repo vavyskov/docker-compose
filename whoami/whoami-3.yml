@@ -5,7 +5,7 @@ version: '3.5'
 
 services:
   whoami:
-    image: containous/whoami:${WHOAMI_VERSION:-v1.4.0}
+    image: containous/whoami:${WHOAMI_VERSION:-v1.5.0}
     container_name: ${COMPOSE_PROJECT_NAME:-whoami-3}_whoami-3
     #hostname: whoami-3.example.com
     ports:
@@ -24,7 +24,7 @@ services:
       - traefik.enable=true
       - traefik.http.services.${COMPOSE_PROJECT_NAME:-whoami-3}_whoami-3.loadbalancer.server.port=80
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami-3}_whoami-3.rule=Host(`whoami-3.example.com`)
-#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami-3}_whoami-3.tls=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-whoami-3}_whoami-3.tls=true
 
 networks:
   frontend_network:
