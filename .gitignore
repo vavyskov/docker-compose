@@ -4,3 +4,7 @@
 # Ignore IDEs directories
 .idea/
 nbproject/
+
+# Traefik
+traefik/certificates/*
+!traefik/certificates/.gitkeep

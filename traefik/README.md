@@ -5,6 +5,9 @@ This Compose file contains the following environment variables:
 
 - `COMPOSE_PROJECT_NAME` the default value is **traefik**
 - `MKCERT_VERSION` the default value is **1.4.3-alpine3.13**
+- `SERVER_HOSTNAMES` the default value is **\*.localhost.dev \*.localhost.test \*.example.com \*.example.edu**
+- `HOST_USER_ID` the default value is **1000**
+- `HOST_USER_NAME` the default value is **user**
 - `TRAEFIK_VERSION` the default value is **v2.5**
 - `TRAEFIK_PORT` the default value is **8080**
 
