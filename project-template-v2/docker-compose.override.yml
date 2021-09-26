@@ -111,6 +111,8 @@ services:
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_node.tls=true
     expose:
       - "3000"
+    environment:
+      SSH_AUTH_SOCK: /ssh-agent
     volumes:
 #      - ./:${PROJECT_ROOT}:cached # Dev
       - codebase:${PROJECT_ROOT} # Prod
