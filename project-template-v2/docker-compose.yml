@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.6"
 
 services:
   php:
@@ -6,8 +6,7 @@ services:
     image: wodby/php:${PHP_TAG}
     container_name: "${COMPOSE_PROJECT_NAME}_php"
     environment:
-      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailcatcher:$SMTP_PORT
-#      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S opensmtpd:$OPENSMTPD_PORT
+      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S $SMTP_HOSTNAME:$SMTP_PORT
 
       PHP_FPM_USER: wodby
       PHP_FPM_GROUP: wodby

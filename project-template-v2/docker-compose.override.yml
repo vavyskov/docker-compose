@@ -158,9 +158,16 @@ services:
 #    container_name: "${COMPOSE_PROJECT_NAME}_rsyslog"
 #    image: wodby/rsyslog:$RSYSLOG_TAG
 
-#  opensmtpd:
-#    container_name: "${COMPOSE_PROJECT_NAME}_opensmtpd"
-#    image: wodby/opensmtpd:$OPENSMTPD_TAG
+  opensmtpd:
+    container_name: "${COMPOSE_PROJECT_NAME}_opensmtpd"
+    image: wodby/opensmtpd:$OPENSMTPD_TAG
+#    environment:
+#      RELAY_HOST: $RELAY_HOST
+#      RELAY_PORT: $RELAY_PORT
+#      RELAY_USER: $RELAY_USER
+#      RELAY_PASSWORD: $RELAY_PASSWORD
+    networks:
+      - backend_network
 
 #  xhprof:
 #    image: wodby/xhprof:$XHPROF_TAG
