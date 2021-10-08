@@ -33,9 +33,9 @@ services:
     #configs:
     #  - source: nginx_config
     #    target: /etc/nginx/nginx.conf
-#    ports:
-#      - target: 80
-#        published: ${NGINX_PORT}
+    ports:
+      - target: 80
+        published: ${NGINX_PORT}
     #    #mode: host
     #  - target: 443
     #    published: ${NGINX_PORT_SSL}
@@ -122,7 +122,8 @@ services:
       replicas: 1
 
   mariadb:
-    image: mariadb:${MARIADB_VERSION}
+#    image: mariadb:${MARIADB_VERSION}
+    image: wodby/mariadb:${MARIADB_TAG}
     container_name: ${COMPOSE_PROJECT_NAME}_mariadb
     environment:
       MYSQL_DATABASE: ${MARIADB_DATABASE}
@@ -138,6 +139,7 @@ services:
         published: ${MARIADB_PORT}
     networks:
       - project_network
+    #stop_grace_period: 30s
     #restart: unless-stopped
     #restart: always
     deploy:
