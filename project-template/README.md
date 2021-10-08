@@ -24,9 +24,9 @@ Volitelně Traefik
     - Docker:
 
           docker-compose pull
-          
-          docker network create project_network
+
           docker network create frontend_network
+          docker network create project_network
           docker-compose up -d
 
           docker-compose stop
@@ -36,8 +36,8 @@ Volitelně Traefik
 
           docker-compose pull
           
-          docker network create --driver=overlay project_network
           docker network create --driver=overlay frontend_network
+          docker network create --driver=overlay project_network
           docker stack deploy --compose-file=docker-compose.yml project
           docker stack deploy --compose-file=docker-compose.override.yml project
           

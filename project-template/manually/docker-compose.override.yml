@@ -57,7 +57,7 @@ services:
       - traefik.enable=true
       - traefik.http.services.${COMPOSE_PROJECT_NAME}_nginx.loadbalancer.server.port=80
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.rule=Host(`${PROJECT_HOSTNAME}`)
-#     - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.tls=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.tls=true
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.service=${COMPOSE_PROJECT_NAME}_nginx
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.entrypoints=websecure
       #- traefik.http.services.${COMPOSE_PROJECT_NAME}_nginx.loadbalancer.passhostheader=true
@@ -220,7 +220,7 @@ services:
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.rule=Host(`${MAILCATCHER_HOSTNAME}`)
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.rule=Host(`${PROJECT_HOSTNAME}`) && Path(`${MAILCATCHER_PATH}`)
       ## HTTPS only
-#      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.tls=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.tls=true
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.entrypoints=websecure
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.service=mailcatcher
 
@@ -247,7 +247,7 @@ services:
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`${ADMINER_HOSTNAME}`)
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`${PROJECT_HOSTNAME}`) && Path(`${ADMINER_PATH}`)
       ## HTTPS only
-#      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.tls=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.tls=true
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.entrypoints=websecure
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.service=adminer
 
