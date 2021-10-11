@@ -8,8 +8,12 @@ services:
     environment:
       PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S $SMTP_HOSTNAME:$SMTP_PORT
 
-      PHP_FPM_USER: wodby
-      PHP_FPM_GROUP: wodby
+
+
+#      PHP_FPM_USER: wodby
+#      PHP_FPM_GROUP: wodby
+
+
 
 #      COLUMNS: 80 # Set 80 columns for docker exec -it.
 #      # Read instructions at https://wodby.com/docs/stacks/php/local/#xdebug
@@ -29,7 +33,7 @@ services:
       SSH_AUTH_SOCK: /ssh-agent
     volumes:
 #      - ./:${PROJECT_ROOT}:cached # Dev
-      - codebase:${PROJECT_ROOT} # Prod
+      - codebase_data:${PROJECT_ROOT} # Prod
       - $SSH_AUTH_SOCK:/ssh-agent:ro # Forward local machine SSH key to docker (ssh-forwarding on macOS hosts - instead of mounting the path of $SSH_AUTH_SOCK, you have to mount this path - /run/host-services/ssh-auth.sock)
 ## Alternative for macOS users: Mutagen https://wodby.com/docs/stacks/drupal/local#docker-for-mac
 #      - mutagen:${PROJECT_ROOT}
@@ -45,6 +49,6 @@ networks:
 
 volumes:
 ## For production
-  codebase:
+  codebase_data:
 ## For Xdebug profiler
 #  files:

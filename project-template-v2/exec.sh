@@ -138,3 +138,9 @@ docker exec -it "$selectedContainer" sh
 #      esac
 #    fi
 #done
+
+
+
+## SWARM
+#docker exec -it $(docker ps -q -f name=SERVICE_NAME | head -1) sh
+#docker exec -it $(docker ps -q -f name=my-project_php | head -1) sh

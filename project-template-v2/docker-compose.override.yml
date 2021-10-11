@@ -15,7 +15,7 @@ services:
 #      NGINX_DRUPAL_FILE_PROXY_URL: http://example.com
     volumes:
 #      - ./:${PROJECT_ROOT}:cached
-      - codebase:${PROJECT_ROOT}
+      - codebase_data:${PROJECT_ROOT}
     ports:
       - target: 80
         published: ${NGINX_PORT}
@@ -39,7 +39,7 @@ services:
 #      APACHE_VHOST_PRESET: $APACHE_VHOST_PRESET
 #    volumes:
 ##      - ./:${PROJECT_ROOT}:cached
-#      - codebase:${PROJECT_ROOT}
+#      - codebase_data:${PROJECT_ROOT}
 #    labels:
 #      - traefik.enable=true
 #      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_apache.rule=Host(`${PROJECT_BASE_URL}`)"
@@ -94,7 +94,18 @@ services:
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.tls=true
 
   node:
-    image: wodby/node:$NODE_TAG
+    image: wodby/node:{$NODE_TAG}
+
+
+
+#    image: vavyskov/node:$NODE_TAG
+#    user: root
+
+#    build:
+#      context: ../../docker-node/14/alpine3.11
+
+
+
     container_name: "${COMPOSE_PROJECT_NAME}_node"
     ports:
       - target: 3000
@@ -113,9 +124,16 @@ services:
       - "3000"
     environment:
       SSH_AUTH_SOCK: /ssh-agent
+
+
+
+#      PROXY_SERVER: ${PROXY_SERVER}
+
+
+
     volumes:
 #      - ./:${PROJECT_ROOT}:cached # Dev
-      - codebase:${PROJECT_ROOT} # Prod
+      - codebase_data:${PROJECT_ROOT} # Prod
       - $SSH_AUTH_SOCK:/ssh-agent:ro # Forward local machine SSH key to docker (ssh-forwarding on macOS hosts - instead of mounting the path of $SSH_AUTH_SOCK, you have to mount this path - /run/host-services/ssh-auth.sock)
     command: sh -c 'npx http-server -p 3000'
 #    command: sh -c 'yarn install && yarn run start'
@@ -129,7 +147,7 @@ services:
 #    command: sudo -E LD_PRELOAD=/usr/lib/preloadable_libiconv.so crond -f -d 0
 #    volumes:
 ##      - ./:${PROJECT_ROOT}:cached
-#      - codebase:${PROJECT_ROOT}
+#      - codebase_data:${PROJECT_ROOT}
 
 #  drupal-node:
 #    image: wodby/drupal-node:$DRUPAL_NODE_TAG
@@ -162,7 +180,7 @@ services:
 
   opensmtpd:
     container_name: "${COMPOSE_PROJECT_NAME}_opensmtpd"
-    image: wodby/opensmtpd:$OPENSMTPD_TAG
+    image: wodby/opensmtpd:${OPENSMTPD_TAG}
 #    environment:
 #      RELAY_HOST: $RELAY_HOST
 #      RELAY_PORT: $RELAY_PORT
@@ -204,7 +222,7 @@ networks:
 
 volumes:
 ## For production
-  codebase:
+  codebase_data:
 ## For Xdebug profiler
 #  files:
 ## Database
