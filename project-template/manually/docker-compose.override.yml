@@ -211,6 +211,7 @@ services:
         published: ${SMTP_PORT}
     networks:
       - frontend_network
+      - project_network
     deploy:
       replicas: 1
       placement:
@@ -252,6 +253,46 @@ services:
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.tls=true
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.entrypoints=websecure
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.service=adminer
+
+  php-crond:
+    image: vavyskov/php:${PHP_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_php-crond
+    #hostname: "web_app_fpm"
+    ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
+    #depends_on:
+    #  - mariadb
+    #  - postgres
+    environment:
+      #FASTCGI_PORT: ${FASTCGI_PORT}
+      PROJECT_MODE: ${PROJECT_MODE}
+      #PHP_HOME: ${PHP_HOME}
+      PHP_USER: ${PHP_USER}
+      PHP_SENDMAIL_PATH: ${PHP_SENDMAIL_PATH}
+      SMTP_HOSTNAME: ${SMTP_HOSTNAME}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_FROM: ${SMTP_FROM}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+#      PROXY_SERVER: ${PROXY_SERVER}
+      HOST_USER_ID: ${HOST_USER_ID}
+      #XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME}
+      #APP_ENV: ${APP_ENV}
+      #APP_SECRET: ${APP_SECRET}
+      #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
+      PHP_CRONTAB: ${PHP_CRONTAB}
+    command: crond -f -d 0
+    networks:
+      - project_network
+    volumes:
+      - html_data:${PROJECT_ROOT}:nocopy
+#      - ./project:${PROJECT_ROOT}:cached
+#      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
+      #- ~/.ssh:${SSH_HOME}/.shared/.ssh:ro
+      #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
+    #working_dir: /var/www/html
+    deploy:
+      replicas: 1
+
 
 networks:
   frontend_network:

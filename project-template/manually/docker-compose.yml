@@ -14,6 +14,7 @@ services:
       PROJECT_MODE: ${PROJECT_MODE}
       #PHP_HOME: ${PHP_HOME}
       PHP_USER: ${PHP_USER}
+      PHP_SENDMAIL_PATH: ${PHP_SENDMAIL_PATH}
       SMTP_HOSTNAME: ${SMTP_HOSTNAME}
       SMTP_PORT: ${SMTP_PORT}
       SMTP_FROM: ${SMTP_FROM}
@@ -25,6 +26,7 @@ services:
       #APP_ENV: ${APP_ENV}
       #APP_SECRET: ${APP_SECRET}
       #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
+      PHP_CRONTAB: ${PHP_CRONTAB}
     networks:
       - project_network
     volumes:
