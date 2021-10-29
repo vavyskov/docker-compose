@@ -114,6 +114,7 @@ services:
     security_opt:
       - no-new-privileges:true
     deploy:
+      replicas: 1
       #mode: replicated
       ## Current number of nodes: $(docker node ls -q | wc -l)
 #      replicas: ${TRAEFIK_REPLICAS:-3}

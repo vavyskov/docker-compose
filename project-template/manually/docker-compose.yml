@@ -12,6 +12,7 @@ services:
     environment:
       #FASTCGI_PORT: ${FASTCGI_PORT}
       PROJECT_MODE: ${PROJECT_MODE}
+      #TIME_ZONE: UTC
       #PHP_HOME: ${PHP_HOME}
       PHP_USER: ${PHP_USER}
       PHP_SENDMAIL_PATH: ${PHP_SENDMAIL_PATH}
