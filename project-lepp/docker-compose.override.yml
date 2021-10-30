@@ -1,6 +1,6 @@
 ## Stack LEPP (Linux (E)Nginx PostgreSQL PHP)
 
-version: '3.5'
+version: '3.8'
 
 services:
   nginx:
@@ -40,7 +40,8 @@ services:
       GIT_EMAIL: ${GIT_EMAIL}
       GIT_NAME: ${GIT_NAME}
       PROXY_SERVER: ${PROXY_SERVER}
-      XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME}
+      PHP_XDEBUG_HOST: ${PHP_XDEBUG_HOST}
+    command: /usr/sbin/sshd -D
     ports:
       - target: 22
         published: ${SSH_PORT}
@@ -115,12 +116,14 @@ services:
       PROJECT_MODE: ${PROJECT_MODE}
       PHP_USER: ${PHP_USER}
       PHP_SENDMAIL_PATH: ${PHP_SENDMAIL_PATH}
-      SMTP_HOSTNAME: ${SMTP_HOSTNAME}
+      SMTP_HOST: ${SMTP_HOST}
       SMTP_PORT: ${SMTP_PORT}
       SMTP_FROM: ${SMTP_FROM}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
-      PHP_CRONTAB: ${PHP_CRONTAB}
+## ToDo: More lines
+#      PHP_CRONTAB: ${PHP_CRONTAB}
+    command: /usr/sbin/crond -f -d 0
     networks:
       - project_network
     volumes:
@@ -141,11 +144,11 @@ volumes:
     name: ${COMPOSE_PROJECT_NAME}_html_data
 #    driver_opts:
 #      type: nfs
-#      o: addr=${NFS_HOSTNAME},nolock,soft,rw
+#      o: addr=${NFS_HOST},nolock,soft,rw
 #      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/html_data
   postgres_data:
     name: ${COMPOSE_PROJECT_NAME}_postgres_data
 #    driver_opts:
 #      type: nfs
-#      o: addr=${NFS_HOSTNAME},nolock,soft,rw
+#      o: addr=${NFS_HOST},nolock,soft,rw
 #      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/postgres_data
