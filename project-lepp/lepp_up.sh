@@ -6,6 +6,16 @@ if [ ! -f .env ]; then
     "$(tput setaf 1)" "$(tput sgr 0)"
     exit
 else
+
+
+
+    ## ToDo: Get variables from .env file
+    ## "." and "source" works in macOS
+    #. .env
+    #source .env
+
+
+
     ## Get COMPOSE_PROJECT_NAME variable (exists, not comment, not empty)
     if [ -n "$(cat < .env | grep COMPOSE_PROJECT_NAME= | sed '/^#/d' | cut -d= -f2 | xargs)" ]; then
         COMPOSE_PROJECT_NAME=$(cat < .env | grep COMPOSE_PROJECT_NAME= | cut -d= -f2 | xargs)
@@ -41,16 +51,29 @@ else
 fi
 
 ##
-## Get variables from .env file
+## Create networks
 ##
-#. .env
-
-
-
-
-## Network
-docker network create frontend_network
-docker network create ${COMPOSE_PROJECT_NAME}_network
+## $1 ~ network name
+## $2 ~ network driver
+## https://linuxize.com/post/bash-functions/
+create_network() {
+    if [ "$(docker network ls | grep "$1" | grep -v "$2")" != "" ]; then
+        printf "$(tput setaf 1)Network with name '%s' already exists but requires driver '%s'.$(tput sgr 0)\r\n\r\n" "$1" "$2"
+        exit
+    elif [ "$(docker network ls | grep "$1" | grep "$2")" = "" ]; then
+        printf "Creating network '%s'...\r\n" "$1"
+        docker network create --driver "$2" "$1"
+    else
+        printf "Network with name '%s' already exists.\r\n" "$1"
+    fi
+}
+## Empty new line
+printf "\r\n"
+## https://linuxize.com/post/bash-for-loop/
+for i in frontend_network ${COMPOSE_PROJECT_NAME}_network
+do
+  create_network "$i" bridge
+done
 
 ## Create and start containers
 docker-compose up -d
