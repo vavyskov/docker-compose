@@ -8,4 +8,5 @@
 #0	5	1	*	*	run-parts /etc/periodic/monthly
 
 * * * * * php -r "mail('test@example.com','CRON mail', 'Test e-mail from CRON.', 'From: cron@example.com');"
-# remember to end this file with an empty new line
+
+## Remember to end this file with an empty new line

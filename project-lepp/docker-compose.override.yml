@@ -40,7 +40,6 @@ services:
       GIT_EMAIL: ${GIT_EMAIL}
       GIT_NAME: ${GIT_NAME}
       PROXY_SERVER: ${PROXY_SERVER}
-      PHP_XDEBUG_HOST: ${PHP_XDEBUG_HOST}
     command: /usr/sbin/sshd -D
     ports:
       - target: 22
@@ -121,14 +120,16 @@ services:
       SMTP_FROM: ${SMTP_FROM}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
-## ToDo: More lines
-#      PHP_CRONTAB: ${PHP_CRONTAB}
+      PHP_CRONTAB: |
+        * * * * * php -r "mail('test@example.com','CRON mail', 'Test e-mail from CRON.', 'From: cron@example.com');"
+        2 * * * * php -r "mail('test@example.com','CRON mail 2', 'Test 2 e-mail from CRON.', 'From: cron@example.com');"
     command: /usr/sbin/crond -f -d 0
     networks:
       - project_network
     volumes:
       - html_data:${PROJECT_ROOT}
-      - ./config/crontab:/etc/crontabs/root
+    ## ToDo: file permission
+#      - ./config/crontab:/etc/crontabs/root
     deploy:
       replicas: 1
 
