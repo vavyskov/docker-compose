@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.8'
 
 services:
 
@@ -10,7 +10,7 @@ services:
         published: ${ADMINER_PORT:-8081}
     networks:
       - frontend_network
-      - adminer_network
+      - project_network
     deploy:
       replicas: 1
       placement:
@@ -19,11 +19,13 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.${COMPOSE_PROJECT_NAME:-adminer}_adminer.loadbalancer.server.port=8080
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-adminer}_adminer.rule=Host(`example.com`) && Path(`/adminer`)
-#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-adminer}_adminer.tls=true
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-adminer}_adminer.rule=Host(`example.com`) && Path(`/adminer`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-adminer}_adminer.rule=Host(`adminer.example.com`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-adminer}_adminer.tls=true
 
 networks:
   frontend_network:
     external: true
-  adminer_network:
+  project_network:
     external: true
+    name: ${COMPOSE_PROJECT_NAME:-adminer}_network

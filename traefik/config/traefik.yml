@@ -15,7 +15,7 @@ providers:
     watch: true
     ## Do not expose containers unless explicitly told so
     exposedbydefault: false
-#    network: frontend_network
+    network: frontend_network
 #    useBindPortIP: true
   file:
 #    directory: /etc/traefik

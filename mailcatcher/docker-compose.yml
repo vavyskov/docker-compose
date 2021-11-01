@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+
+  mailcatcher:
+    image: vavyskov/mailcatcher:${MAILCATCHER_VERSION:-alpine3.11}
+    container_name: ${COMPOSE_PROJECT_NAME:-mailcatcher}_mailcatcher
+    ports:
+      - target: 80
+        published: ${MAILCATCHER_PORT:-1081}
+      - target: 25
+        published: ${SMTP_PORT:-1025}
+    networks:
+      - frontend_network
+      - project_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-mailcatcher}_mailcatcher.loadbalancer.server.port=80
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-mailcatcher}_mailcatcher.rule=Host(`example.com`) && Path(`/mailcatcher`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-mailcatcher}_mailcatcher.rule=Host(`mailcatcher.example.com`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-mailcatcher}_mailcatcher.tls=true
+
+networks:
+  frontend_network:
+    external: true
+  project_network:
+    external: true
+    name: ${COMPOSE_PROJECT_NAME:-mailcatcher}_network
