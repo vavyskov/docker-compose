@@ -74,8 +74,7 @@ services:
   php-ssh:
     image: vavyskov/php:${PHP_VERSION}
     container_name: ${COMPOSE_PROJECT_NAME}_php-ssh
-#    hostname: ${PROJECT_HOSTNAME}
-    #hostname: project_ssh (docker service name)
+    hostname: ${COMPOSE_PROJECT_NAME}_php-ssh
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
       - php-fpm
