@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.8'
 
 services:
   php-fpm:
@@ -23,11 +23,11 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
 #      PROXY_SERVER: ${PROXY_SERVER}
       HOST_USER_ID: ${HOST_USER_ID}
-      XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME}
+      PHP_XDEBUG_HOSTNAME: ${PHP_XDEBUG_HOSTNAME}
+#      PHP_XDEBUG_LOG: ${PHP_XDEBUG_LOG}
       #APP_ENV: ${APP_ENV}
       #APP_SECRET: ${APP_SECRET}
       #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
-      PHP_CRONTAB: ${PHP_CRONTAB}
     networks:
       - project_network
     volumes:
@@ -43,6 +43,7 @@ services:
 networks:
   project_network:
     external: true
+    name: ${COMPOSE_PROJECT_NAME}_network
 
 volumes:
   html_data:

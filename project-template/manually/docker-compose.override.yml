@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.8'
 
 #configs:
 #  nginx_config:
@@ -71,9 +71,9 @@ services:
     #  timeout: 10s
     #  retries: 3
 
-  ssh:
-    image: vavyskov/ssh:${SSH_VERSION}
-    container_name: ${COMPOSE_PROJECT_NAME}_ssh
+  php-ssh:
+    image: vavyskov/php:${PHP_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_php-ssh
 #    hostname: ${PROJECT_HOSTNAME}
     #hostname: project_ssh (docker service name)
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
@@ -82,9 +82,9 @@ services:
     environment:
       PROJECT_MODE: ${PROJECT_MODE}
       #TIME_ZONE: UTC
-      SSH_HOME: ${SSH_HOME}
-      SSH_USER: ${SSH_USER}
-      SSH_PASSWORD: ${SSH_PASSWORD}
+      #SSH_HOME: ${SSH_HOME}
+      PHP_USER: ${PHP_USER}
+      PHP_PASSWORD: ${PHP_PASSWORD}
       ## Docker Secrets - store sensitive data encrypted by default (password, ssh-key, API key, SSL certificate etc.)
       ## printf "password" | docker secret create project_ssh_password -
       #SSH_PASSWORD: /run/secrets/project_ssh_password
@@ -103,6 +103,7 @@ services:
       #APP_ENV: ${APP_ENV}
       #APP_SECRET: ${APP_SECRET}
       #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
+    command: /usr/sbin/sshd -D
     ports:
       ## https://community.containo.us/t/routing-ssh-traffic-with-traefik-v2/717/13
       - target: 22
@@ -179,6 +180,7 @@ services:
       - target: 5432
         published: ${POSTGRES_PORT}
     networks:
+#      - frontend_network
       - project_network
     #restart: unless-stopped
     #restart: always
@@ -222,7 +224,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.${COMPOSE_PROJECT_NAME}_mailcatcher.loadbalancer.server.port=80
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.rule=Host(`${MAILCATCHER_HOSTNAME}`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.rule=Host(`mailcatcher-${PROJECT_HOSTNAME}`)
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.rule=Host(`${PROJECT_HOSTNAME}`) && Path(`${MAILCATCHER_PATH}`)
       ## HTTPS only
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_mailcatcher.tls=true
@@ -249,7 +251,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.${COMPOSE_PROJECT_NAME}_adminer.loadbalancer.server.port=8080
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`${ADMINER_HOSTNAME}`)
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`adminer-${PROJECT_HOSTNAME}`)
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`${PROJECT_HOSTNAME}`) && Path(`${ADMINER_PATH}`)
       ## HTTPS only
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.tls=true
@@ -282,13 +284,15 @@ services:
       #APP_ENV: ${APP_ENV}
       #APP_SECRET: ${APP_SECRET}
       #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
-      PHP_CRONTAB: ${PHP_CRONTAB}
-    command: crond -f -d 0
+      PHP_CRONTAB: |
+        * * * * * php -r "mail('test@example.com','CRON mail', 'Test e-mail from CRON.', 'From: cron@example.com');"
+        2 * * * * php -r "mail('test@example.com','CRON mail 2', 'Test 2 e-mail from CRON.', 'From: cron@example.com');"
+    command: /usr/sbin/crond -f -d 0
     networks:
       - project_network
     volumes:
       - html_data:${PROJECT_ROOT}
-      - ./config/crontab:/etc/crontabs/root
+      #- ./config/crontab:/etc/crontabs/root
 #      - ./project:${PROJECT_ROOT}:cached
 #      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
       #- ~/.ssh:${SSH_HOME}/.shared/.ssh:ro

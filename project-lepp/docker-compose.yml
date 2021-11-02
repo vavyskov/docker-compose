@@ -21,7 +21,7 @@ services:
     networks:
       - project_network
     volumes:
-      - html_data:/var/www/html
+      - html_data:${PROJECT_ROOT}
     deploy:
       replicas: 1
 
