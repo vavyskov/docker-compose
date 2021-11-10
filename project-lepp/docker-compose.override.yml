@@ -41,6 +41,10 @@ services:
       GIT_EMAIL: ${GIT_EMAIL}
       GIT_NAME: ${GIT_NAME}
       PHP_SENDMAIL_PATH: ${PHP_SENDMAIL_PATH}
+      COMPOSER_VERSION: ${COMPOSER_VERSION}
+      NODE_VERSION: ${NODE_VERSION}
+      NPM_VERSION: ${NPM_VERSION}
+      YARN_VERSION: ${YARN_VERSION}
       SMTP_HOSTNAME: ${SMTP_HOSTNAME}
       SMTP_PORT: ${SMTP_PORT}
       SMTP_FROM: ${SMTP_FROM}
@@ -48,6 +52,9 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       PROXY_SERVER: ${PROXY_SERVER}
       HOST_USER_ID: ${HOST_USER_ID}
+      PHP_INI: |
+        memory_limit = -1
+        upload_max_filesize = 128M
     command: /usr/sbin/sshd -D
     ports:
       - target: 22
