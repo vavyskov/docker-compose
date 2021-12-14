@@ -16,9 +16,30 @@ else
     fi
 fi
 
-## Network
-docker network create --driver=overlay frontend_network
-docker network create --driver=overlay ${COMPOSE_PROJECT_NAME}_network
+##
+## Create networks
+##
+## $1 ~ network name
+## $2 ~ network driver
+## https://linuxize.com/post/bash-functions/
+create_network() {
+    if [ "$(docker network ls | grep "$1" | grep -v "$2")" != "" ]; then
+        printf "$(tput setaf 1)Network with name '%s' already exists but requires driver '%s'.$(tput sgr 0)\r\n\r\n" "$1" "$2"
+        exit
+    elif [ "$(docker network ls | grep "$1" | grep "$2")" = "" ]; then
+        printf "Creating network '%s'...\r\n" "$1"
+        docker network create --driver "$2" "$1"
+    else
+        printf "Network with name '%s' already exists.\r\n" "$1"
+    fi
+}
+## Empty new line
+printf "\r\n"
+## https://linuxize.com/post/bash-for-loop/
+for i in frontend_network ${COMPOSE_PROJECT_NAME}_network
+do
+  create_network "$i" overlay
+done
 
 ## Part 1
 ## docker stack deploy --compose-file=docker-compose.yml project

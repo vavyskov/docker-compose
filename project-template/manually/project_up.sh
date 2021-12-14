@@ -24,11 +24,11 @@ else
         "$(tput setaf 1)" "$(tput sgr 0)"
         exit
     fi
-    ## Get PROJECT_BASE_URL variable (exists, not comment, not empty)
-    if [ -n "$(cat < .env | grep PROJECT_BASE_URL= | sed '/^#/d' | cut -d= -f2 | xargs)" ]; then
-        PROJECT_BASE_URL=$(cat < .env | grep PROJECT_BASE_URL= | cut -d= -f2 | xargs)
+    ## Get PROJECT_HOSTNAME variable (exists, not comment, not empty)
+    if [ -n "$(cat < .env | grep PROJECT_HOSTNAME= | sed '/^#/d' | cut -d= -f2 | xargs)" ]; then
+        PROJECT_HOSTNAME=$(cat < .env | grep PROJECT_HOSTNAME= | cut -d= -f2 | xargs)
     else
-        printf "\r\n%s'PROJECT_BASE_URL' variable is not set.%s\r\n\r\n" \
+        printf "\r\n%s'PROJECT_HOSTNAME' variable is not set.%s\r\n\r\n" \
         "$(tput setaf 1)" "$(tput sgr 0)"
         exit
     fi
@@ -87,19 +87,19 @@ RESET_ALL=`tput sgr0`
 echo ""
 echo "${UNDERLINE}Project URLs:${RESET_ALL}"
 echo "${BLUE_FG}http://${DOCKER_MACHINE_IP}:${NGINX_PORT}"
-echo "${BLUE_FG}https://${PROJECT_BASE_URL}"
-echo "https://adminer-${PROJECT_BASE_URL}"
-echo "https://mailcatcher-${PROJECT_BASE_URL}${RESET_ALL}"
+echo "${BLUE_FG}https://${PROJECT_HOSTNAME}"
+echo "https://adminer-${PROJECT_HOSTNAME}"
+echo "https://mailcatcher-${PROJECT_HOSTNAME}${RESET_ALL}"
 echo ""
 
 ## Open URLs in browser
 ## Linux
-#xdg-open "http://mailcatcher-${PROJECT_BASE_URL}"
-#xdg-open "http://adminer-${PROJECT_BASE_URL}"
-#xdg-open "http://${PROJECT_BASE_URL}"
+#xdg-open "http://mailcatcher-${PROJECT_HOSTNAME}"
+#xdg-open "http://adminer-${PROJECT_HOSTNAME}"
+#xdg-open "http://${PROJECT_HOSTNAME}"
 ## macOS
-#open "http://mailcatcher-${PROJECT_BASE_URL}"
-#open "http://adminer-${PROJECT_BASE_URL}"
-#open "http://${PROJECT_BASE_URL}"
+#open "http://mailcatcher-${PROJECT_HOSTNAME}"
+#open "http://adminer-${PROJECT_HOSTNAME}"
+#open "http://${PROJECT_HOSTNAME}"
 ## Windows
-#start "http://mailcatcher-${PROJECT_BASE_URL}" "http://adminer-${PROJECT_BASE_URL}" "http://${PROJECT_BASE_URL}"
+#start "http://mailcatcher-${PROJECT_HOSTNAME}" "http://adminer-${PROJECT_HOSTNAME}" "http://${PROJECT_HOSTNAME}"

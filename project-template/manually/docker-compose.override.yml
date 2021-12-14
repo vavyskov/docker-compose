@@ -98,6 +98,9 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       PROXY_SERVER: ${PROXY_SERVER}
       HOST_USER_ID: ${HOST_USER_ID}
+      PHP_INI: |
+        memory_limit = -1
+        upload_max_filesize = 128M
 #      PHP_XDEBUG_HOSTNAME: ${XDEBUG_HOSTNAME}
 #      PHP_XDEBUG_PORT: ${XDEBUG_PORT}
 #      PHP_XDEBUG_LOG: ${PHP_XDEBUG_LOG}
