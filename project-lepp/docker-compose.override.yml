@@ -11,6 +11,8 @@ services:
       - html_data:${PROJECT_ROOT}:nocopy
     depends_on:
       - php-fpm
+    environment:
+      PROJECT_HOSTNAME: ${PROJECT_HOSTNAME}
     ports:
       - target: 80
         published: ${NGINX_PORT}

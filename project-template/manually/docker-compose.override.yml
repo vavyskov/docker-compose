@@ -21,7 +21,8 @@ services:
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
       - php-fpm
-#    environment:
+    environment:
+      PROJECT_HOSTNAME: ${PROJECT_HOSTNAME}
       #TIME_ZONE: UTC
       #NGINX_ROOT: ${NGINX_ROOT}
       #FASTCGI_HOSTNAME: ${FASTCGI_HOSTNAME}
