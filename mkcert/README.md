@@ -17,11 +17,7 @@ You can set environment variables in `.env` file.
 1. Run command:
     - Docker:
     
-          docker-compose up -d
-
-    - Docker Swarm
-
-          docker stack deploy --compose-file=docker-compose.yml mkcert
+          docker-compose up
 
 ## Quick start (docker)
 

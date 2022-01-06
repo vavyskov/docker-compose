@@ -16,7 +16,7 @@ services:
       - html_data:${PROJECT_ROOT}:nocopy
 #      - ./project:${PROJECT_ROOT}:cached
 #      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
-#      - /etc/ssl/path:/etc/ssl/path:ro
+      - ../../mkcert/certificates:/etc/ssl/path:ro
       #- ./logs:/var/log
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
@@ -27,9 +27,13 @@ services:
       #NGINX_ROOT: ${NGINX_ROOT}
       #FASTCGI_HOSTNAME: ${FASTCGI_HOSTNAME}
       #FASTCGI_PORT: ${FASTCGI_PORT}
-#      CERTIFICATE_PATH: ${CERTIFICATE_PATH}
-#      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME}
-#      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME}
+      CERTIFICATE_PATH: ${CERTIFICATE_PATH}
+      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME}
+      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME}
+      ## Nginx-proxy
+      VIRTUAL_HOST: ${PROJECT_HOSTNAME}
+      VIRTUAL_PORT: 443
+      VIRTUAL_PROTO: https
     ## Docker Config - store non-sensitive data as configuration files (not encrypted)
     ## cat nginx.conf | docker config create project_nginx.conf -
     #configs:
@@ -61,8 +65,13 @@ services:
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.rule=Host(`${PROJECT_HOSTNAME}`)
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.tls=true
       #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.service=${COMPOSE_PROJECT_NAME}_nginx
-      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.entrypoints=websecure
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.entrypoints=web,websecure
       #- traefik.http.services.${COMPOSE_PROJECT_NAME}_nginx.loadbalancer.passhostheader=true
+
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.middlewares=${COMPOSE_PROJECT_NAME}_ssl
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME}_ssl.headers.sslProxyHeaders.X-Forwarded-Proto=https
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME}_ssl.headers.sslRedirect=true
+
     #healthcheck:
     #  test: curl --fail -s http://localhost:5000/ || exit 1
     #  ##test: "/usr/bin/curl --silent --fail -o /dev/null -w %{http_code} http://localhost:9200 || exit 1"
