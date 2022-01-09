@@ -21,7 +21,8 @@ services:
     networks:
       - project_network
     volumes:
-      - html_data:${PROJECT_ROOT}
+#      - html_data:${PROJECT_ROOT}
+      - ./project:${PROJECT_ROOT}
     deploy:
       replicas: 1
 
@@ -30,10 +31,10 @@ networks:
     external: true
     name: ${COMPOSE_PROJECT_NAME}_network
 
-volumes:
-  html_data:
-    name: ${COMPOSE_PROJECT_NAME}_html_data
-#    driver_opts:
-#      type: nfs
-#      o: addr=${NFS_HOSTNAME},nolock,soft,rw
-#      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/html_data
+#volumes:
+#  html_data:
+#    name: ${COMPOSE_PROJECT_NAME}_html_data
+##    driver_opts:
+##      type: nfs
+##      o: addr=${NFS_HOSTNAME},nolock,soft,rw
+##      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/html_data

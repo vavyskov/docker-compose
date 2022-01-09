@@ -16,7 +16,7 @@ services:
       - html_data:${PROJECT_ROOT}:nocopy
 #      - ./project:${PROJECT_ROOT}:cached
 #      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
-      - ../../mkcert/certificates:/etc/ssl/path:ro
+#      - ../../mkcert/certificates:/etc/ssl/path:ro
       #- ./logs:/var/log
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
@@ -27,9 +27,9 @@ services:
       #NGINX_ROOT: ${NGINX_ROOT}
       #FASTCGI_HOSTNAME: ${FASTCGI_HOSTNAME}
       #FASTCGI_PORT: ${FASTCGI_PORT}
-      CERTIFICATE_PATH: ${CERTIFICATE_PATH}
-      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME}
-      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME}
+#      CERTIFICATE_PATH: ${CERTIFICATE_PATH}
+#      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME}
+#      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME}
       ## Nginx-proxy
       VIRTUAL_HOST: ${PROJECT_HOSTNAME}
       VIRTUAL_PORT: 443
@@ -225,6 +225,7 @@ services:
     environment:
       ## Nginx-proxy
       VIRTUAL_HOST: mailcatcher-${PROJECT_HOSTNAME}
+      VIRTUAL_PORT: 80
       #VIRTUAL_PORT: 443
       #VIRTUAL_PROTO: https
     ports:
