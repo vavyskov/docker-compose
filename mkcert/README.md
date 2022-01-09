@@ -16,8 +16,13 @@ You can set environment variables in `.env` file.
 1. Go inside of directory `cd docker-compose/mkcert`
 1. Run command:
     - Docker:
-    
-          docker-compose up
+
+          docker-compose up -d
+
+    - Docker Swarm
+
+          docker stack deploy --compose-file=docker-compose.yml mkcert
+
 
 ## Quick start (docker)
 
