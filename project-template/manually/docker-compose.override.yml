@@ -222,6 +222,11 @@ services:
     #hostname: project_mailcatcher (docker service name)
     #hostname: ${MAILCATCHER_HOSTNAME}
     #hostname: ${MAILCATCHER_HOSTNAME} # /mailcatcher
+    environment:
+      ## Nginx-proxy
+      VIRTUAL_HOST: mailcatcher-${PROJECT_HOSTNAME}
+      VIRTUAL_PORT: 443
+      VIRTUAL_PROTO: https
     ports:
       - target: 80
         published: ${MAILCATCHER_PORT}
@@ -251,6 +256,11 @@ services:
     #hostname: project_adminer (docker service name)
     #hostname: ${MAILCATCHER_HOSTNAME}
     #hostname: ${MAILCATCHER_HOSTNAME} # /mailcatcher
+    environment:
+      ## Nginx-proxy
+      VIRTUAL_HOST: adminer-${PROJECT_HOSTNAME}
+      VIRTUAL_PORT: 443
+      VIRTUAL_PROTO: https
     ports:
       - target: 8080
         published: ${ADMINER_PORT}
