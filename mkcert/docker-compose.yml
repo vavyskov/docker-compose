@@ -2,10 +2,10 @@ version: "3.8"
 
 services:
   mkcert:
-    image: vavyskov/mkcert:${MKCERT_VERSION:-1.4.3-alpine3.13}
+    image: vavyskov/mkcert:${MKCERT_VERSION:-1.4.3-alpine3.14}
     container_name: ${COMPOSE_PROJECT_NAME:-mkcert}_mkcert
     environment:
-      SERVER_HOSTNAMES: "*.localhost.dev *.localhost.test *.example.com *.example.edu"
+      MKCERT_HOSTNAMES: "*.localhost.dev *.localhost.test *.example.com *.example.edu"
       HOST_USER_ID: 1000
       HOST_USER_NAME: user
     volumes:

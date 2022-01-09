@@ -4,8 +4,8 @@
 This Compose file contains the following environment variables:
 
 - `COMPOSE_PROJECT_NAME` the default value is **traefik**
-- `MKCERT_VERSION` the default value is **1.4.3-alpine3.13**
-- `SERVER_HOSTNAMES` the default value is **\*.localhost.dev \*.localhost.test \*.example.com \*.example.edu**
+- `MKCERT_VERSION` the default value is **1.4.3-alpine3.14**
+- `MKCERT_HOSTNAMES` the default value is **\*.localhost.dev \*.localhost.test \*.example.com \*.example.edu**
 - `HOST_USER_ID` the default value is **1000**
 - `HOST_USER_NAME` the default value is **user**
 - `TRAEFIK_VERSION` the default value is **v2.5**
@@ -31,7 +31,7 @@ You can set environment variables in `.env` file.
 ## Quick start (docker)
 
     docker network create frontend_network; \
-    docker run --rm -v $PWD/certificates:/root/.local/share/mkcert vavyskov/mkcert:1.4.3-alpine3.13; \
+    docker run --rm -v $PWD/certificates:/root/.local/share/mkcert vavyskov/mkcert:1.4.3-alpine3.14; \
     docker run -itd \
         --name traefik \
         --publish 80:80 \

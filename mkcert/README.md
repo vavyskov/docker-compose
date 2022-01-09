@@ -5,7 +5,7 @@ A fast and simple way to generate CA and SSL certificates for your local dev env
 ## Environments
 This Compose file contains the following environment variables:
 
-- `SERVER_HOSTNAMES` the default value is **\*.localhost.dev \*.localhost.test \*.example.com \*.example.edu**
+- `MKCERT_HOSTNAMES` the default value is **\*.localhost.dev \*.localhost.test \*.example.com \*.example.edu**
 - `HOST_USER_ID` the default value is **1000**
 - `HOST_USER_NAME` the default value is **user**
 
@@ -21,14 +21,14 @@ You can set environment variables in `.env` file.
 
 ## Quick start (docker)
 
-    docker run --rm -v $PWD/certificates:/root/.local/share/mkcert vavyskov/mkcert:1.4.3-alpine3.13
+    docker run --rm -v $PWD/certificates:/root/.local/share/mkcert vavyskov/mkcert:1.4.3-alpine3.14
 
     docker run --rm \
         -v $PWD/certificates:/root/.local/share/mkcert \
-        -e SERVER_HOSTNAMES="*.local *.example.com" \
+        -e MKCERT_HOSTNAMES="*.local *.example.com" \
         -e HOST_USER_ID="1000" \
         -e HOST_USER_NAME="user" \
-        vavyskov/mkcert:1.4.3-alpine3.13
+        vavyskov/mkcert:1.4.3-alpine3.14
 
 ## Adding trusted root certificate authority
 1. Operating system
