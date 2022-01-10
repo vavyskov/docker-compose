@@ -23,6 +23,8 @@ services:
     volumes:
 #      - html_data:${PROJECT_ROOT}
       - ./project:${PROJECT_ROOT}
+      ## Custom root CA
+      - ../mkcert/certificates/rootCA.pem:/usr/local/share/ca-certificates/rootCA.crt
     deploy:
       replicas: 1
 

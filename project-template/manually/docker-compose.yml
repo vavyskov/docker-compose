@@ -37,6 +37,8 @@ services:
 #      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
       #- ~/.ssh:${SSH_HOME}/.shared/.ssh:ro
       #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
+      ## Custom root CA
+      - ../../mkcert/certificates/rootCA.pem:/usr/local/share/ca-certificates/rootCA.crt
     #working_dir: /var/www/html
     deploy:
       replicas: 1
