@@ -190,6 +190,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
        #- postgres:/data/postgres
+      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - target: 5432
         published: ${POSTGRES_PORT}
