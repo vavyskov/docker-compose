@@ -1,0 +1,5 @@
+<?php
+
+    echo "LEMP";
+
+    phpinfo();

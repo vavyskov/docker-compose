@@ -1,0 +1,42 @@
+## Stack LEMP (Linux (E)Nginx PostgreSQL PHP)
+
+version: '3.8'
+
+services:
+  php-fpm:
+    image: vavyskov/php:${PHP_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_php-fpm
+    environment:
+      PROJECT_MODE: ${PROJECT_MODE}
+      PHP_USER: ${PHP_USER}
+      PHP_SENDMAIL_PATH: ${PHP_SENDMAIL_PATH}
+      SMTP_HOSTNAME: ${SMTP_HOSTNAME}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_FROM: ${SMTP_FROM}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      HOST_USER_ID: ${HOST_USER_ID}
+      PHP_XDEBUG_HOSTNAME: ${PHP_XDEBUG_HOSTNAME}
+#      PHP_XDEBUG_LOG: ${PHP_XDEBUG_LOG}
+    networks:
+      - project_network
+    volumes:
+#      - html_data:${PROJECT_ROOT}
+      - ./project:${PROJECT_ROOT}
+      ## Custom root CA
+      - ../mkcert/certificates/rootCA.pem:/usr/local/share/ca-certificates/rootCA.crt
+    deploy:
+      replicas: 1
+
+networks:
+  project_network:
+    external: true
+    name: ${COMPOSE_PROJECT_NAME}_network
+
+#volumes:
+#  html_data:
+#    name: ${COMPOSE_PROJECT_NAME}_html_data
+##    driver_opts:
+##      type: nfs
+##      o: addr=${NFS_HOSTNAME},nolock,soft,rw
+##      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/html_data
