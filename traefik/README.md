@@ -59,11 +59,11 @@ Path:
 1. Operating system
    - **Linux (Debian)**:
 
-         sudo cp rootCA.pem /usr/local/share/ca-certificates/rootCA.crt
+         sudo cp rootCertificateAuthority.crt /usr/local/share/ca-certificates/
          sudo update-ca-certificates
 
 2. Browsers:
-   - **Chrome**: Settings -> Privacy and security -> Security -> Manage certificates -> Authorities -> Import (rootCA.pem)
+   - **Chrome**: Settings -> Privacy and security -> Security -> Manage certificates -> Authorities -> Import (rootCertificateAuthority.crt)
 
 ## Custom certificates
 
