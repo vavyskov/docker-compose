@@ -8,3 +8,7 @@ nbproject/
 # Traefik
 traefik/certificates/*
 !traefik/certificates/.gitkeep
+
+# Mkcert
+mkcert/certificates/*
+!mkcert/certificates/.gitkeep
