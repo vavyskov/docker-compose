@@ -9,7 +9,7 @@ services:
     hostname: ${PROJECT_HOSTNAME}
     volumes:
 #      - html_data:${PROJECT_ROOT}:nocopy
-      - ./project:${PROJECT_ROOT}
+      - ./codebase:${PROJECT_ROOT}
     depends_on:
       - php-fpm
     environment:
@@ -66,7 +66,7 @@ services:
       - project_network
     volumes:
 #      - html_data:${PROJECT_ROOT}:nocopy
-      - ./project:${PROJECT_ROOT}
+      - ./codebase:${PROJECT_ROOT}
 #      - ~/.ssh:${SSH_HOME}/.shared/.ssh
 #      - ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig
     deploy:
@@ -165,7 +165,7 @@ services:
       - project_network
     volumes:
 #      - html_data:${PROJECT_ROOT}
-      - ./project:${PROJECT_ROOT}
+      - ./codebase:${PROJECT_ROOT}
     deploy:
       replicas: 1
 

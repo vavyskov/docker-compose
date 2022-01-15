@@ -33,7 +33,7 @@ services:
       - project_network
     volumes:
       - html_data:${PROJECT_ROOT}
-#      - ./project:${PROJECT_ROOT}:cached
+#      - ./codebase:${PROJECT_ROOT}:cached
 #      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
       #- ~/.ssh:${SSH_HOME}/.shared/.ssh:ro
       #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro

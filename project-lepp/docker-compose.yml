@@ -22,7 +22,7 @@ services:
       - project_network
     volumes:
 #      - html_data:${PROJECT_ROOT}
-      - ./project:${PROJECT_ROOT}
+      - ./codebase:${PROJECT_ROOT}
       ## Custom root CA
       - ../mkcert/certificates/rootCertificateAuthority.crt:/usr/local/share/ca-certificates/rootCA.crt
     deploy:

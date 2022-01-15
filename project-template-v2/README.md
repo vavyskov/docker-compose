@@ -1,4 +1,4 @@
-# PROJECT template
+# Project TEMPLATE
 
 Často používané "docker" příkazy:
 

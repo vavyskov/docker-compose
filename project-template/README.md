@@ -1,4 +1,4 @@
-# PROJECT template
+# Project TEMPLATE
 
 Content:
 - Linux
