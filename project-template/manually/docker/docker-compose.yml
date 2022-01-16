@@ -38,7 +38,7 @@ services:
       #- ~/.ssh:${SSH_HOME}/.shared/.ssh:ro
       #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
       ## Custom root CA
-      - ../../mkcert/certificates/rootCertificateAuthority.crt:/usr/local/share/ca-certificates/rootCA.crt
+      - ../../../mkcert/certificates/rootCertificateAuthority.crt:/usr/local/share/ca-certificates/rootCA.crt
     #working_dir: /var/www/html
     deploy:
       replicas: 1

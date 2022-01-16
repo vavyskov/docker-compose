@@ -24,7 +24,7 @@ services:
 #      - html_data:${PROJECT_ROOT}
       - ../codebase:${PROJECT_ROOT}
       ## Custom root CA
-      - ../mkcert/certificates/rootCertificateAuthority.crt:/usr/local/share/ca-certificates/rootCA.crt
+      - ../../mkcert/certificates/rootCertificateAuthority.crt:/usr/local/share/ca-certificates/rootCA.crt
     deploy:
       replicas: 1
 
