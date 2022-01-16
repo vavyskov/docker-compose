@@ -1,4 +1,4 @@
-## Stack LEMP (Linux (E)Nginx PostgreSQL PHP)
+## Stack LEPP (Linux (E)Nginx PostgreSQL PHP)
 
 version: '3.8'
 
@@ -22,7 +22,7 @@ services:
       - project_network
     volumes:
 #      - html_data:${PROJECT_ROOT}
-      - ./codebase:${PROJECT_ROOT}
+      - ../codebase:${PROJECT_ROOT}
       ## Custom root CA
       - ../mkcert/certificates/rootCertificateAuthority.crt:/usr/local/share/ca-certificates/rootCA.crt
     deploy:

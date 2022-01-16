@@ -7,8 +7,9 @@ Content:
 - PHP
 
 ## Quick start (docker-compose)
-1. Clone or download this repository
-1. Go inside of directory `cd docker-compose/stack-lepp`
+
+1. Clone or download this repository.
+1. Go inside of directory `cd docker-compose/project-lepp/docker`.
 1. Run command:
     - Docker:
 

@@ -1,4 +1,4 @@
-## Stack LEPP (Linux (E)Nginx PostgreSQL PHP)
+## Stack LEMP (Linux (E)Nginx MySQL/MariaDB PHP)
 
 version: '3.8'
 
@@ -9,7 +9,7 @@ services:
     hostname: ${PROJECT_HOSTNAME}
     volumes:
 #      - html_data:${PROJECT_ROOT}:nocopy
-      - ./codebase:${PROJECT_ROOT}
+      - ../codebase:${PROJECT_ROOT}
     depends_on:
       - php-fpm
     environment:
@@ -66,27 +66,28 @@ services:
       - project_network
     volumes:
 #      - html_data:${PROJECT_ROOT}:nocopy
-      - ./codebase:${PROJECT_ROOT}
+      - ../codebase:${PROJECT_ROOT}
 #      - ~/.ssh:${SSH_HOME}/.shared/.ssh
 #      - ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig
     deploy:
       replicas: 1
 
-  postgres:
-    image: postgres:${POSTGRES_VERSION}
-    container_name: ${COMPOSE_PROJECT_NAME}_postgres
+  mariadb:
+#    image: mariadb:${MARIADB_VERSION}
+    image: wodby/mariadb:${MARIADB_TAG}
+    container_name: ${COMPOSE_PROJECT_NAME}_mariadb
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DATABASE}
-      LC_COLLATE: ${LC_COLLATE}
-      LC_CTYPE: ${LC_CTYPE}
+      MYSQL_DATABASE: ${MARIADB_DATABASE}
+      MYSQL_USER: ${MARIADB_USER}
+      MYSQL_PASSWORD: ${MARIADB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    command: ["mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_czech_ci"]
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
+      #- ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mariadb_data:/var/lib/mysql
     ports:
-      - target: 5432
-        published: ${POSTGRES_PORT}
+      - target: 3306
+        published: ${MARIADB_PORT}
     networks:
 #      - frontend_network
       - project_network
@@ -164,7 +165,7 @@ services:
       - project_network
     volumes:
 #      - html_data:${PROJECT_ROOT}
-      - ./codebase:${PROJECT_ROOT}
+      - ../codebase:${PROJECT_ROOT}
     deploy:
       replicas: 1
 
@@ -182,9 +183,9 @@ volumes:
 ##      type: nfs
 ##      o: addr=${NFS_HOSTNAME},nolock,soft,rw
 ##      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/html_data
-  postgres_data:
-    name: ${COMPOSE_PROJECT_NAME}_postgres_data
+  mariadb_data:
+    name: ${COMPOSE_PROJECT_NAME}_mariadb_data
 #    driver_opts:
 #      type: nfs
 #      o: addr=${NFS_HOSTNAME},nolock,soft,rw
-#      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/postgres_data
+#      device: :${NFS_PATH}/${COMPOSE_PROJECT_NAME}/volumes/mariadb_data

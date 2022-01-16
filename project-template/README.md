@@ -11,43 +11,49 @@ Content:
 
 ## Quick start (docker-compose)
 
-1. Upravte `.env` dle potřeb (`.env` nefunguje ve Swarm módu).
-1. Příkazem `docker-compose config` si zobrazte výslednou konfiguraci.
-1. (Zobrazený výstup si uložte do nového projektu jako `docker-compose.yml` a upravte dle potřeb.)
+1. Clone or download this repository.
+2. Go inside of directory `cd docker-compose/project-template/manually/docker`
+3. Upravte `.env` dle potřeb (`.env` nefunguje ve Swarm módu).
+4. Linux:
+   - Run command `sh project_up.sh` (Docker).
+   - Run command `sh stack-deploy_project.sh` (Docker Swarm).
+5. Other systems:
+   - (Příkazem `docker-compose config` si zobrazte výslednou konfiguraci.)
+   - (Zobrazený výstup si uložte do nového projektu jako `docker-compose.yml` a upravte dle potřeb.)
+   - Run command:
+       - Docker:
 
-## Notes
-Volitelně Traefik
+             docker-compose pull
 
-1. Clone or download this repository
-1. Go inside of directory `cd docker-compose/stack-project-template`
-1. Run command:
-    - Docker:
+             docker network create frontend_network
+             docker network create project_network
+             docker-compose up -d
 
-          docker-compose pull
+             docker-compose stop
+             docker-compose down
 
-          docker network create frontend_network
-          docker network create project_network
-          docker-compose up -d
+       - Docker Swarm
 
-          docker-compose stop
-          docker-compose down
-
-    - Docker Swarm
-
-          docker-compose pull
+             docker-compose pull
           
-          docker network create --driver=overlay frontend_network
-          docker network create --driver=overlay project_network
-          docker stack deploy --compose-file=docker-compose.yml project
-          docker stack deploy --compose-file=docker-compose.override.yml project
+             docker network create --driver=overlay frontend_network
+             docker network create --driver=overlay project_network
+             docker stack deploy --compose-file=docker-compose.yml project
+             docker stack deploy --compose-file=docker-compose.override.yml project
           
-          docker stack rm project
+             docker stack rm project
 
 ## URL
 
 - project.example.com
 - project.example.com/adminer | adminer.example.com
 - mailcatcher.example.com
+
+## Notes
+
+Volitelně spusťte:
+- mkcert + nginx-proxy
+- (traefik)
 
 ## Aktualizace docker obrazů
 
