@@ -39,8 +39,8 @@ You can set environment variables in `.env` file.
 1. Operating system
    - **Linux (Debian)**:
 
-         sudo cp rootCertificateAuthority.crt /usr/local/share/ca-certificates/
+         sudo cp rootCA.crt /usr/local/share/ca-certificates/
          sudo update-ca-certificates
 
 2. Browsers:
-   - **Chrome**: Settings -> Privacy and security -> Security -> Manage certificates -> Authorities -> Import (rootCertificateAuthority.crt)
+   - **Chrome**: Settings -> Privacy and security -> Security -> Manage certificates -> Authorities -> Import (rootCA.crt)
