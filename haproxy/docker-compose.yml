@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  haproxy:
+    image: haproxy:2.5-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-haproxy}_haproxy
+    restart: always
+    volumes:
+      - ./config:/usr/local/etc/haproxy:ro
+      - ../mkcert/certificates:/usr/local/etc/certs:ro
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+      - target: 1936
+        published: 1936
+        protocol: tcp
+        mode: host
+    networks:
+      - frontend_network
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+
+  nginx-certbot:
+    image: nginx:1.21-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-haproxy}_nginx-certbot
+    restart: always
+    volumes:
+      - ./webroot:/usr/share/nginx/html
+    networks:
+      - frontend_network
+
+volumes:
+  letsencrypt:
+  cronstamps:
+
+networks:
+  frontend_network:
+    external: true
