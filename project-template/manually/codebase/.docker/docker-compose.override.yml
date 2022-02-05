@@ -14,7 +14,7 @@ services:
     volumes:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
       - html_data:${PROJECT_ROOT}:nocopy
-#      - ./codebase:${PROJECT_ROOT}:cached
+#      - ..:${PROJECT_ROOT}:cached
 #      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
 #      - ../../mkcert/certificates:/etc/ssl/path:ro
       #- ./logs:/var/log
@@ -129,7 +129,7 @@ services:
     volumes:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
       - html_data:${PROJECT_ROOT}:nocopy
-#      - ./codebase:${PROJECT_ROOT}:cached
+#      - ..:${PROJECT_ROOT}:cached
 #      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
 #      - ~/.ssh:${SSH_HOME}/.shared/.ssh
 #      - ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig
@@ -320,7 +320,7 @@ services:
     volumes:
       - html_data:${PROJECT_ROOT}
       #- ./config/crontab:/etc/crontabs/root
-#      - ./codebase:${PROJECT_ROOT}:cached
+#      - ..:${PROJECT_ROOT}:cached
 #      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
       #- ~/.ssh:${SSH_HOME}/.shared/.ssh:ro
       #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
