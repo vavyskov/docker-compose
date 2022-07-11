@@ -85,7 +85,8 @@ services:
       ## Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
       ## Custom certificates (set path also in dynamic/certificates.yml)
-      - ./certificates:/etc/ssl/certificates:ro
+#      - ./certificates:/etc/ssl/certificates:ro
+      - ../mkcert/certificates:/etc/ssl/certificates:ro
 #      - /etc/ssl/path:/etc/ssl/path:ro
       ## Configuration
       - ./config/dynamic.yml:/etc/traefik/dynamic.yml:ro

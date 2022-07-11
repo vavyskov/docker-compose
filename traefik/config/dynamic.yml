@@ -9,8 +9,8 @@ tls:
   stores:
     default:
       defaultCertificate:
-        certFile: "/etc/ssl/certificates/server.crt"
-        keyFile: "/etc/ssl/certificates/server.key"
+        certFile: "/etc/ssl/certificates/example.com.crt"
+        keyFile: "/etc/ssl/certificates/example.com.key"
 
 #http:
 #  routers:
