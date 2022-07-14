@@ -1,20 +1,197 @@
+## docker service logs traefik_traefik
+
 version: '3.8'
 
+#secrets:
+#  ## secret name also used to name the file exposed within the container
+#  ovh_endpoint:
+#    ## path on the host
+#    file: ./secrets/ovh_endpoint.secret
+#  ovh_application_key:
+#    file: ./secrets/ovh_application_key.secret
+#  ovh_application_secret:
+#    file: ./secrets/ovh_application_secret.secret
+#  ovh_consumer_key:
+#    file: ./secrets/ovh_consumer_key.secret
+
 services:
-  mkcert:
-    image: vavyskov/mkcert:${MKCERT_VERSION:-1.4.3-1.0.0}
-    container_name: ${COMPOSE_PROJECT_NAME:-traefik}_mkcert
-#    restart: no
-    environment:
-      #MKCERT_HOSTNAMES: ${MKCERT_HOSTNAMES:-*.localhost.dev *.localhost.test *.example.com *.example.edu} ## Do not work - special characters require quotes :(
-      MKCERT_HOSTNAMES: "*.localhost.dev *.localhost.test *.example.com *.example.edu"
-      HOST_USER_ID: ${HOST_USER_ID:-1000}
-      HOST_USER_NAME: ${HOST_USER_NAME:-user}
+  traefik:
+    image: traefik:${TRAEFIK_VERSION:-2.8}
+    container_name: ${COMPOSE_PROJECT_NAME:-traefik}_traefik
+#    command:
+      ## Enabling docker provider
+#      - --providers.docker=true
+      ## ???
+      #?- --providers.docker.swarmMode=true
+      #- --providers.docker.swarmModeRefreshSeconds=15s
+      #?- --providers.docker.constraints=Label(`traefik.enable`,`true`)
+      ## Consul
+      #- --providers.consul.stale=true
+      #?- --providers.consul.endpoint.address=consul-leader:8500
+      #- --providers.file.directory=/etc/traefik/
+      ## Network
+#      - --providers.docker.network=frontend_network
+      ## Traefik tries to find a binding on port to select the container
+#      - --providers.docker.useBindPortIP=true
+
+      ## Traefik will listen to incoming request on the port 3306 (MySQL - custom name)
+      #- --entrypoints.mysql.address=:3306
+
+      ## Custom certificates
+#      - --providers.file.directory=/etc/traefik/dynamic
+
+      # Create mechanism (enable a TLS challenge) to generate certifiacte called "letsencrypt"
+      #- --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      ## The email to provide to let's encrypt
+      #- --certificatesresolvers.letsencrypt.acme.email=my@email.com
+      ## Tell to store the certificate on a path under our volume
+      #- --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      #- --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http
+
+
+      ## Enable a DNS challenge named "mydnschallenge"
+      #- --certificatesresolvers.mydnschallenge.acme.dnschallenge=true
+      ## Tell which provider to use
+      #- --certificatesresolvers.mydnschallenge.acme.dnschallenge.provider=ovh
+
+
+      ## Tell it to use our predefined entrypoint named "http"
+      #- --certificatesresolvers.myhttpchallenge.acme.httpchallenge.entrypoint=http
+      #- --certificatesresolvers.myhttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+      #- --certificatesresolvers.myhttpchallenge.acme.email=postmaster@mydomain.com
+      #- --certificatesresolvers.myhttpchallenge.acme.storage=/letsencrypt/acme.json
+
+      ## Log level: ERROR (default) | DEBUG | PANIC | FATAL | WARN | INFO
+      #- --log.level=DEBUG
+
+      #- --certificatesResolvers.mytlschallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+
+    ## expose the predefined secret to the container by name
+    #secrets:
+    #  - ovh_endpoint
+    #  - ovh_application_key
+    #  - ovh_application_secret
+    #  - ovh_consumer_key
+    #environment:
+    #  - OVH_ENDPOINT=xxx
+    #  - OVH_APPLICATION_KEY=xxx
+    #  - OVH_APPLICATION_SECRET=xxx
+    #  - OVH_CONSUMER_KEY=xxx
+    #  - OVH_ENDPOINT_FILE=/run/secrets/ovh_endpoint
+    #  - OVH_APPLICATION_KEY_FILE=/run/secrets/ovh_application_key
+    #  - OVH_APPLICATION_SECRET_FILE=/run/secrets/ovh_application_secret
+    #  - OVH_CONSUMER_KEY_FILE=/run/secrets/ovh_consumer_key
     volumes:
-      - ./certificates:/root/.local/share/mkcert
+      ## Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      ## Custom certificates (set path also in dynamic/certificates.yml)
+      - ../mkcert/certificates:/etc/ssl/certificates:ro
+#      - /etc/ssl/path:/etc/ssl/path:ro
+      ## Configuration
+      - ./config/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - ./config/traefik.yml:/etc/traefik/traefik.yml:ro
+      ## Create a letsencrypt dir within the folder where the docker-compose file is
+      #- ./letsencrypt:/letsencrypt
+#    depends_on:
+#      - consul_leader
+    ports:
+      - target: 80
+        published: 80
+      - target: 443
+        published: 443
+      ## Dashboard
+      - target: 8080
+        published: ${TRAEFIK_PORT:-8080}
+      ## Node
+      - target: 3000
+        published: 3000
+      ## Development
+#      - target: 9000
+#        published: 9000
     networks:
       - frontend_network
+#    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      replicas: 1
+      #mode: replicated
+      ## Current number of nodes: $(docker node ls -q | wc -l)
+#      replicas: ${TRAEFIK_REPLICAS:-3}
+      placement:
+        constraints:
+          - node.role == manager
+    #      - node.hostname == node-2
+    #      - node.hostname == serverhostname
+    #      - node.labels.traefik == true
+#        preferences:
+#          - spread: node.id
+    #deploy:
+    #  mode: global
+    #  placement:
+    #    constraints:
+    #      - node.platform.os == linux
+    #  restart_policy:
+    #    condition: on-failure
+    #    preferences:
+    #      - spread: node.id
+    ## Dynamic section
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-traefik}_traefik.loadbalancer.server.port=8080
+      #- traefik.http.services.${COMPOSE_PROJECT_NAME:-traefik}_traefik.loadbalancer.passhostheader=true
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.service=${COMPOSE_PROJECT_NAME:-traefik}_traefik
+      ## The router 'traefik_traefik' will forward request to service api@internal
+      #?- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.service=api@internal
+
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.rule=Host(`traefik.example.com`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.rule=Host(`traefik.example.com`) && Path(`/traefik`)
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.rule=Host(`traefik.example.com`) && PathPrefix(`/traefik`)
+
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.tls=true
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.entrypoints=websecure
+
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik=true
+
+      #?- "traefik.http.services.dummyService.loadbalancer.server.port=1337"
+
+      ## Tell Traefik, that for router 'traefik' should use following middleware
+      ## BasicAuth (BCrypt or MD5 not SHA1) - https://www.htaccesstools.com/htpasswd-generator/
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.middlewares=${COMPOSE_PROJECT_NAME:-traefik}_auth-users
+      ## In password type $ as $$
+      - traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_auth-users.basicauth.users=traefik:$$2y$$10$$MxGYZbTQLhcfs40HR9wkLuzqYCwCtjVzGfhguf0RTk6sQQrRQqJS2
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_auth-users.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_auth-users.basicauth.users=admin:$$2y$$05$$1OX5jZ1Kpm/iVKE8tgUhu.STmPkgi0lLxVeP5yEcRioFdV4mcgdTu
+
+      ## Global redirection - this creates the redirect middleware and redirects all http requests to https
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.entrypoints=web
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.rule=hostregexp(`{host:.+}`)
+      ##- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.rule=HostRegexp(`{any:.*}`)
+#      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_http-catchall.middlewares=${COMPOSE_PROJECT_NAME:-traefik}_redirect-to-https
+#      - traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_redirect-to-https.redirectscheme.scheme=https
+
+      ## Middlewares: Strip prefix
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_strip-prefix.stripprefix.prefixes=/traefik
+      #- traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_strip-prefix.stripprefix.forceslash=false
+      #- traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.middlewares=${COMPOSE_PROJECT_NAME:-traefik}_strip-prefix@docker
+
+      ## Chain middlewares (traefik_https-only + traefik_auth-users + traefik_known-ips)
+      #- "traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_secured.chain.middlewares=${COMPOSE_PROJECT_NAME:-traefik}_https-only,${COMPOSE_PROJECT_NAME:-traefik}_known-ips,${COMPOSE_PROJECT_NAME:-traefik}_auth-users"
+      #- "traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_https-only.redirectscheme.scheme=https"
+      #- "traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_auth-users.basicauth.users=test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"
+      #- "traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_known-ips.ipwhitelist.sourceRange=192.168.1.7,127.0.0.1/32"
+
+      ## Middlewares: Add prefix
+      ## Create a middleware named `traefik_add-prefix`
+      #- "traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-traefik}_add-prefix.addprefix.prefix=/traefik/dashboard"
+      ## Apply the middleware named `traefik_add-prefix` to the router named `traefik_traefik`
+      #- "traefik.http.routers.${COMPOSE_PROJECT_NAME:-traefik}_traefik.middlewares=${COMPOSE_PROJECT_NAME:-traefik}_add-prefix@docker"
 
 networks:
   frontend_network:
     external: true
+    #attachable: true
+    #driver: overlay
+    #name: frontend_network
+    ##driver_opts:
+    #  #encrypted: true

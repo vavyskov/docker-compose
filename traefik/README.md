@@ -4,19 +4,18 @@
 This Compose file contains the following environment variables:
 
 - `COMPOSE_PROJECT_NAME` the default value is **traefik**
-- `MKCERT_VERSION` the default value is **1.4.3-alpine3.14**
-- `MKCERT_HOSTNAMES` the default value is **\*.localhost.dev \*.localhost.test \*.example.com \*.example.edu**
-- `HOST_USER_ID` the default value is **1000**
-- `HOST_USER_NAME` the default value is **user**
-- `TRAEFIK_VERSION` the default value is **v2.5**
+- `TRAEFIK_VERSION` the default value is **2.8**
 - `TRAEFIK_PORT` the default value is **8080**
 
 You can set environment variables in `.env` file.
 
 ## Quick start (docker-compose)
 1. Clone or download this repository
-1. Go inside of directory `cd docker-compose/traefik`
-1. Run command:
+2. Optionally:
+   1. Go inside of the directory `cd docker-compose/mkcert`
+   2. Run command `docker-compose up -d`
+3. Go inside of the directory `cd docker-compose/traefik`
+4. Run command:
     - Docker:
 
           docker network create frontend_network
@@ -26,19 +25,17 @@ You can set environment variables in `.env` file.
 
           docker network create --driver=overlay frontend_network
           docker stack deploy --compose-file=docker-compose.yml traefik
-          docker stack deploy --compose-file=docker-compose.override.yml traefik
 
 ## Quick start (docker)
 
     docker network create frontend_network; \
-    docker run --rm -v $PWD/certificates:/root/.local/share/mkcert vavyskov/mkcert:1.4.3-alpine3.14; \
     docker run -itd \
         --name traefik \
         --publish 80:80 \
         --publish 443:443 \
         --publish 8080:8080 \
         --network frontend_network \
-        traefik:v2.5
+        traefik:v2.8
 
 ## Access to Traefik: 
 - **URL:** `http://localhost:8080` (Docker Toolbox: `192.168.99.100:8080`)
@@ -55,7 +52,7 @@ Path:
 - macOX: `/private/etc/hosts`
 - Windows: `C:\Windows\System32\drivers\etc\hosts`
 
-## Adding trusted root certificate authority
+## Adding trusted root certificate authority (e.g. from mkcert)
 1. Operating system
    - **Linux (Debian)**:
 
