@@ -16,7 +16,7 @@ version: '3.8'
 
 services:
   traefik:
-    image: traefik:${TRAEFIK_VERSION:-v2.5}
+    image: traefik:${TRAEFIK_VERSION:-2.8}
     container_name: ${COMPOSE_PROJECT_NAME:-traefik}_traefik
 #    command:
       ## Enabling docker provider
@@ -85,15 +85,16 @@ services:
       ## Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
       ## Custom certificates (set path also in dynamic/certificates.yml)
-#      - ./certificates:/etc/ssl/certificates:ro
-      - ../mkcert/certificates:/etc/ssl/certificates:ro
+      - ./certificates:/etc/ssl/certificates:ro
+#      - ../mkcert/certificates:/etc/ssl/certificates:ro
 #      - /etc/ssl/path:/etc/ssl/path:ro
       ## Configuration
       - ./config/dynamic.yml:/etc/traefik/dynamic.yml:ro
       - ./config/traefik.yml:/etc/traefik/traefik.yml:ro
       ## Create a letsencrypt dir within the folder where the docker-compose file is
       #- ./letsencrypt:/letsencrypt
-#    depends_on:
+    depends_on:
+      - mkcert
 #      - consul_leader
     ports:
       - target: 80

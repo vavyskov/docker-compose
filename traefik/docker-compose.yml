@@ -6,7 +6,8 @@ services:
     container_name: ${COMPOSE_PROJECT_NAME:-traefik}_mkcert
 #    restart: no
     environment:
-      MKCERT_HOSTNAMES: ${MKCERT_HOSTNAMES:-*.localhost.dev *.localhost.test *.example.com *.example.edu}
+      #MKCERT_HOSTNAMES: ${MKCERT_HOSTNAMES:-*.localhost.dev *.localhost.test *.example.com *.example.edu} ## Do not work - special characters require quotes :(
+      MKCERT_HOSTNAMES: "*.localhost.dev *.localhost.test *.example.com *.example.edu"
       HOST_USER_ID: ${HOST_USER_ID:-1000}
       HOST_USER_NAME: ${HOST_USER_NAME:-user}
     volumes:
