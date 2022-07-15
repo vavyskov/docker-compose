@@ -12,7 +12,9 @@ services:
         published: ${SMTP_PORT:-1025}
     networks:
       - frontend_network
-      - project_network
+      - backend_network
+#      - database_network
+#      - project_network
     deploy:
       replicas: 1
       placement:
@@ -28,6 +30,10 @@ services:
 networks:
   frontend_network:
     external: true
-  project_network:
+  backend_network:
     external: true
-    name: ${COMPOSE_PROJECT_NAME:-mailcatcher}_network
+#  database_network:
+#    external: true
+#  project_network:
+#    external: true
+#    name: ${COMPOSE_PROJECT_NAME:-mailcatcher}_network

@@ -26,6 +26,8 @@ Content:
              docker-compose pull
 
              docker network create frontend_network
+             docker network create backend_network
+             docker network create database_network
              docker network create project_network
              docker-compose up -d
 
@@ -37,6 +39,8 @@ Content:
              docker-compose pull
           
              docker network create --driver=overlay frontend_network
+             docker network create --driver=overlay backend_network
+             docker network create --driver=overlay database_network
              docker network create --driver=overlay project_network
              docker stack deploy --compose-file=docker-compose.yml project
              docker stack deploy --compose-file=docker-compose.override.yml project
