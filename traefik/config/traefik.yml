@@ -35,7 +35,6 @@ entryPoints:
         entryPoint:
           to: websecure
           scheme: https
-
   ## Traefik will listen to incoming request on the port 443 (websecure - custom name)
   websecure:
     address: ':443'

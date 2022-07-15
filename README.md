@@ -47,6 +47,7 @@ Resource usage statistics
 ## ToDo
 
 - hostname (identifikace kontejneru např. při SSH přístupu)
+- SSH bez nutnosti zadávat port (https://github.com/yrutschle/sslh)
 - SSH command history - volume
 - For better performances, you should move the cache and log directories to a non-shared folder of the VM.
 - otestovat změnu hesla u existujících databází (případně i změnu uživatele a název databáze)
