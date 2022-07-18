@@ -17,19 +17,19 @@ You can set environment variables in `.env` file.
     - Docker:
 
           docker network create frontend_network
-          docker network create backend_network
+          docker network create mailcatcher_network
           docker-compose up -d
 
     - Docker Swarm
 
           docker network create --driver=overlay frontend_network
-          docker network create --driver=overlay backend_network
+          docker network create --driver=overlay mailcatcher_network
           docker stack deploy --compose-file=docker-compose.yml mailcatcher
 
 ## Quick start (docker)
 
     docker network create -d overlay --attachable frontend_network; \
-    docker network create -d overlay --attachable backend_network; \
+    docker network create -d overlay --attachable mailcatcher_network; \
     docker run -itd \
         --name mailcatcher \
         --publish 1081:80 \
@@ -43,5 +43,5 @@ You can set environment variables in `.env` file.
 ## Network
 Show IP address:
 
-    docker network inspect backend_network | grep IPv
     docker network inspect frontend_network | grep IPv
+    docker network inspect mailcatcher_network | grep IPv

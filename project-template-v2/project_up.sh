@@ -4,7 +4,7 @@
 if [ ! -f .env ]; then
     printf "\r\n%sFile '.env' does not exist.%s\r\n\r\n" \
     "$(tput setaf 1)" "$(tput sgr 0)"
-    exit
+    exit 1
 else
 
 
@@ -22,7 +22,7 @@ else
     else
         printf "\r\n%s'COMPOSE_PROJECT_NAME' variable is not set.%s\r\n\r\n" \
         "$(tput setaf 1)" "$(tput sgr 0)"
-        exit
+        exit 1
     fi
     ## Get PROJECT_BASE_URL variable (exists, not comment, not empty)
     if [ -n "$(cat < .env | grep PROJECT_BASE_URL= | sed '/^#/d' | cut -d= -f2 | xargs)" ]; then
@@ -30,7 +30,7 @@ else
     else
         printf "\r\n%s'PROJECT_BASE_URL' variable is not set.%s\r\n\r\n" \
         "$(tput setaf 1)" "$(tput sgr 0)"
-        exit
+        exit 1
     fi
     ## Get NGINX_PORT variable (exists, not comment, not empty)
     if [ -n "$(cat < .env | grep NGINX_PORT= | sed '/^#/d' | cut -d= -f2 | xargs)" ]; then
@@ -38,7 +38,7 @@ else
     else
         printf "\r\n%s'NGINX_PORT' variable is not set.%s\r\n\r\n" \
         "$(tput setaf 1)" "$(tput sgr 0)"
-        exit
+        exit 1
     fi
     ## Get DOCKER_MACHINE_IP variable (exists, not comment, not empty)
     if [ -n "$(cat < .env | grep DOCKER_MACHINE_IP= | sed '/^#/d' | cut -d= -f2 | xargs)" ]; then
@@ -46,7 +46,7 @@ else
     else
         printf "\r\n%s'DOCKER_MACHINE_IP' variable is not set.%s\r\n\r\n" \
         "$(tput setaf 1)" "$(tput sgr 0)"
-        exit
+        exit 1
     fi
 fi
 
@@ -59,7 +59,7 @@ fi
 create_network() {
     if [ "$(docker network ls | grep "$1" | grep -v "$2")" != "" ]; then
         printf "$(tput setaf 1)Network with name '%s' already exists but requires driver '%s'.$(tput sgr 0)\r\n\r\n" "$1" "$2"
-        exit
+        exit 1
     elif [ "$(docker network ls | grep "$1" | grep "$2")" = "" ]; then
         printf "Creating network '%s'...\r\n" "$1"
         docker network create --driver "$2" "$1"

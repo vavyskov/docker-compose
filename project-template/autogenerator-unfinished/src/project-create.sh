@@ -10,14 +10,14 @@ if [ "$(docker container ls 1>/dev/null 2>/dev/null; echo $?)" != 0 ]; then
     printf "\r\n%sCannot connect to the 'Docker Daemon'. Is the Docker Daemon running?%s\r\n\r\n" \
     "$(tput setaf 1)" "$(tput sgr 0)"
 
-    exit
+    exit 1
 fi
 
 ## Check .env file
 if [ ! -f .env ]; then
     printf "\r\n%sFile '.env' does not exist.%s\r\n\r\n" \
     "$(tput setaf 1)" "$(tput sgr 0)"
-    exit
+    exit 1
 else
     ## Get COMPOSE_PROJECT_NAME variable (exists, not comment, not empty)
     if [ -n "$(cat < .env | grep COMPOSE_PROJECT_NAME= | sed '/^#/d' | cut -d= -f2 | xargs)" ]; then
@@ -25,7 +25,7 @@ else
     else
         printf "\r\n%s'COMPOSE_PROJECT_NAME' variable is not set.%s\r\n\r\n" \
         "$(tput setaf 1)" "$(tput sgr 0)"
-        exit
+        exit 1
     fi
 fi
 
@@ -115,7 +115,7 @@ fi
 create_network() {
     if [ "$(docker network ls | grep "$1" | grep -v "$2")" != "" ]; then
         printf "$(tput setaf 1)Network with name '%s' already exists but requires driver '%s'.$(tput sgr 0)\r\n\r\n" "$1" "$2"
-        exit
+        exit 1
     elif [ "$(docker network ls | grep "$1" | grep "$2")" = "" ]; then
         docker network create --driver "$2" "$1"
     fi

@@ -5,7 +5,7 @@ set -e
 echo "Starting create new certificate..."
 if [ "$#" -lt 2 ]; then
     echo "Usage: ...  <domain> <email> [options]"
-    exit
+    exit 1
 fi
 
 DOMAIN=$1

@@ -21,7 +21,7 @@ services:
         published: ${NGINX_PORT}
     networks:
       - frontend_network
-      - backend_network
+      - project_network
     labels:
       - traefik.enable=true
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.rule=Host(`${PROJECT_BASE_URL}`)
@@ -59,7 +59,7 @@ services:
 #      - /path/to/mariadb/data/on/host:/var/lib/mysql # Use bind mount
       - mariadb_data:/var/lib/mysql
     networks:
-      - backend_network
+      - project_network
 
   postgres:
     image: wodby/postgres:${POSTGRES_TAG}
@@ -74,7 +74,7 @@ services:
 #      - /path/to/postgres/data/on/host:/var/lib/postgresql/data # Use bind mount
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - backend_network
+      - project_network
 
   mailcatcher:
     image: vavyskov/mailcatcher:${MAILCATCHER_VERSION}
@@ -168,7 +168,7 @@ services:
       ADMINER_DEFAULT_DB_NAME: $MARIADB_HOST
     networks:
       - frontend_network
-      - backend_network
+      - project_network
     labels:
       - traefik.enable=true
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_adminer.rule=Host(`adminer-${PROJECT_BASE_URL}`)
@@ -187,7 +187,7 @@ services:
 #      RELAY_USER: $RELAY_USER
 #      RELAY_PASSWORD: $RELAY_PASSWORD
     networks:
-      - backend_network
+      - project_network
 
 #  xhprof:
 #    image: wodby/xhprof:$XHPROF_TAG
@@ -216,7 +216,7 @@ services:
 networks:
   frontend_network:
     external: true
-  backend_network:
+  project_network:
     external: true
     name: ${COMPOSE_PROJECT_NAME}_network
 

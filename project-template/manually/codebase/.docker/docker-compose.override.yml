@@ -125,7 +125,7 @@ services:
       #- target: 9000
       #  published: ${XDEBUG_PORT}
     networks:
-      - backend_network
+      - mailcatcher_network
       - project_network
     volumes:
       ## 'nocopy' flag to disable copying of data from a container when a volume is created
@@ -156,7 +156,7 @@ services:
       - target: 3306
         published: ${MARIADB_PORT}
     networks:
-      - database_network
+      - adminer_network
       - project_network
     #stop_grace_period: 30s
     #restart: unless-stopped
@@ -197,7 +197,7 @@ services:
       - target: 5432
         published: ${POSTGRES_PORT}
     networks:
-      - database_network
+      - adminer_network
       - project_network
     #restart: unless-stopped
     #restart: always
@@ -318,7 +318,7 @@ services:
         2 * * * * php -r "mail('test@example.com','CRON mail 2', 'Test 2 e-mail from CRON.', 'From: cron@example.com');"
     command: /usr/sbin/crond -f -d 0
     networks:
-      - backend_network
+      - mailcatcher_network
       - project_network
     volumes:
       - html_data:${PROJECT_ROOT}
@@ -334,9 +334,9 @@ services:
 networks:
   frontend_network:
     external: true
-  backend_network:
+  mailcatcher_network:
     external: true
-  database_network:
+  adminer_network:
     external: true
   project_network:
     external: true

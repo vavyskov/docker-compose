@@ -63,7 +63,7 @@ services:
       - target: 22
         published: ${SSH_PORT}
     networks:
-      - backend_network
+      - mailcatcher_network
       - project_network
     volumes:
 #      - html_data:${PROJECT_ROOT}:nocopy
@@ -90,7 +90,7 @@ services:
       - target: 3306
         published: ${MARIADB_PORT}
     networks:
-      - database_network
+      - adminer_network
       - project_network
     deploy:
       replicas: 1
@@ -159,11 +159,11 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       HOST_USER_ID: ${HOST_USER_ID}
       PHP_CRONTAB: |
-        * * * * * php -r "mail('test@example.com','CRON mail', 'Test e-mail from CRON.', 'From: cron@example.com');"
-        2 * * * * php -r "mail('test@example.com','CRON mail 2', 'Test 2 e-mail from CRON.', 'From: cron@example.com');"
+        * * * * * php -r "mail('test@example.com','CRON mail (LEMP)', 'Test e-mail from CRON.', 'From: cron@example.com');"
+        2 * * * * php -r "mail('test@example.com','CRON mail 2 (LEMP)', 'Test 2 e-mail from CRON.', 'From: cron@example.com');"
     command: /usr/sbin/crond -f -d 0
     networks:
-      - backend_network
+      - mailcatcher_network
       - project_network
     volumes:
 #      - html_data:${PROJECT_ROOT}
@@ -174,9 +174,9 @@ services:
 networks:
   frontend_network:
     external: true
-  backend_network:
+  mailcatcher_network:
     external: true
-  database_network:
+  adminer_network:
     external: true
   project_network:
     external: true

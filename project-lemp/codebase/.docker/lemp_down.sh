@@ -16,5 +16,9 @@ else
     fi
 fi
 
-## Execute na interactive shell in the PHP container
-docker exec -it ${COMPOSE_PROJECT_NAME}_php sh
+## Stop and remove containers
+docker-compose --env-file .env down
+
+## Remove project network
+echo "\r\nRemoving network: "
+docker network rm ${COMPOSE_PROJECT_NAME}_network

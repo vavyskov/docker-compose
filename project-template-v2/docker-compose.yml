@@ -40,10 +40,10 @@ services:
 ## For XHProf and Xdebug profiler traces
 #      - files:/mnt/files
     networks:
-      - backend_network
+      - project_network
 
 networks:
-  backend_network:
+  project_network:
     external: true
     name: ${COMPOSE_PROJECT_NAME}_network
 
