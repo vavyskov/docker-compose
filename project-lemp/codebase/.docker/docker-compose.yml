@@ -19,9 +19,7 @@ services:
       PHP_XDEBUG_HOSTNAME: ${PHP_XDEBUG_HOSTNAME}
 #      PHP_XDEBUG_LOG: ${PHP_XDEBUG_LOG}
     networks:
-      - frontend_network
-      - mailcatcher_network
-      - project_network
+      - backend_network
     volumes:
 #      - html_data:${PROJECT_ROOT}
       - ..:${PROJECT_ROOT}
@@ -31,13 +29,8 @@ services:
       replicas: 1
 
 networks:
-  frontend_network:
+  backend_network:
     external: true
-  mailcatcher_network:
-    external: true
-  project_network:
-    external: true
-    name: ${COMPOSE_PROJECT_NAME}_network
 
 #volumes:
 #  html_data:

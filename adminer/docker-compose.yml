@@ -10,7 +10,7 @@ services:
         published: ${ADMINER_PORT:-8081}
     networks:
       - frontend_network
-      - project_network
+      - database_network
     deploy:
       replicas: 1
       placement:
@@ -26,6 +26,5 @@ services:
 networks:
   frontend_network:
     external: true
-  project_network:
+  database_network:
     external: true
-    name: ${COMPOSE_PROJECT_NAME:-adminer}_network

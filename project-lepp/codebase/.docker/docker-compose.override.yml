@@ -14,16 +14,13 @@ services:
       - php-fpm
     environment:
       PROJECT_HOSTNAME: ${PROJECT_HOSTNAME}
-      ## Nginx-proxy
-      VIRTUAL_HOST: ${PROJECT_HOSTNAME}
-      VIRTUAL_PORT: 443
-      VIRTUAL_PROTO: https
+      FASTCGI_HOSTNAME: ${COMPOSE_PROJECT_NAME}_php-fpm
     ports:
       - target: 80
         published: ${NGINX_PORT}
     networks:
       - frontend_network
-      - project_network
+      - backend_network
     deploy:
       replicas: 1
       placement:
@@ -63,8 +60,7 @@ services:
       - target: 22
         published: ${SSH_PORT}
     networks:
-      - mailcatcher_network
-      - project_network
+      - backend_network
     volumes:
 #      - html_data:${PROJECT_ROOT}:nocopy
       - ..:${PROJECT_ROOT}
@@ -89,8 +85,7 @@ services:
       - target: 5432
         published: ${POSTGRES_PORT}
     networks:
-      - adminer_network
-      - project_network
+      - database_network
     deploy:
       replicas: 1
 
@@ -108,7 +103,7 @@ services:
 #        published: ${SMTP_PORT}
 #    networks:
 #      - frontend_network
-#      - project_network
+#      - backend_network
 #    deploy:
 #      replicas: 1
 #      placement:
@@ -132,7 +127,7 @@ services:
 #        published: ${ADMINER_PORT}
 #    networks:
 #      - frontend_network
-#      - project_network
+#      - database_network
 #    deploy:
 #      replicas: 1
 #      placement:
@@ -162,8 +157,7 @@ services:
         2 * * * * php -r "mail('test@example.com','CRON mail 2 (LEPP)', 'Test 2 e-mail from CRON.', 'From: cron@example.com');"
     command: /usr/sbin/crond -f -d 0
     networks:
-      - mailcatcher_network
-      - project_network
+      - backend_network
     volumes:
 #      - html_data:${PROJECT_ROOT}
       - ..:${PROJECT_ROOT}
@@ -173,13 +167,10 @@ services:
 networks:
   frontend_network:
     external: true
-  mailcatcher_network:
+  backend_network:
     external: true
-  adminer_network:
+  database_network:
     external: true
-  project_network:
-    external: true
-    name: ${COMPOSE_PROJECT_NAME}_network
 
 volumes:
 #  html_data:

@@ -23,6 +23,7 @@ services:
       - php-fpm
     environment:
       PROJECT_HOSTNAME: ${PROJECT_HOSTNAME}
+      FASTCGI_HOSTNAME: ${COMPOSE_PROJECT_NAME}_php-fpm
       #TIME_ZONE: UTC
       #NGINX_ROOT: ${NGINX_ROOT}
       #FASTCGI_HOSTNAME: ${FASTCGI_HOSTNAME}

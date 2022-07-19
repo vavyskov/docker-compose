@@ -70,7 +70,7 @@ create_network() {
 ## Empty new line
 printf "\r\n"
 ## https://linuxize.com/post/bash-for-loop/
-for i in frontend_network mailcatcher_network adminer_network ${COMPOSE_PROJECT_NAME}_network
+for i in frontend_network backend_network database_network
 do
   create_network "$i" bridge
 done
