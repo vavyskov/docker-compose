@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   mkcert:
-    image: vavyskov/mkcert:${MKCERT_VERSION:-1.4.3-1.0.0}
+    image: vavyskov/mkcert:${MKCERT_VERSION:-1.4.3-1.1.0}
     container_name: ${COMPOSE_PROJECT_NAME:-mkcert}_mkcert
     environment:
       MKCERT_HOSTNAMES: "*.localhost.dev *.localhost.test *.example.com *.example.edu"
@@ -10,3 +10,4 @@ services:
       HOST_USER_NAME: user
     volumes:
       - ./certificates:/root/.local/share/mkcert
+    network_mode: none

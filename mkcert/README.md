@@ -26,14 +26,14 @@ You can set environment variables in `.env` file.
 
 ## Quick start (docker)
 
-    docker run --rm -v $PWD/certificates:/root/.local/share/mkcert vavyskov/mkcert:1.4.3-alpine3.14
+    docker run --rm -v $PWD/certificates:/root/.local/share/mkcert vavyskov/mkcert:1.4.3-1.1.0
 
     docker run --rm \
         -v $PWD/certificates:/root/.local/share/mkcert \
         -e MKCERT_HOSTNAMES="*.local *.example.com" \
         -e HOST_USER_ID="1000" \
         -e HOST_USER_NAME="user" \
-        vavyskov/mkcert:1.4.3-alpine3.14
+        vavyskov/mkcert:1.4.3-1.1.0
 
 ## Adding trusted root certificate authority
 1. Operating system

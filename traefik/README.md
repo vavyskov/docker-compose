@@ -11,11 +11,13 @@ You can set environment variables in `.env` file.
 
 ## Quick start (docker-compose)
 1. Clone or download this repository
-2. Optionally:
-   1. Go inside of the directory `cd docker-compose/mkcert`
-   2. Run command `docker-compose up -d`
-3. Go inside of the directory `cd docker-compose/traefik`
-4. Run command:
+2. Optionally run `mkcert` or place custom wildcard certificate in a directory:
+   ```
+   /etc/ssl/path/wildcard_example.com.crt
+   /etc/ssl/path/wildcard_example.com.key
+   ```
+4. Go inside of the directory `cd docker-compose/traefik`
+5. Run command:
     - Docker:
 
           docker network create frontend_network
