@@ -30,8 +30,7 @@ services:
       #APP_SECRET: ${APP_SECRET}
       #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
     networks:
-      - frontend_network
-      - mailcatcher_network
+      - backend_network
       - project_network
     volumes:
       - html_data:${PROJECT_ROOT}
@@ -46,9 +45,7 @@ services:
       replicas: 1
 
 networks:
-  frontend_network:
-    external: true
-  mailcatcher_network:
+  backend_network:
     external: true
   project_network:
     external: true

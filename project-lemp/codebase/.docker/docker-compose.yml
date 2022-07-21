@@ -20,6 +20,7 @@ services:
 #      PHP_XDEBUG_LOG: ${PHP_XDEBUG_LOG}
     networks:
       - backend_network
+      - project_network
     volumes:
 #      - html_data:${PROJECT_ROOT}
       - ..:${PROJECT_ROOT}
@@ -31,6 +32,9 @@ services:
 networks:
   backend_network:
     external: true
+  project_network:
+    external: true
+    name: ${COMPOSE_PROJECT_NAME}_network
 
 #volumes:
 #  html_data:

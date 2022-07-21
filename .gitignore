@@ -6,5 +6,7 @@
 nbproject/
 
 # Mkcert
+environment/certificates/*
+!environment/certificates/.gitkeep
 mkcert/certificates/*
 !mkcert/certificates/.gitkeep

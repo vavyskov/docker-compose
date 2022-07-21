@@ -70,7 +70,7 @@ create_network() {
 ## Empty new line
 printf "\r\n"
 ## https://linuxize.com/post/bash-for-loop/
-for i in frontend_network mailcatcher_network adminer_network ${COMPOSE_PROJECT_NAME}_network
+for i in frontend_network backend_network database_network ${COMPOSE_PROJECT_NAME}_network
 do
   create_network "$i" bridge
 done
@@ -88,8 +88,8 @@ echo ""
 echo "${UNDERLINE}Project URLs:${RESET_ALL}"
 echo "${BLUE_FG}http://${DOCKER_MACHINE_IP}:${NGINX_PORT}"
 echo "${BLUE_FG}https://${PROJECT_HOSTNAME}"
-echo "https://adminer-${PROJECT_HOSTNAME}"
-echo "https://mailcatcher-${PROJECT_HOSTNAME}${RESET_ALL}"
+#echo "https://adminer-${PROJECT_HOSTNAME}"
+#echo "https://mailcatcher-${PROJECT_HOSTNAME}${RESET_ALL}"
 echo ""
 
 ## Open URLs in browser
