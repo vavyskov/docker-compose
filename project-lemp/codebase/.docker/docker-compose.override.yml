@@ -10,11 +10,16 @@ services:
     volumes:
 #      - html_data:${PROJECT_ROOT}:nocopy
       - ..:${PROJECT_ROOT}
+      ## Custom certificates (set path also in dynamic/certificates.yml)
+      - ./certificates:/etc/ssl/certificates:ro
     depends_on:
       - php-fpm
     environment:
       PROJECT_HOSTNAME: ${PROJECT_HOSTNAME}
       FASTCGI_HOSTNAME: ${COMPOSE_PROJECT_NAME}_php-fpm
+      CERTIFICATE_PATH: ${CERTIFICATE_PATH}
+      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME}
+      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME}
     ports:
       - target: 80
         published: ${NGINX_PORT}
@@ -67,6 +72,7 @@ services:
       - ..:${PROJECT_ROOT}
 #      - ~/.ssh:${SSH_HOME}/.shared/.ssh
 #      - ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig
+      - ../../../project-environment/certificates/rootCA.crt:/usr/local/share/ca-certificates/rootCA.crt
     deploy:
       replicas: 1
 
@@ -115,6 +121,7 @@ services:
     volumes:
 #      - html_data:${PROJECT_ROOT}
       - ..:${PROJECT_ROOT}
+      - ../../../project-environment/certificates/rootCA.crt:/usr/local/share/ca-certificates/rootCA.crt
     deploy:
       replicas: 1
 

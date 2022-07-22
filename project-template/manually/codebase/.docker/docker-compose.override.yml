@@ -16,7 +16,7 @@ services:
       - html_data:${PROJECT_ROOT}:nocopy
 #      - ..:${PROJECT_ROOT}:cached
 #      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
-#      - ../../mkcert/certificates:/etc/ssl/path:ro
+      - ./certificates:/etc/ssl/certificates:ro
       #- ./logs:/var/log
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     depends_on:
@@ -28,9 +28,9 @@ services:
       #NGINX_ROOT: ${NGINX_ROOT}
       #FASTCGI_HOSTNAME: ${FASTCGI_HOSTNAME}
       #FASTCGI_PORT: ${FASTCGI_PORT}
-#      CERTIFICATE_PATH: ${CERTIFICATE_PATH}
-#      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME}
-#      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME}
+      CERTIFICATE_PATH: ${CERTIFICATE_PATH}
+      CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME}
+      CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME}
       ## Nginx-proxy
       VIRTUAL_HOST: ${PROJECT_HOSTNAME}
       VIRTUAL_PORT: 443
@@ -135,6 +135,7 @@ services:
 #      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
 #      - ~/.ssh:${SSH_HOME}/.shared/.ssh
 #      - ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig
+      - ../../../project-environment/certificates/rootCA.crt:/usr/local/share/ca-certificates/rootCA.crt
     #working_dir: /var/www/html
     deploy:
       #mode: replicated
@@ -198,7 +199,7 @@ services:
       - target: 5432
         published: ${POSTGRES_PORT}
     networks:
-      - adminer_network
+      - database_network
       - project_network
     #restart: unless-stopped
     #restart: always
@@ -317,6 +318,9 @@ services:
       PHP_CRONTAB: |
         * * * * * php -r "mail('test@example.com','CRON mail (PROJECT)', 'Test e-mail from CRON.', 'From: cron@example.com');"
         2 * * * * php -r "mail('test@example.com','CRON mail 2 (PROJECT)', 'Test 2 e-mail from CRON.', 'From: cron@example.com');"
+#
+#        MAILTO="cron@example.com"
+#        30 2 * * * php /var/www/html/bin/console app:cron --quiet
     command: /usr/sbin/crond -f -d 0
     networks:
       - backend_network
@@ -328,6 +332,7 @@ services:
 #      - ${PROJECT_ROOT}/vendor ## Ignore Vendor folder
       #- ~/.ssh:${SSH_HOME}/.shared/.ssh:ro
       #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
+      - ../../../project-environment/certificates/rootCA.crt:/usr/local/share/ca-certificates/rootCA.crt
     #working_dir: /var/www/html
     deploy:
       replicas: 1
