@@ -11,7 +11,7 @@ services:
 #      - html_data:${PROJECT_ROOT}:nocopy
       - ..:${PROJECT_ROOT}
       ## Custom certificates (set path also in dynamic/certificates.yml)
-      - ./certificates:/etc/ssl/certificates:ro
+      - ../../../project-environment/certificates:/etc/ssl/certificates:ro
     depends_on:
       - php-fpm
     environment:
