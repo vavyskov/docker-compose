@@ -3,21 +3,34 @@
 version: '3.8'
 
 services:
-  php-fpm:
+  php:
     image: vavyskov/php:${PHP_VERSION}
-    container_name: ${COMPOSE_PROJECT_NAME}_php-fpm
+    container_name: ${COMPOSE_PROJECT_NAME}_php
     environment:
       PROJECT_MODE: ${PROJECT_MODE}
       PHP_USER: ${PHP_USER}
+      PHP_PASSWORD: ${PHP_PASSWORD}
+      GIT_EMAIL: ${GIT_EMAIL}
+      GIT_NAME: ${GIT_NAME}
       PHP_SENDMAIL_PATH: ${PHP_SENDMAIL_PATH}
       SMTP_HOSTNAME: ${SMTP_HOSTNAME}
       SMTP_PORT: ${SMTP_PORT}
       SMTP_FROM: ${SMTP_FROM}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
+      PROXY_SERVER: ${PROXY_SERVER}
       HOST_USER_ID: ${HOST_USER_ID}
+      PHP_INI: |
+        memory_limit = -1
+        upload_max_filesize = 128M
+      PHP_CRONTAB: |
+        * * * * * php -r "mail('test@example.com','CRON mail (LEPP)', 'Test e-mail from CRON.', 'From: cron@example.com');"
+        2 * * * * php -r "mail('test@example.com','CRON mail 2 (LEPP)', 'Test 2 e-mail from CRON.', 'From: cron@example.com');"
       PHP_XDEBUG_HOSTNAME: ${PHP_XDEBUG_HOSTNAME}
 #      PHP_XDEBUG_LOG: ${PHP_XDEBUG_LOG}
+    ports:
+      - target: 22
+        published: ${SSH_PORT}
     networks:
       - backend_network
       - project_network

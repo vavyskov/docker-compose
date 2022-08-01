@@ -13,10 +13,10 @@ services:
       ## Custom certificates (set path also in dynamic/certificates.yml)
       - ../../../project-environment/certificates:/etc/ssl/certificates:ro
     depends_on:
-      - php-fpm
+      - php
     environment:
       PROJECT_HOSTNAME: ${PROJECT_HOSTNAME}
-      FASTCGI_HOSTNAME: ${COMPOSE_PROJECT_NAME}_php-fpm
+      FASTCGI_HOSTNAME: ${COMPOSE_PROJECT_NAME}_php
       CERTIFICATE_PATH: ${CERTIFICATE_PATH}
       CERTIFICATE_FILENAME: ${CERTIFICATE_FILENAME}
       CERTIFICATE_KEYNAME: ${CERTIFICATE_KEYNAME}
@@ -37,45 +37,6 @@ services:
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.rule=Host(`${PROJECT_HOSTNAME}`)
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}_nginx.tls=true
 
-  php-ssh:
-    image: vavyskov/php:${PHP_VERSION}
-    container_name: ${COMPOSE_PROJECT_NAME}_php-ssh
-    hostname: ${COMPOSE_PROJECT_NAME}_php-ssh
-    depends_on:
-      - php-fpm
-    environment:
-      PROJECT_MODE: ${PROJECT_MODE}
-      PHP_USER: ${PHP_USER}
-      PHP_PASSWORD: ${PHP_PASSWORD}
-      GIT_EMAIL: ${GIT_EMAIL}
-      GIT_NAME: ${GIT_NAME}
-      PHP_SENDMAIL_PATH: ${PHP_SENDMAIL_PATH}
-      SMTP_HOSTNAME: ${SMTP_HOSTNAME}
-      SMTP_PORT: ${SMTP_PORT}
-      SMTP_FROM: ${SMTP_FROM}
-      SMTP_USER: ${SMTP_USER}
-      SMTP_PASSWORD: ${SMTP_PASSWORD}
-      PROXY_SERVER: ${PROXY_SERVER}
-      HOST_USER_ID: ${HOST_USER_ID}
-      PHP_INI: |
-        memory_limit = -1
-        upload_max_filesize = 128M
-    command: /usr/sbin/sshd -D
-    ports:
-      - target: 22
-        published: ${SSH_PORT}
-    networks:
-      - backend_network
-      - project_network
-    volumes:
-#      - html_data:${PROJECT_ROOT}:nocopy
-      - ..:${PROJECT_ROOT}
-#      - ~/.ssh:${SSH_HOME}/.shared/.ssh
-#      - ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig
-      - ../../../project-environment/certificates/rootCA.crt:/usr/local/share/ca-certificates/rootCA.crt
-    deploy:
-      replicas: 1
-
   mariadb:
 #    image: mariadb:${MARIADB_VERSION}
     image: wodby/mariadb:${MARIADB_TAG}
@@ -95,33 +56,6 @@ services:
     networks:
       - database_network
       - project_network
-    deploy:
-      replicas: 1
-
-  php-cron:
-    image: vavyskov/php:${PHP_VERSION}
-    container_name: ${COMPOSE_PROJECT_NAME}_php-cron
-    environment:
-      PROJECT_MODE: ${PROJECT_MODE}
-      PHP_USER: ${PHP_USER}
-      PHP_SENDMAIL_PATH: ${PHP_SENDMAIL_PATH}
-      SMTP_HOSTNAME: ${SMTP_HOSTNAME}
-      SMTP_PORT: ${SMTP_PORT}
-      SMTP_FROM: ${SMTP_FROM}
-      SMTP_USER: ${SMTP_USER}
-      SMTP_PASSWORD: ${SMTP_PASSWORD}
-      HOST_USER_ID: ${HOST_USER_ID}
-      PHP_CRONTAB: |
-        * * * * * php -r "mail('test@example.com','CRON mail (LEMP)', 'Test e-mail from CRON.', 'From: cron@example.com');"
-        2 * * * * php -r "mail('test@example.com','CRON mail 2 (LEMP)', 'Test 2 e-mail from CRON.', 'From: cron@example.com');"
-    command: /usr/sbin/crond -f -d 0
-    networks:
-      - backend_network
-      - project_network
-    volumes:
-#      - html_data:${PROJECT_ROOT}
-      - ..:${PROJECT_ROOT}
-      - ../../../project-environment/certificates/rootCA.crt:/usr/local/share/ca-certificates/rootCA.crt
     deploy:
       replicas: 1
 

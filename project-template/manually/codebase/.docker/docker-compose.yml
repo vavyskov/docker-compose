@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  php-fpm:
+  php:
     image: vavyskov/php:${PHP_VERSION}
-    container_name: ${COMPOSE_PROJECT_NAME}_php-fpm
+    container_name: ${COMPOSE_PROJECT_NAME}_php
     #hostname: "web_app_fpm"
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     #depends_on:
@@ -15,20 +15,32 @@ services:
       #TIME_ZONE: UTC
       #PHP_HOME: ${PHP_HOME}
       PHP_USER: ${PHP_USER}
+      PHP_PASSWORD: ${PHP_PASSWORD}
+      GIT_EMAIL: ${GIT_EMAIL}
+      GIT_NAME: ${GIT_NAME}
       PHP_SENDMAIL_PATH: ${PHP_SENDMAIL_PATH}
       SMTP_HOSTNAME: ${SMTP_HOSTNAME}
       SMTP_PORT: ${SMTP_PORT}
       SMTP_FROM: ${SMTP_FROM}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
-#      PROXY_SERVER: ${PROXY_SERVER}
+      PROXY_SERVER: ${PROXY_SERVER}
       HOST_USER_ID: ${HOST_USER_ID}
+      PHP_INI: |
+        memory_limit = -1
+        upload_max_filesize = 128M
+      PHP_CRONTAB: |
+        * * * * * php -r "mail('test@example.com','CRON mail (LEPP)', 'Test e-mail from CRON.', 'From: cron@example.com');"
+        2 * * * * php -r "mail('test@example.com','CRON mail 2 (LEPP)', 'Test 2 e-mail from CRON.', 'From: cron@example.com');"
       PHP_XDEBUG_HOSTNAME: ${PHP_XDEBUG_HOSTNAME}
 #      PHP_XDEBUG_PORT: ${PHP_XDEBUG_PORT}
 #      PHP_XDEBUG_LOG: ${PHP_XDEBUG_LOG}
       #APP_ENV: ${APP_ENV}
       #APP_SECRET: ${APP_SECRET}
       #DATABASE_HOSTNAME: mysql://${MARIADB_USER}:${MARIADB_PASSWORD}@database:3306/${MARIADB_DATABASE}?serverVersion=5.7
+    ports:
+      - target: 22
+        published: ${SSH_PORT}
     networks:
       - backend_network
       - project_network
@@ -39,7 +51,7 @@ services:
       #- ~/.ssh:${SSH_HOME}/.shared/.ssh:ro
       #- ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
       ## Custom root CA
-      - ../../../project-environment/certificates/rootCA.crt:/usr/local/share/ca-certificates/rootCA.crt
+      - ../../../../project-environment/certificates/rootCA.crt:/usr/local/share/ca-certificates/rootCA.crt
     #working_dir: /var/www/html
     deploy:
       replicas: 1
