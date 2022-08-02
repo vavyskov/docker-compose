@@ -6,6 +6,7 @@ services:
   php:
     image: vavyskov/php:${PHP_VERSION}
     container_name: ${COMPOSE_PROJECT_NAME}_php
+    hostname: ${COMPOSE_PROJECT_NAME}_php
     environment:
       PROJECT_MODE: ${PROJECT_MODE}
       PHP_USER: ${PHP_USER}
@@ -37,6 +38,8 @@ services:
     volumes:
 #      - html_data:${PROJECT_ROOT}
       - ..:${PROJECT_ROOT}
+#      - ~/.ssh:${SSH_HOME}/.shared/.ssh:ro
+#      - ~/.gitconfig:${SSH_HOME}/.shared/.gitconfig:ro
       ## Custom root CA
       - ../../../project-environment/certificates/rootCA.crt:/usr/local/share/ca-certificates/rootCA.crt
     deploy:

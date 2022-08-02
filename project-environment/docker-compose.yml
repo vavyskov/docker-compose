@@ -35,8 +35,6 @@ services:
         published: ${TRAEFIK_PORT}
     networks:
       - frontend_network
-    security_opt:
-      - no-new-privileges:true
     deploy:
       replicas: 1
       placement:

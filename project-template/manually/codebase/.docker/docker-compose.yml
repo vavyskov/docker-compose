@@ -4,7 +4,7 @@ services:
   php:
     image: vavyskov/php:${PHP_VERSION}
     container_name: ${COMPOSE_PROJECT_NAME}_php
-    #hostname: "web_app_fpm"
+    hostname: ${COMPOSE_PROJECT_NAME}_php
     ## Docker Swarm (docker stack deploy) does not support "depends_on" :(
     #depends_on:
     #  - mariadb
