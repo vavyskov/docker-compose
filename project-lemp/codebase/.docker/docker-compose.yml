@@ -25,8 +25,8 @@ services:
         memory_limit = -1
         upload_max_filesize = 128M
       PHP_CRONTAB: |
-        * * * * * php -r "mail('test@example.com','CRON mail (LEMP)', 'Test e-mail from CRON.', 'From: cron@example.com');"
-        2 * * * * php -r "mail('test@example.com','CRON mail 2 (LEMP)', 'Test 2 e-mail from CRON.', 'From: cron@example.com');"
+        * * * * * php -r "mail('${GIT_EMAIL}','CRON ${COMPOSE_PROJECT_NAME}', 'Test e-mail from CRON.', 'From: ${SMTP_FROM}');"
+        2 * * * * php -r "mail('${GIT_EMAIL}','CRON ${COMPOSE_PROJECT_NAME} 2', 'Test e-mail from CRON 2.', 'From: ${SMTP_FROM}');"
       PHP_XDEBUG_HOSTNAME: ${PHP_XDEBUG_HOSTNAME}
 #      PHP_XDEBUG_LOG: ${PHP_XDEBUG_LOG}
     ports:
