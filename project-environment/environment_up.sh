@@ -76,7 +76,7 @@ RESET_ALL=`tput sgr0`
 ## Show URLs
 echo ""
 echo "${UNDERLINE}Project URLs:${RESET_ALL}"
-echo "${BLUE_FG}https://${TRAEFIK_HOSTNAME}"
-echo "${BLUE_FG}https://${ADMINER_HOSTNAME}"
-echo "${BLUE_FG}https://${MAILCATCHER_HOSTNAME}"
+echo "${BLUE_FG}https://${TRAEFIK_HOSTNAME}${RESET_ALL}"
+echo "${BLUE_FG}https://${ADMINER_HOSTNAME}${RESET_ALL}"
+echo "${BLUE_FG}https://${MAILCATCHER_HOSTNAME}${RESET_ALL}"
 echo ""
