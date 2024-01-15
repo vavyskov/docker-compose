@@ -20,7 +20,7 @@ You can set environment variables in `.env` file.
     - Docker Swarm
 
           docker network create --driver=overlay frontend_network
-          docker stack deploy --compose-file=docker-compose.yml traefik
+          docker stack deploy --compose-file=docker-compose.yml nginx-proxy
 
 ## Container behind Nginx-proxy require environment settings
 
