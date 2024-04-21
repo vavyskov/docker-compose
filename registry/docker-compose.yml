@@ -1,0 +1,26 @@
+version: '4'
+
+services:
+  registry:
+    image: registry:${REGISTRY_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_registry
+    restart: always
+    volumes:
+      - registry:/var/lib/registry
+    ports:
+      - target: 5000
+        published: 5000
+    networks:
+      - backend_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  backend_network:
+    external: true
+
+volumes:
+  registry:

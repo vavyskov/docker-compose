@@ -1,0 +1,42 @@
+version: 0.1
+log:
+  fields:
+    service: registry
+storage:
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/registry
+http:
+  addr: :5000
+  headers:
+    X-Content-Type-Options: [nosniff]
+
+#http:
+#  addr: localhost:5000
+#  prefix: /my/nested/registry/
+#  host: https://myregistryaddress.org:5000
+#  secret: asecretforlocaldevelopment
+#  relativeurls: false
+#  draintimeout: 60s
+#  tls:
+#    certificate: /path/to/x509/public
+#    key: /path/to/x509/private
+#    clientcas:
+#      - /path/to/ca.pem
+#      - /path/to/another/ca.pem
+#    letsencrypt:
+#      cachefile: /path/to/cache-file
+#      email: emailused@letsencrypt.com
+#      hosts: [myregistryaddress.org]
+#      directoryurl: https://acme-v02.api.letsencrypt.org/directory
+
+auth:
+  htpasswd:
+    realm: basic-realm
+    path: /etc/registry
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3
