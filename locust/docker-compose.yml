@@ -1,0 +1,17 @@
+services:
+  master:
+    image: locustio/locust:${LOCUST_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_master
+    ports:
+      - target: 8089
+        published: 8089
+    volumes:
+      - ./scenario:/mnt/locust
+    command: -f /mnt/locust/${PYTHON_FILE_NAME} --master -H ${WEBSITE_URL}
+  
+  worker:
+    image: locustio/locust:${LOCUST_VERSION}
+    # container_name: ${COMPOSE_PROJECT_NAME}_worker
+    volumes:
+      - ./scenario:/mnt/locust
+    command: -f /mnt/locust/${PYTHON_FILE_NAME} --worker --master-host master
